@@ -6,6 +6,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Aggregate Sailing Availability Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/cruiseAggrAvailabilitySearch",
     description: "High-throughput search endpoint for finding available cruise sailings based on date range, geographic region, ship code, and passenger count.",
@@ -52,7 +53,36 @@ export const API_KNOWLEDGE_BASE = [
   ]
 }`,
     v4Comparison: "TravCorp V4 queries tour departures directly; iTravel uses a Powershopping cached tier to serve sub-second search results.",
-    errorCodes: ["ERR_INVALID_DATE_RANGE", "ERR_NO_SAILINGS_FOUND", "ERR_CHANNEL_UNAUTHORIZED"]
+    errorCodes: ["ERR_INVALID_DATE_RANGE", "ERR_NO_SAILINGS_FOUND", "ITRVL_CRUISE_AVAIL_SYS_00002"]
+  },
+  {
+    id: "portal_oauth",
+    sectionNumber: "Portal 1.1",
+    title: "OAuth 2.0 /token (Client Credentials)",
+    displayName: "iTravel Connect Authorization Server Token Endpoint",
+    lifecycle: "Shopping & Search",
+    lifecycleBadge: "Shopping",
+    source: "Developer Portal",
+    method: "POST",
+    endpointPath: "/oauth/token",
+    description: "Issues short-lived signed JWT bearer tokens (30-minute TTL) required for authenticating across all 150+ iTravel Connect REST APIs.",
+    headers: [
+      { name: "Content-Type", type: "String", required: true, description: "application/x-www-form-urlencoded" }
+    ],
+    parameters: [
+      { name: "client_id", type: "String", required: true, description: "Registered channel / consumer identifier" },
+      { name: "client_secret", type: "String", required: true, description: "Secret token assigned during onboarding" },
+      { name: "grant_type", type: "String", required: true, description: "Must be 'client_credentials'" }
+    ],
+    requestPayload: `client_id=B2BAPI%40UNIWORLD&client_secret=sec_88291039&grant_type=client_credentials`,
+    responsePayload: `{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 1800,
+  "scope": "cruise:read cruise:write"
+}`,
+    v4Comparison: "V4 uses session cookies/API keys; iTravel Connect uses strict 30-min JWT bearer tokens with auto-refresh.",
+    errorCodes: ["ITRVL_AUTH_401_UNAUTHORIZED", "ITRVL_AUTH_403_FORBIDDEN"]
   },
   {
     id: "ep_4_3",
@@ -61,6 +91,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Category-Level Availability & Fare Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/cruiseCategoryAvailabilitySearch",
     description: "Fetches available cabin categories (Suites, Balcony, Oceanview, Inside), deck allocations, and base fare breakdowns for a selected sailing.",
@@ -102,6 +133,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Fetch Applicable Promotions & Discounts",
     lifecycle: "Promotions & Pricing",
     lifecycleBadge: "Promotions",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/fetchApplicablePromotions",
     description: "Evaluates eligible promotional codes, early bird discounts, and past-guest loyalty offers for a given sailing and category.",
@@ -139,6 +171,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Availability Search",
     lifecycle: "Cabin Selection",
     lifecycleBadge: "Cabins",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/cruiseCabinAvailabilitySearch",
     description: "Fetches specific physical cabin numbers on chosen decks, along with bed configurations and accessibility features.",
@@ -180,6 +213,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Inventory Hold",
     lifecycle: "Inventory Lock",
     lifecycleBadge: "Holds",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/cruiseCabinHold",
     description: "Places a temporary inventory hold on a specific cabin number for a specified duration while the order basket is completed.",
@@ -213,6 +247,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Create Reservation (Preview vs Commit)",
     lifecycle: "Booking Creation",
     lifecycleBadge: "Booking",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/createBooking",
     description: "Validates basket, computes taxes, fees, deposit schedules, and commits the multi-product order to generate a Super PNR.",
@@ -265,6 +300,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Freeze Reservation (Servicing Lock)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/freezeBooking",
     description: "Applies a pessimistic servicing session lock on a booking to prevent concurrent edits during active advisor modifications.",
@@ -293,6 +329,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Modify Reservation (Amendments & Upgrades)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/modify",
     description: "Executes price-neutral or price-affecting modifications (passenger detail changes, category upgrades, date shifts, adding/removing ancillaries).",
@@ -326,6 +363,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Cancel Booking & Penalty Evaluation",
     lifecycle: "Cancellation & Repricing",
     lifecycleBadge: "Cancellation",
+    source: "PDF v6.0 & Portal",
     method: "POST",
     endpointPath: "/api/v6/cancelBooking",
     description: "Cancels full booking or specific line items, evaluates cancellation penalties, and issues refund vouchers or credit notes.",
@@ -402,5 +440,12 @@ export const QUIZ_QUESTIONS = [
     ],
     correctAnswer: 1,
     explanation: "AgencyConsortium in BookingOwner triggers preferred pricing, overrides, and consortia benefits."
+  },
+  {
+    id: 6,
+    question: "What is the Time-To-Live (TTL) of the signed OAuth 2.0 JWT access token issued by iTravel Connect?",
+    options: ["15 minutes", "30 minutes", "12 hours", "24 hours"],
+    correctAnswer: 1,
+    explanation: "iTravel Connect OAuth 2.0 tokens have a 30-minute expiration period and must be refreshed using client credentials."
   }
 ];
