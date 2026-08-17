@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE, QUIZ_QUESTIONS } from './data/apiData';
-import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check } from 'lucide-react';
+import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -14,6 +14,10 @@ const trackTelemetry = (properties) => {
 };
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
   const [activeTab, setActiveTab] = useState('kb'); // 'kb' | 'quiz' | 'arch' | 'trade'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -25,6 +29,35 @@ export default function App() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+
+  // Password Gate Check on Mount
+  useEffect(() => {
+    const savedAuth = localStorage.getItem('itravel_kb_authenticated');
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    // Default Access Passcode
+    if (passwordInput.trim() === 'itravel2026' || passwordInput.trim() === 'ttc2026') {
+      setIsAuthenticated(true);
+      localStorage.setItem('itravel_kb_authenticated', 'true');
+      setPasswordError('');
+      trackTelemetry({ block_type: 'AUTH', block_id: 'LOGIN', interaction_type: 'SUCCESS' });
+    } else {
+      setPasswordError('Invalid access passcode. Please try again.');
+      trackTelemetry({ block_type: 'AUTH', block_id: 'LOGIN', interaction_type: 'FAILURE' });
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('itravel_kb_authenticated');
+    setPasswordInput('');
+    trackTelemetry({ block_type: 'AUTH', block_id: 'LOGOUT', interaction_type: 'CLICK' });
+  };
 
   // Categories
   const categories = ['ALL', 'Shopping & Search', 'Promotions & Pricing', 'Cabin Selection', 'Inventory Lock', 'Booking Creation', 'Servicing & Modification', 'Cancellation & Repricing'];
@@ -77,6 +110,52 @@ export default function App() {
     setQuizCompleted(false);
   };
 
+  // Password Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--navy-900)', padding: '24px' }}>
+        <div className="card" style={{ maxWidth: '440px', width: '100%', padding: '40px', textAlign: 'center', boxShadow: 'var(--shadow-section)' }}>
+          <div style={{ backgroundColor: 'var(--gold-500)', width: '56px', height: '56px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto', color: '#fff' }}>
+            <Lock size={28} />
+          </div>
+          <h1 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '8px' }}>iTravel API Knowledge Base</h1>
+          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>Protected Team Portal — Please enter the access passcode to continue.</p>
+
+          <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <input
+                type="password"
+                placeholder="Enter Access Passcode"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-accordion)',
+                  border: passwordError ? '2px solid #dc2626' : '1px solid var(--color-border-subtle)',
+                  fontSize: '14px',
+                  outline: 'none',
+                  textAlign: 'center',
+                  letterSpacing: '0.1em'
+                }}
+                autoFocus
+              />
+              {passwordError && (
+                <p style={{ fontSize: '12px', color: '#dc2626', marginTop: '8px', fontWeight: '600' }}>{passwordError}</p>
+              )}
+            </div>
+
+            <button type="submit" className="btn-accent" style={{ width: '100%', padding: '12px', justifyContent: 'center', fontSize: '15px' }}>
+              Unlock Knowledge Base
+            </button>
+          </form>
+
+          <p style={{ fontSize: '11px', color: 'var(--slate-400)', marginTop: '24px' }}>Default passcode: <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: 'var(--navy-900)' }}>itravel2026</code></p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Navigation Header */}
@@ -92,33 +171,55 @@ export default function App() {
             <p style={{ fontSize: '12px', color: 'var(--slate-400)', marginTop: '4px' }}>Unified Technical Reference, OpenAPI Specifications, & Team Assessment Hub</p>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav style={{ display: 'flex', gap: '8px' }}>
-            <button 
-              className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
+          {/* Navigation Tabs & Logout */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <nav style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
+              >
+                <BookOpen size={16} /> API Catalog
+              </button>
+              <button 
+                className={activeTab === 'quiz' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('quiz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QUIZ', interaction_type: 'CLICK' }); }}
+              >
+                <Award size={16} /> Team Quiz Hub
+              </button>
+              <button 
+                className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
+              >
+                <ShieldCheck size={16} /> Agency & Trade Rules
+              </button>
+              <button 
+                className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
+              >
+                <Layers size={16} /> V4 vs iTravel Arch
+              </button>
+            </nav>
+
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid var(--slate-400)',
+                color: 'var(--slate-400)',
+                padding: '8px 12px',
+                borderRadius: 'var(--radius-accordion)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}
+              title="Lock Session"
             >
-              <BookOpen size={16} /> API Catalog
+              <LogOut size={14} /> Lock
             </button>
-            <button 
-              className={activeTab === 'quiz' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('quiz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QUIZ', interaction_type: 'CLICK' }); }}
-            >
-              <Award size={16} /> Team Quiz Hub
-            </button>
-            <button 
-              className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
-            >
-              <ShieldCheck size={16} /> Agency & Trade Rules
-            </button>
-            <button 
-              className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
-            >
-              <Layers size={16} /> V4 vs iTravel Arch
-            </button>
-          </nav>
+          </div>
         </div>
       </header>
 
@@ -192,7 +293,7 @@ export default function App() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <span className={`badge badge-${ep.lifecycleBadge.toLowerCase()}`}>{ep.lifecycleBadge}</span>
-                      <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-400)' }}>Sec {ep.sectionNumber}</span>
+                      <span style={{ fontSize: '11px', fontWeight: '700', color: '#475569', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{ep.source}</span>
                     </div>
                     <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '4px' }}>{ep.title}</h3>
                     <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>{ep.displayName}</p>
@@ -207,6 +308,7 @@ export default function App() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                       <span style={{ backgroundColor: '#10b981', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>{selectedEndpoint.method}</span>
                       <code style={{ fontSize: '14px', fontWeight: '600', color: 'var(--navy-900)' }}>{selectedEndpoint.endpointPath}</code>
+                      <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: '700', color: '#0369a1', background: '#e0f2fe', padding: '4px 8px', borderRadius: '4px' }}>Source: {selectedEndpoint.source}</span>
                     </div>
                     <h2 className="parent-title-dt" style={{ marginBottom: '8px' }}>{selectedEndpoint.displayName} ({selectedEndpoint.title})</h2>
                     <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>{selectedEndpoint.description}</p>
@@ -425,7 +527,7 @@ export default function App() {
       {/* Footer */}
       <footer style={{ backgroundColor: 'var(--navy-900)', color: 'var(--slate-400)', padding: '20px 32px', marginTop: 'auto', borderTop: '1px solid var(--navy-800)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
-          <p>© 2026 The Travel Corporation (TTC) & IBS Software. iTravel API Knowledge Base.</p>
+          <p>© 2026 The Travel Corporation (TTC) & IBS Software. Password Protected iTravel Knowledge Base.</p>
           <p>OpenAPI 3.0 Compliant | Amplitude Telemetry Active</p>
         </div>
       </footer>
