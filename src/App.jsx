@@ -634,7 +634,7 @@ export default function App() {
                   <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>Option A (Recommended for CRM Sync)</div>
                   <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Salesforce CRM / MDM as Golden Source</h4>
                   <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: '0 0 10px 0', lineHeight: '1.5' }}>
-                    Salesforce owns agency creation, validation, and consortia tier mapping. MuleSoft pushes CDC updates down to <strong>iTravel Connect OMS</strong> and <strong>Tropics (V4)</strong>.
+                    Salesforce owns agency creation, validation, and consortia tier mapping. Salesforce CDC (Change Data Capture) / Outbound Webhooks sync updates directly down to <strong>iTravel Connect OMS</strong> and <strong>Tropics (V4)</strong>.
                   </p>
                   <div style={{ fontSize: '11px', fontWeight: '700', color: '#15803d' }}>✓ Pros: Single B2B CRM source of truth across sales reps and marketing.</div>
                 </div>
