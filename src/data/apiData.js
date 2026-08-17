@@ -8,8 +8,8 @@ export const API_KNOWLEDGE_BASE = [
     lifecycleBadge: "Shopping",
     source: "PDF Sec 4.2 Pg 11 | Connect REST: /v7/rest/public-power-shopping/cruises/fetch",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseAggrAvailabilitySearch",
-    description: "High-throughput sailing availability search defined in PDF v6.0 Section 4.2 (Page 11). Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseAggrAvailabilitySearch",
+    description: "High-throughput sailing availability search defined in PDF v6.0 Section 4.2 (Page 11). Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseAggrAvailabilitySearch. Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel (e.g. B2BAPI@TENANT)" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer authentication JWT" },
@@ -93,8 +93,8 @@ export const API_KNOWLEDGE_BASE = [
     lifecycleBadge: "Shopping",
     source: "PDF Sec 4.3 Pg 23 | Connect REST: /v7/rest/public-power-shopping/cruises/fetch",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCategoryAvailabilitySearch",
-    description: "Category availability & fare search defined in PDF v6.0 Section 4.3 (Page 23). Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCategoryAvailabilitySearch",
+    description: "Category availability & fare search defined in PDF v6.0 Section 4.3 (Page 23). Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCategoryAvailabilitySearch. Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer authentication JWT" }
@@ -135,8 +135,8 @@ export const API_KNOWLEDGE_BASE = [
     lifecycleBadge: "Promotions",
     source: "PDF Sec 4.4 Pg 34 | Connect REST: /v7/rest/cruises/promotions/{cruise-code}",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/cru/promotion/fetchApplicablePromotions",
-    description: "Evaluates eligible promotional codes and past-guest loyalty offers defined in PDF v6.0 Section 4.4 (Page 34). Connect REST mapping: /v7/rest/cruises/promotions/{cruise-code} (code in terminal position).",
+    endpointPath: "https://itraveldev3.ibsplc.net/iTravel/selling/api/public-be-cruise/v1/rest/cru/promotion/fetchApplicablePromotions",
+    description: "Evaluates eligible promotional codes and past-guest loyalty offers defined in PDF v6.0 Section 4.4 (Page 34). Printed URL in PDF: https://itraveldev3.ibsplc.net/iTravel/selling/api/public-be-cruise/v1/rest/cru/promotion/fetchApplicablePromotions. Connect REST mapping: /v7/rest/cruises/promotions/{cruise-code}.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -167,14 +167,14 @@ export const API_KNOWLEDGE_BASE = [
   {
     id: "ep_4_5",
     sectionNumber: "4.5",
-    title: "applyPromotionRQ/RS",
+    title: "applyPromoRQ/RS",
     displayName: "Apply Promotional Discount Code",
     lifecycle: "Promotions & Pricing",
     lifecycleBadge: "Promotions",
     source: "PDF Sec 4.5 Pg 41 | Connect REST: None (IBS RPC Message Only)",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/applyPromotion",
-    description: "Applies a validated promo code or agency override discount to an active basket as defined in PDF v6.0 Section 4.5 (Page 41). Note: Exact URL printed in PDF guide is /iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/applyPromotion. Not published in Connect REST.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-availability/v1/rest/avl/availability/applyPromotion",
+    description: "Applies a validated promo code or agency override discount to an active basket as defined in PDF v6.0 Section 4.5 (Page 41). Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-availability/v1/rest/avl/availability/applyPromotion. Not published in Connect REST.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -200,10 +200,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Availability Search",
     lifecycle: "Cabin Selection",
     lifecycleBadge: "Cabins",
-    source: "PDF Sec 4.6 Pg 56 | RPC: /iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch",
+    source: "PDF Sec 4.6 Pg 56 | RPC: https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch",
-    description: "Physical cabin availability search defined in Section 4.6 (Page 56) of the PDF guide. Exact URL printed in PDF guide is /iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch",
+    description: "Physical cabin availability search defined in Section 4.6 (Page 56) of the PDF guide. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinAvailabilitySearch.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -235,6 +235,29 @@ export const API_KNOWLEDGE_BASE = [
     errorCodes: ["ERR_NO_CABINS_AVAILABLE", "ERR_INVALID_DECK"]
   },
   {
+    id: "ep_4_7",
+    sectionNumber: "4.7",
+    title: "getTraditionalRestaurantAvailabilityRQ/RS",
+    displayName: "Restaurant & Dining Availability",
+    lifecycle: "Ancillaries & Dining",
+    lifecycleBadge: "Ancillaries",
+    source: "PDF Sec 4.7 Pg 70 | RPC: https://itraveldev3.ibsplc.net/iTravel/selling/api/public-be-cruise/v1/rest/cru/dining/getTraditionalRestaurantAvailability",
+    method: "POST",
+    endpointPath: "https://itraveldev3.ibsplc.net/iTravel/selling/api/public-be-cruise/v1/rest/cru/dining/getTraditionalRestaurantAvailability",
+    description: "Fetches traditional restaurant seating availability defined in PDF v6.0 Section 4.7 (Page 70). Printed URL in PDF: https://itraveldev3.ibsplc.net/iTravel/selling/api/public-be-cruise/v1/rest/cru/dining/getTraditionalRestaurantAvailability.",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "SailingID", type: "String", required: true, description: "Voyage ID" }
+    ],
+    requestPayload: `{ "SailingID": "SL_UNI_2027_RH05" }`,
+    responsePayload: `{ "Status": "SUCCESS", "DiningOptions": [{ "RestaurantCode": "MAIN_DINING", "SeatingTime": "19:00" }] }`,
+    v4Comparison: "Fetches shipboard dining availability.",
+    errorCodes: ["ERR_NO_DINING_AVAILABLE"]
+  },
+  {
     id: "ep_4_8",
     sectionNumber: "4.8",
     title: "cruiseCabinHoldRQ/RS",
@@ -243,8 +266,8 @@ export const API_KNOWLEDGE_BASE = [
     lifecycleBadge: "Holds",
     source: "PDF Sec 4.8 Pg 77 | Connect REST: /v7/rest/public-be-cruise/cruises/{cruise-code}/cabins/hold",
     method: "POST",
-    endpointPath: "/iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinHold",
-    description: "Places a temporary inventory hold on a cabin defined in PDF v6.0 Section 4.8 (Page 77). Exact URL printed in PDF guide is /iTravel/selling-availability/api/public-availability/v1/rest/avl/availability/cruiseCabinHold. Connect REST mapping: /v7/rest/public-be-cruise/cruises/{cruise-code}/cabins/hold.",
+    endpointPath: "https://itraveldev1.ibsplc.net/iTravel/selling/api/public-availability/v1/rest/avl/availability/cruiseCabinHold",
+    description: "Places a temporary inventory hold on a cabin defined in PDF v6.0 Section 4.8 (Page 77). Printed URL in PDF: https://itraveldev1.ibsplc.net/iTravel/selling/api/public-availability/v1/rest/avl/availability/cruiseCabinHold. Connect REST mapping: /v7/rest/public-be-cruise/cruises/{cruise-code}/cabins/hold.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
@@ -269,6 +292,29 @@ export const API_KNOWLEDGE_BASE = [
     errorCodes: ["ERR_CABIN_ALREADY_HELD", "ERR_HOLD_DURATION_EXCEEDED"]
   },
   {
+    id: "ep_4_9",
+    sectionNumber: "4.9",
+    title: "fetchApplicableAncillaryRuleRQ/RS",
+    displayName: "Ancillary Rule Evaluation",
+    lifecycle: "Ancillaries & Dining",
+    lifecycleBadge: "Ancillaries",
+    source: "PDF Sec 4.9 Pg 84 | RPC: https://itraveldev3.ibsplc.net/iTravel/selling-availability/api/public-be-cruise/v1/rest/cru/ancillary/fetchApplicableAncillaryRule",
+    method: "POST",
+    endpointPath: "https://itraveldev3.ibsplc.net/iTravel/selling-availability/api/public-be-cruise/v1/rest/cru/ancillary/fetchApplicableAncillaryRule",
+    description: "Evaluates rules for transfers, excursions, and hotel packages defined in PDF v6.0 Section 4.9 (Page 84). Printed URL in PDF: https://itraveldev3.ibsplc.net/iTravel/selling-availability/api/public-be-cruise/v1/rest/cru/ancillary/fetchApplicableAncillaryRule.",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "SailingID", type: "String", required: true, description: "Voyage ID" }
+    ],
+    requestPayload: `{ "SailingID": "SL_UNI_2027_RH05" }`,
+    responsePayload: `{ "Status": "SUCCESS", "AncillaryRules": [{ "RuleID": "TRANSFER_BUFFER_3HR", "MinBufferHours": 3 }] }`,
+    v4Comparison: "Evaluates land transfer and shore excursion compatibility rules.",
+    errorCodes: ["ERR_ANCILLARY_RULE_VIOLATION"]
+  },
+  {
     id: "ep_4_11",
     sectionNumber: "4.11",
     title: "createBookingRQ/RS",
@@ -277,8 +323,8 @@ export const API_KNOWLEDGE_BASE = [
     lifecycleBadge: "Booking",
     source: "PDF Sec 4.11 Pg 108 | Connect REST: POST /v7/rest/bookings",
     method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking",
-    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the order. Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking. Exposed on Connect REST as POST /v7/rest/bookings.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking",
+    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the order. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking. Exposed on Connect REST as POST /v7/rest/bookings.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
@@ -324,14 +370,14 @@ export const API_KNOWLEDGE_BASE = [
   {
     id: "ep_retrieve",
     sectionNumber: "4.12",
-    title: "retrieveRQ/RS",
+    title: "retrieveBookingRQ/RS",
     displayName: "Retrieve Reservation Details",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "PDF Sec 4.12 Pg 115 | Connect REST: GET /v7/rest/bookings/{bookingReference}",
+    source: "PDF Sec 4.12 Pg 140 | Connect REST: GET /v7/rest/bookings/{bookingReference}",
     method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/retrieve",
-    description: "Fetches full booking state and Super PNR breakdown. Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/retrieve.",
+    endpointPath: "https://itraveldev3.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/retrieve",
+    description: "Fetches full booking state and Super PNR breakdown. Printed URL in PDF: https://itraveldev3.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/retrieve.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -345,40 +391,16 @@ export const API_KNOWLEDGE_BASE = [
     errorCodes: ["ERR_BOOKING_NOT_FOUND"]
   },
   {
-    id: "ep_makePayment",
-    sectionNumber: "4.15",
-    title: "makePaymentRQ/RS",
-    displayName: "Apply Payment to Reservation",
-    lifecycle: "Booking Creation",
-    lifecycleBadge: "Booking",
-    source: "PDF Sec 4.15 Pg 132 | Connect REST: POST /v7/rest/bookings/{bookingReference}/payments",
-    method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/makePayment",
-    description: "Processes deposits, progress payments, or final balance payments. Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/makePayment.",
-    headers: [
-      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
-      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
-    ],
-    parameters: [
-      { name: "ReservationID", type: "String", required: true, description: "Reservation ID" },
-      { name: "PaymentDetails", type: "Object", required: true, description: "Card or Agency Net Account token" }
-    ],
-    requestPayload: `{ "ReservationID": "RES_900122", "Amount": 500.00 }`,
-    responsePayload: `{ "Status": "PAYMENT_SUCCESS", "TransactionID": "TX_99201" }`,
-    v4Comparison: "Applies deposit payment against Super PNR.",
-    errorCodes: ["ERR_PAYMENT_FAILED"]
-  },
-  {
     id: "ep_5_3",
     sectionNumber: "5.3",
-    title: "freezePnrsRQ/RS",
+    title: "freezeBookingRQ/RS",
     displayName: "Freeze Reservation (Servicing Session Lock)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "PDF Sec 5.3 Pg 147 | RPC: /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs",
+    source: "PDF Sec 5.3 Pg 147 | RPC: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs",
     method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs",
-    description: "Applies a pessimistic servicing session lock on a booking as defined in PDF v6.0 Section 5.3 (Page 147). Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs",
+    description: "Applies a pessimistic servicing session lock on a booking as defined in PDF v6.0 Section 5.3 (Page 147). Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs (note endpoint segment is freezePnrs).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -398,16 +420,40 @@ export const API_KNOWLEDGE_BASE = [
     errorCodes: ["ERR_BOOKING_ALREADY_LOCKED", "ERR_BOOKING_NOT_FOUND"]
   },
   {
-    id: "ep_unfreezePnrs",
-    sectionNumber: "5.4",
-    title: "unfreezePnrsRQ/RS",
+    id: "ep_makePayment",
+    sectionNumber: "5.7",
+    title: "makePaymentRQ/RS",
+    displayName: "Apply Payment to Reservation",
+    lifecycle: "Booking Creation",
+    lifecycleBadge: "Booking",
+    source: "PDF Sec 5.7 Pg 154 | Connect REST: POST /v7/rest/bookings/{bookingReference}/payments",
+    method: "POST",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/makePayment",
+    description: "Processes deposits, progress payments, or final balance payments. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/makePayment.",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "ReservationID", type: "String", required: true, description: "Reservation ID" },
+      { name: "PaymentDetails", type: "Object", required: true, description: "Card or Agency Net Account token" }
+    ],
+    requestPayload: `{ "ReservationID": "RES_900122", "Amount": 500.00 }`,
+    responsePayload: `{ "Status": "PAYMENT_SUCCESS", "TransactionID": "TX_99201" }`,
+    v4Comparison: "Applies deposit payment against Super PNR.",
+    errorCodes: ["ERR_PAYMENT_FAILED"]
+  },
+  {
+    id: "ep_unfreezeBooking",
+    sectionNumber: "5.8",
+    title: "unfreezeBookingRQ/RS",
     displayName: "Release Servicing Session Lock",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "PDF Sec 5.4 Pg 150 | Connect REST: None (IBS RPC Message Only)",
+    source: "PDF Sec 5.8 Pg 156 | Connect REST: None (IBS RPC Message Only)",
     method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/unfreezePnrs",
-    description: "Releases an active servicing session lock. Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/unfreezePnrs.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/unfreezePnrs",
+    description: "Releases an active servicing session lock. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/unfreezePnrs.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -457,14 +503,14 @@ export const API_KNOWLEDGE_BASE = [
   {
     id: "ep_6_2",
     sectionNumber: "6.2",
-    title: "cancelRQ/RS",
+    title: "cancelBookingRQ/RS",
     displayName: "Cancel Booking & Penalty Evaluation",
     lifecycle: "Cancellation & Repricing",
     lifecycleBadge: "Cancellation",
-    source: "PDF Sec 6.2 Pg 196 | RPC: /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel",
+    source: "PDF Sec 6.2 Pg 196 | RPC: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel",
     method: "POST",
-    endpointPath: "/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel",
-    description: "Cancels full booking or specific line items and evaluates cancellation penalties as defined in PDF v6.0 Section 6.2 (Page 196). Exact URL printed in PDF guide is /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel.",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel",
+    description: "Cancels full booking or specific line items and evaluates cancellation penalties as defined in PDF v6.0 Section 6.2 (Page 196). Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/cancel.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -485,6 +531,52 @@ export const API_KNOWLEDGE_BASE = [
 }`,
     v4Comparison: "Automatically recalls agency commission and creates GL credit notes.",
     errorCodes: ["ERR_BOOKING_ALREADY_CANCELLED", "ERR_INVALID_CANCELLATION_REASON"]
+  },
+  {
+    id: "ep_repriceBooking",
+    sectionNumber: "6.3",
+    title: "repriceBookingRQ/RS",
+    displayName: "Reprice Booking & Taxes",
+    lifecycle: "Cancellation & Repricing",
+    lifecycleBadge: "Cancellation",
+    source: "PDF Sec 6.3 Pg 216 | RPC: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/reprice",
+    method: "POST",
+    endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/reprice",
+    description: "Recalculates booking prices, taxes, and fees based on current system rates. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/reprice.",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "ReservationID", type: "String", required: true, description: "Target reservation ID" }
+    ],
+    requestPayload: `{ "ReservationID": "RES_900122" }`,
+    responsePayload: `{ "Status": "REPRICED_SUCCESS", "NewTotal": { "Currency": "USD", "Amount": 5299.00 } }`,
+    v4Comparison: "Reprices active Super PNR basket.",
+    errorCodes: ["ERR_REPRICE_FAILED"]
+  },
+  {
+    id: "ep_notes",
+    sectionNumber: "238",
+    title: "fetchNotes",
+    displayName: "Notes API",
+    lifecycle: "Servicing & Modification",
+    lifecycleBadge: "Servicing",
+    source: "PDF Pg 238 | RPC: https://iTravelDomainName/iTravel/selling/api/public-notes/v1/rest/notesITAPI/",
+    method: "POST",
+    endpointPath: "https://iTravelDomainName/iTravel/selling/api/public-notes/v1/rest/notesITAPI/",
+    description: "Fetches booking notes and internal agency remarks. Printed URL in PDF: https://iTravelDomainName/iTravel/selling/api/public-notes/v1/rest/notesITAPI/.",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "ReservationID", type: "String", required: true, description: "Target reservation ID" }
+    ],
+    requestPayload: `{ "ReservationID": "RES_900122" }`,
+    responsePayload: `{ "Notes": [{ "NoteID": "N1", "Text": "Special dietary request noted" }] }`,
+    v4Comparison: "Fetches booking notes.",
+    errorCodes: ["ERR_NOTES_FAILED"]
   }
 ];
 
@@ -511,9 +603,9 @@ export const QUIZ_QUESTIONS = [
   {
     id: 3,
     question: "Which mechanism does iTravel use to prevent concurrent editing collisions on the same booking?",
-    options: ["OAuth refresh tokens", "freezePnrsRQ / unfreezePnrsRQ pessimistic locking", "Database read-only replicas", "WebSocket ping/pong"],
+    options: ["OAuth refresh tokens", "freezeBookingRQ / unfreezeBookingRQ (freezePnrs / unfreezePnrs) pessimistic locking", "Database read-only replicas", "WebSocket ping/pong"],
     correctAnswer: 1,
-    explanation: "freezePnrsRQ applies a pessimistic session lock on a reservation during active servicing."
+    explanation: "freezeBookingRQ applies a pessimistic session lock on a reservation during active servicing via the freezePnrs endpoint."
   },
   {
     id: 4,
