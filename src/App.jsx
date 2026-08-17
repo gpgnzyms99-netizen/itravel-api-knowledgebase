@@ -40,7 +40,7 @@ export default function App() {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    // Default Access Passcode
+    // Authorized Access Passcode
     if (passwordInput.trim() === 'itravel2026' || passwordInput.trim() === 'ttc2026') {
       setIsAuthenticated(true);
       localStorage.setItem('itravel_kb_authenticated', 'true');
@@ -149,8 +149,6 @@ export default function App() {
               Unlock Knowledge Base
             </button>
           </form>
-
-          <p style={{ fontSize: '11px', color: 'var(--slate-400)', marginTop: '24px' }}>Default passcode: <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', color: 'var(--navy-900)' }}>itravel2026</code></p>
         </div>
       </div>
     );
