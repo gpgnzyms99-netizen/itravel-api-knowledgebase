@@ -86,8 +86,8 @@ export default function App() {
           <div style={{ backgroundColor: 'var(--gold-500)', width: '56px', height: '56px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto', color: '#fff' }}>
             <Lock size={28} />
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '8px' }}>iTravel API Knowledge Base</h1>
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>Protected Team Portal — Please enter the access passcode to continue.</p>
+          <h1 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '8px' }}>OMS Knowledge Base</h1>
+          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '24px' }}>Built using API Specs & Architecture Reference — Enter passcode to continue.</p>
 
           <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
@@ -114,7 +114,7 @@ export default function App() {
             </div>
 
             <button type="submit" className="btn-accent" style={{ width: '100%', padding: '12px', justifyContent: 'center', fontSize: '15px' }}>
-              Unlock Knowledge Base
+              Unlock OMS Knowledge Base
             </button>
           </form>
         </div>
@@ -125,58 +125,20 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Navigation Header */}
-      <header style={{ backgroundColor: 'var(--navy-900)', color: '#fff', padding: '16px 32px', borderBottom: '3px solid var(--gold-500)', boxShadow: 'var(--shadow-section)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
+      <header style={{ backgroundColor: 'var(--navy-900)', color: '#fff', padding: '16px 28px', borderBottom: '3px solid var(--gold-500)', boxShadow: 'var(--shadow-section)' }}>
+        <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          
+          {/* Top Brand Bar & Lock */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ backgroundColor: 'var(--gold-500)', padding: '8px', borderRadius: 'var(--radius-icon)', color: '#fff' }}>
                 <Code size={24} />
               </div>
-              <h1 style={{ fontSize: '22px', fontWeight: '700', letterSpacing: '-0.02em', margin: 0 }}>iTravel Connect & Cruise API Knowledge Base</h1>
+              <div>
+                <h1 style={{ fontSize: '22px', fontWeight: '700', letterSpacing: '-0.02em', margin: 0 }}>OMS Knowledge Base</h1>
+                <p style={{ fontSize: '12px', color: 'var(--slate-400)', marginTop: '2px', margin: 0 }}>Built using API Specs, High-Level Requirements Mapping & OpenAPI Specifications</p>
+              </div>
             </div>
-            <p style={{ fontSize: '12px', color: 'var(--slate-400)', marginTop: '4px' }}>Unified Multi-Modal Business Reference, High-Level Requirements Mapping, & OpenAPI Specs</p>
-          </div>
-
-          {/* Navigation Tabs & Logout */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <nav style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button 
-                className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
-              >
-                <Briefcase size={16} /> Multi-Modal Journey
-              </button>
-              <button 
-                className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
-              >
-                <Code size={16} /> API Interactive Explorer
-              </button>
-              <button 
-                className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
-              >
-                <GitMerge size={16} /> Integration Topology
-              </button>
-              <button 
-                className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
-              >
-                <AlertTriangle size={16} /> Risks & Evidence Q&A
-              </button>
-              <button 
-                className={activeTab === 'reqs' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('reqs'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'REQS', interaction_type: 'CLICK' }); }}
-              >
-                <CheckSquare size={16} /> Business Requirements Matrix
-              </button>
-              <button 
-                className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
-              >
-                <ShieldCheck size={16} /> Agency & Trade
-              </button>
-            </nav>
 
             <button
               onClick={handleLogout}
@@ -184,7 +146,7 @@ export default function App() {
                 backgroundColor: 'transparent',
                 border: '1px solid var(--slate-400)',
                 color: 'var(--slate-400)',
-                padding: '8px 12px',
+                padding: '8px 14px',
                 borderRadius: 'var(--radius-accordion)',
                 cursor: 'pointer',
                 display: 'flex',
@@ -195,9 +157,55 @@ export default function App() {
               }}
               title="Lock Session"
             >
-              <LogOut size={14} /> Lock
+              <LogOut size={14} /> Lock Session
             </button>
           </div>
+
+          {/* Navigation Bar (All 6 Tabs Prominent) */}
+          <nav style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+            <button 
+              className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <Briefcase size={16} /> Multi-Modal Journey
+            </button>
+            <button 
+              className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <ShieldCheck size={16} /> Agency & Trade
+            </button>
+            <button 
+              className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <Code size={16} /> API Interactive Explorer
+            </button>
+            <button 
+              className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <GitMerge size={16} /> Integration Topology
+            </button>
+            <button 
+              className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <AlertTriangle size={16} /> Risks & Evidence Q&A
+            </button>
+            <button 
+              className={activeTab === 'reqs' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('reqs'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'REQS', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <CheckSquare size={16} /> Business Requirements Matrix
+            </button>
+          </nav>
         </div>
       </header>
 
