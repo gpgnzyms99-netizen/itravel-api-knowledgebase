@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE, QUIZ_QUESTIONS } from './data/apiData';
-import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, BUSINESS_PERSONAS } from './data/businessData';
-import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass, FileText, CheckSquare, RefreshCw } from 'lucide-react';
+import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, BUSINESS_PERSONAS, OMS_ARCHITECTURE_TOPOLOGY } from './data/businessData';
+import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass, CheckSquare, Server, Cpu, GitMerge } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -254,6 +254,28 @@ export default function App() {
               </p>
             </div>
 
+            {/* Integration Architecture Topology Card */}
+            <div className="card" style={{ padding: '24px', background: '#f8fafc', border: '2px solid var(--navy-900)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <GitMerge size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>{OMS_ARCHITECTURE_TOPOLOGY.title}</h3>
+              </div>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#0369a1', marginBottom: '16px' }}>{OMS_ARCHITECTURE_TOPOLOGY.subtitle}</p>
+
+              <pre style={{ background: 'var(--navy-900)', color: '#38bdf8', padding: '20px', borderRadius: 'var(--radius-card)', fontSize: '12px', overflowX: 'auto', border: '1px solid var(--gold-500)' }}>
+                {OMS_ARCHITECTURE_TOPOLOGY.diagram}
+              </pre>
+
+              <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', marginTop: '16px' }}>
+                <h4 className="child-title-dt" style={{ marginBottom: '10px', color: '#15803d' }}>Architectural Confirmation & Principles:</h4>
+                <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--slate-800)', margin: 0 }}>
+                  {OMS_ARCHITECTURE_TOPOLOGY.keyTakeaways.map((item, idx) => (
+                    <li key={idx} style={{ marginBottom: '8px', lineHeight: '1.5' }}><strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             {/* Interactive End-to-End Multi-Modal Journey Stepper */}
             <div className="card" style={{ padding: '24px' }}>
               <h3 className="parent-title-dt" style={{ marginBottom: '8px' }}>1. End-to-End Multi-Modal Customer Journey</h3>
@@ -299,27 +321,27 @@ export default function App() {
 
                   <div>
                     <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>API Orchestration & Rules Engine Mapping</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                       
+                      {/* UI Call */}
+                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
+                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#15803d', textTransform: 'uppercase', marginBottom: '4px' }}>Frontend UI → OMS Gateway</div>
+                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Single UI REST Call</h5>
+                        <code style={{ fontSize: '12px', background: '#dcfce7', color: '#14532d', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.uiCall}</code>
+                      </div>
+
                       {/* V4 Land Tour Component */}
                       <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>Land Tour Component (Tropics / Longitude)</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>TravCorp V4 Distribution API</h5>
+                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>Land Tour Component (Tropics)</div>
+                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>TravCorp V4 Adapter</h5>
                         <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.v4Call}</code>
                       </div>
 
                       {/* iTravel River Cruise Component */}
                       <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
                         <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>River Cruise Component (Uniworld)</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>iTravel Connect v6.0 REST API</h5>
+                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>iTravel Connect Engine</h5>
                         <code style={{ fontSize: '12px', background: '#f3e8ff', color: '#6b21a8', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.itravelCall}</code>
-                      </div>
-
-                      {/* Configurable Rules Engine */}
-                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#d97706', textTransform: 'uppercase', marginBottom: '4px' }}>Configurable Rules Engine</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Transit Buffer & Combination Logic</h5>
-                        <p style={{ fontSize: '12px', color: 'var(--slate-700)', margin: 0, background: '#fef3c7', padding: '6px 10px', borderRadius: '4px', border: '1px solid #fde68a' }}>{selectedJourneyStep.rulesEngineCall}</p>
                       </div>
 
                     </div>
