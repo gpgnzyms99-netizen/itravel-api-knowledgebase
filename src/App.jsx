@@ -650,6 +650,53 @@ export default function App() {
               </table>
             </div>
 
+            {/* DEEP-DIVE CARD: TROPICS V4 CAPABILITIES & GATEWAY ORCHESTRATION RATIONALE */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '2px solid var(--navy-900)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <GitMerge size={26} color="var(--navy-900)" />
+                <div>
+                  <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>
+                    Tropics V4 Inventory Capabilities vs OMS Gateway Orchestration
+                  </h3>
+                  <div style={{ fontSize: '13px', color: 'var(--gold-500)', fontWeight: '700', marginTop: '2px' }}>
+                    Architectural Analysis: Does Direct UI Access to Tropics Matter?
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginTop: '8px' }}>
+                
+                {/* Tropics V4 Raw Capabilities */}
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '6px' }}>Backend Inventory System</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '10px' }}>Tropics V4 Inventory Capabilities</h4>
+                  <ul style={{ fontSize: '13px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: '1.5' }}>
+                    <li><strong>Hotel Allotment Dates:</strong> Manages pre/post land tour hotel room night allotments via <code>/brands/&#123;brand&#125;/tours/&#123;tourId&#125;/options/&#123;optionId&#125;/departures/&#123;departureId&#125;/availability</code>.</li>
+                    <li><strong>Geographic Operating Points:</strong> Standardizes motorcoach pickup/drop-off locations and hotel transfer points via <code>/api/v4/operatingPoints</code> & <code>/api/v4/locations</code>.</li>
+                    <li><strong>Tour Passenger Manifests:</strong> Controls motorcoach seating limits, single supplement availability, and optional experience packages.</li>
+                  </ul>
+                </div>
+
+                {/* Why Gateway Orchestration Matters */}
+                <div style={{ background: '#0f172a', color: '#fff', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid #334155' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', marginBottom: '6px' }}>Architectural Invariant</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginTop: 0, marginBottom: '10px' }}>Why Gateway Orchestration Matters (UI Never Calls V4)</h4>
+                  <div style={{ fontSize: '12.5px', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '10px', lineHeight: '1.5' }}>
+                    <div>
+                      <strong style={{ color: '#38bdf8' }}>1. Protocol & Security Isolation:</strong> The B2B/B2C UI talks <em>ONLY</em> to iTravel OMS Gateway REST API (<code>POST /v7/rest/bookings</code>). Direct UI calls to Tropics V4 expose legacy brand schemas and break security encapsulation.
+                    </div>
+                    <div>
+                      <strong style={{ color: '#38bdf8' }}>2. Cross-Domain Transit Buffer Rules:</strong> Tropics knows motorcoach ETA at drop-off operating points; Uniworld Cruise Engine knows vessel boarding cutoffs. Neither knows both! Only the iTravel OMS Gateway Rules Engine can evaluate both simultaneously to enforce the mandatory 3-hour transfer buffer.
+                    </div>
+                    <div>
+                      <strong style={{ color: '#38bdf8' }}>3. Super PNR & Unified Guest Invoice:</strong> OMS Gateway writes sub-bookings to Tropics (e.g. <code>TRP-55219</code>) and iTravel Cruise, binding them into a single Super PNR with itemized commission and a single guest invoice. Direct UI calls would fragment bookings into disconnected silos.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
         )}
 
