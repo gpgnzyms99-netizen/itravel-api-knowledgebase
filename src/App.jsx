@@ -953,7 +953,17 @@ export default function App() {
             <div>
               <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Elevate Operating Model Assessment</span>
               <h2 className="parent-title-dt" style={{ marginTop: '8px', color: 'var(--navy-900)' }}>Architecture & Operating Model Risks — Evidence & Solutions Matrix</h2>
-              <p style={{ color: 'var(--color-text-muted)' }}>Direct answers (YES/NO) and technical API/POC evidence addressing the 28 risk questions from the Elevate Third-Party Architecture Assessment.</p>
+              <p style={{ color: 'var(--color-text-muted)' }}>Technical API & POC evidence addressing the 28 risk questions from the Elevate Third-Party Architecture Assessment.</p>
+            </div>
+
+            {/* EA Governance Banner */}
+            <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-card)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <HelpCircle size={24} color="#1d4ed8" />
+              <div style={{ fontSize: '13.5px', color: 'var(--slate-800)', lineHeight: '1.5' }}>
+                <strong>Governance Note:</strong> The technical responses below reflect the <strong>AI-Synthesized Architectural Assessment</strong> grounded in iTravel Cruise v6.0 contracts, TravCorp V4 APIs, and Elevate requirements.
+                <br />
+                <span style={{ color: '#1e40af', fontWeight: '700' }}>Status: AI Answer = YES | Final Confirmation (YES / NO) to be formally signed off by the TTC Enterprise Architecture (EA) Team.</span>
+              </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -971,9 +981,9 @@ export default function App() {
                           <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: 0, flex: 1 }}>
                             "{item.question}"
                           </h4>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase' }}>
-                            <CheckCircle size={14} color="#166534" />
-                            {item.answered}
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
+                            <CheckCircle size={14} color="#1d4ed8" />
+                            AI Answer: YES <span style={{ fontSize: '11px', fontWeight: '600', color: '#3b82f6' }}>(To be confirmed by EA Team)</span>
                           </span>
                         </div>
 
