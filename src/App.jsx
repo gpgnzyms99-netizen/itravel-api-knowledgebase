@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE } from './data/apiData';
 import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe } from 'lucide-react';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -980,6 +980,148 @@ export default function App() {
                   <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
                     iTravel Connect acts as central agency directory for all web bookings. Agencies register in iTravel, which pushes accounts up to Salesforce via REST API.
                   </p>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 5. ACCREDITATION VALIDATION & HOST VS IC HIERARCHY */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Layers size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>5. Accreditation Clearing & Host vs. Independent Advisor Hierarchy</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                How iTravel OMS validates agency credentials against industry clearing houses (<strong>IATA, CLIA, ARC, TRUE</strong>) and structures <strong>Host Agency vs. Independent Contractor (IC)</strong> relationships.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* Accreditation Validation */}
+                <div style={{ background: '#f8fafc', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '8px' }}>Accreditation Real-Time Validation</h4>
+                  <ul style={{ fontSize: '12.5px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <li><strong>IATA / CLIA / ARC / TRUE Check:</strong> Validate active license status before allowing booking creation.</li>
+                    <li><strong>GDS Pseudo City Code (PCC):</strong> Header <code>x-pcc</code> maps Amadeus/Sabre agency office queues to iTravel account context.</li>
+                    <li><strong>Address & Tax Verification:</strong> W-9 / W-8BEN tax status verified before releasing commission disbursements.</li>
+                  </ul>
+                </div>
+
+                {/* Host vs IC Routing */}
+                <div style={{ background: '#f8fafc', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '8px' }}>Host Agency vs Independent Contractor (IC)</h4>
+                  <ul style={{ fontSize: '12.5px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <li><strong>Payout Directing (PayOutAgencyCode):</strong> Commission funds disburse to Host Agency account (e.g. <code>HOST-PROTRAVEL-01</code>).</li>
+                    <li><strong>Advisor Attribution (RequestingUserID):</strong> Individual IC receives sales volume credit towards annual tier milestones.</li>
+                    <li><strong>PayToSelf Flag:</strong> If <code>true</code>, OMS dispatches commission check directly to the IC rather than Host.</li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 6. COMMISSION CLAWBACKS, CANCELLATION RECALLS & SPLITS */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <RefreshCw size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>6. Commission Clawbacks, Recalls, Cancelled Booking Terms & Split Commissions</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                Operational rules governing commission treatment when bookings are cancelled, modified, or co-brokered across multiple advisors.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* Cancellation & Clawback Rules */}
+                <div style={{ background: '#fff5f5', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #fecaca' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#991b1b', marginTop: 0, marginBottom: '8px' }}>Cancellation Recalls & Clawbacks</h4>
+                  <div style={{ fontSize: '12.5px', color: '#7f1d1d', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <div>• <strong>Standard Cancellation:</strong> If guest cancels prior to departure, unearned commission is recalled automatically via negative ledger debit.</div>
+                    <div>• <strong>Non-Refundable Deposit Rule:</strong> If guest forfeits non-refundable deposit, agency retains commission earned on the retained deposit portion.</div>
+                    <div>• <strong>Protection Policy:</strong> Travel protection insurance claims protect 100% of advisor commission on covered cancellations.</div>
+                  </div>
+                </div>
+
+                {/* Co-Brokered & Split Commissions */}
+                <div style={{ background: '#f0fdf4', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #bbf7d0' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#166534', marginTop: 0, marginBottom: '8px' }}>Co-Brokered Split Commissions</h4>
+                  <div style={{ fontSize: '12.5px', color: '#14532d', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <div>• <strong>Multi-Advisor Attribution:</strong> Supports primary/secondary split percentages (e.g. 60% Senior Advisor / 40% Junior Advisor).</div>
+                    <div>• <strong>Host / IC Split Rules:</strong> Host Agency default split rules (e.g. 80/20 IC split) evaluated automatically during remittance calculation.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 7. MULTI-CURRENCY FX SETTLEMENT & VOLUME TIERS */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <CreditCard size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>7. Multi-Currency FX Settlement & Volume Commercial Tiers</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                Cross-border financial settlement and automated scaling of commercial commission tiers based on sales performance.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* FX Currency Lock */}
+                <div style={{ background: '#eff6ff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #bfdbfe' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1e40af', marginTop: 0, marginBottom: '8px' }}>Multi-Currency FX Lock (GBP / EUR / USD / AUD)</h4>
+                  <p style={{ fontSize: '12.5px', color: '#1e3a8a', margin: 0, lineHeight: '1.5' }}>
+                    If a UK agency books a USD-denominated cruise, iTravel OMS locks the exchange rate (<code>BookingExchangeRate</code>) at order creation. Commission is calculated in booking currency and remitted in agency bank currency (GBP) with zero FX slippage.
+                  </p>
+                </div>
+
+                {/* Volume Tier Scaling */}
+                <div style={{ background: '#f8fafc', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '8px' }}>Automated Volume Tier Scaling</h4>
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    As agency annual revenue crosses milestone thresholds (e.g. $250k = 12% Silver, $500k = 14% Gold, $1M+ = 16% Platinum), the Rules Engine updates commission rates dynamically for all subsequent bookings.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 8. HEADLESS API OAUTH SCOPES & LONGITUDE 2027 MIGRATION PATH */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <FileText size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>8. Headless API OAuth Scopes & Longitude 2027 Migration Path</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                Technical integration specifications for B2B partners and the strategic roadmap for replacing legacy Longitude.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* OAuth Scopes & Webhooks */}
+                <div style={{ background: '#0f172a', color: '#e2e8f0', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #334155' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', marginBottom: '8px' }}>Headless REST OAuth Scopes & Webhooks</div>
+                  <pre style={{ fontSize: '11.5px', fontFamily: 'monospace', margin: 0, whiteSpace: 'pre-wrap', color: '#93c5fd', lineHeight: '1.5' }}>{`OAuth 2.0 Scopes:
+- trade:search        (Search availability)
+- trade:hold          (Apply 48hr cabin hold)
+- trade:book          (Commit Super PNR)
+- trade:commissions:read (View ledger)
+
+Webhook Events:
+- booking.created     - booking.modified
+- booking.cancelled   - commission.disbursed`}</pre>
+                </div>
+
+                {/* Longitude Migration Plan */}
+                <div style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '8px' }}>Longitude Decommissioning (End of 2027)</h4>
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: '0 0 8px 0', lineHeight: '1.5' }}>
+                    Longitude currently powers legacy trade bookings. Under TTC Elevate:
+                  </p>
+                  <ul style={{ fontSize: '12px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <li><strong>Phase 1 (2026):</strong> Dual-run with iTravel OMS Gateway proxying Longitude IDs.</li>
+                    <li><strong>Phase 2 (Mid 2027):</strong> Migration of agency history & active holds to iTravel Connect.</li>
+                    <li><strong>Phase 3 (End 2027):</strong> Complete Longitude shutdown & cutover to iTravel Connect.</li>
+                  </ul>
                 </div>
 
               </div>
