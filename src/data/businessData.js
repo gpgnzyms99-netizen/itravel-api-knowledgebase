@@ -47,7 +47,7 @@ export const ARCHITECTURE_RISKS_QA = [
         question: "Disparate IDs across systems; requires mapping or centralised solution.",
         answered: "YES",
         evidence: "Resolved via Master translation layer (Salesforce MDM / iTravel Agency Module). Maps legacy Tropics Agent ID (AG-101) to canonical BookingOwner.RequestorID and x-pcc header in iTravel Connect.",
-        apiRef: "V4 /internal/sellingCompany/{id}/marketVariation/.../commissions & BookingOwner.RequestorID"
+        apiRef: "V4 /internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions & BookingOwner.RequestorID"
       },
       {
         question: "Consultant-level booking tracking adds complexity.",
@@ -296,7 +296,7 @@ export const ELEVATE_REQUIREMENTS = [
     category: "Travel Agent Integration",
     requirement: "Correctly identify agents across systems (different IDs in Tropics vs iTravel), handle consortia relationships, and compute accurate bundled commissions.",
     itravelApi: "BookingOwner Object (NetPayApplicable, PayToSelf, AgencyConsortium)",
-    v4Api: "V4 /internal/sellingCompany/{id}/marketVariation/.../commissions & Salesforce MDM",
+    v4Api: "V4 /internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions & Salesforce MDM",
     howItWorks: "Salesforce/MDM resolves agent IDs between Tropics and iTravel, mapping them to the iTravel BookingOwner context to trigger consortia benefits and calculate blended commission."
   },
   {
@@ -389,7 +389,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Combine Multi-Product Discounts & Virtuoso Benefits",
     description: "Evaluates combined promotions (e.g. '$1,000 Off when booking Tour + Cruise together') plus consortia perks.",
     businessValue: "Incentivizes multi-product bookings while enforcing strict discount combinability rules.",
-    uiCall: "POST /v7/rest/cruises/promotions/{cruise-code} | PDF Sec 4.4 Pg 34 (fetchApplicablePromotionsRQ/RS) & PDF Sec 4.5 Pg 41 (applyPromoRQ/RS)",
+    uiCall: "POST /v7/rest/cruises/promotions/{cruise-code} | PDF Sec 4.4 Pg 34 (fetchApplicablePromotions) & PDF Sec 4.5 Pg 41 (applyPromotion)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote",
     itravelCall: "Evaluates multi-product bundle promo codes (PDF Sec 4.4 Pg 34 & Sec 4.5 Pg 41)",
     rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes."
@@ -400,7 +400,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Resolve Tropics Agent IDs & Place Synchronized Holds",
     description: "Translates travel agent identities across legacy systems and places temporary holds on both tour allotment and ship cabin.",
     businessValue: "Protects inventory across land and water for 15 minutes while guest passport details are collected.",
-    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold | PDF Sec 4.8 Pg 77 (cruiseCabinHoldRQ/RS)",
+    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold | PDF Sec 4.8 Pg 77 (cruiseCabinHold)",
     v4Call: "iTravel OMS calls V4 -> /internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions & Tropics Allotment Hold",
     itravelCall: "Connect public-be-cruise hold endpoint (PDF Sec 4.8 Pg 77 - Holds Cabin for 15 minutes)",
     rulesEngineCall: "Maps Agent ID 789 (Tropics) <-> Agent User in Salesforce MDM <-> iTravel PCC."
@@ -411,7 +411,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Dry-Run Preview & Commit to Super PNR Basket",
     description: "Validates the multi-product order, generates a single unified guest invoice, and commits records to Tropics and iTravel.",
     businessValue: "Delivers a single customer invoice and Super PNR reference while preserving legacy backend records.",
-    uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBookingRQ/RS)",
+    uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBooking)",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",
     rulesEngineCall: "Calculates consolidated deposit due dates and Net vs Gross agency billing."
@@ -422,7 +422,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Collision-Free Modifications & Blended Commission Payout",
     description: "Handles post-booking servicing with freeze locks and calculates accurate agent commissions across bundled products.",
     businessValue: "Prevents concurrent editing race conditions and ensures accurate agency payouts across multi-brand packages.",
-    uiCall: "POST /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezeBooking, modify & cancelBooking | PDF Sec 5.3 Pg 147 (freezeBookingRQ/RS), PDF Sec 5.9 Pg 158 (modifyRQ/RS) & PDF Sec 6.2 Pg 196 (cancelBookingRQ/RS)",
+    uiCall: "POST /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs & cancel | PDF Sec 5.3 Pg 147 (freezePnrs), PDF Sec 5.9 Pg 158 (modify - No URL published) & PDF Sec 6.2 Pg 196 (cancel)",
     v4Call: "iTravel OMS updates Tropics Commission Ledger via V4 Commissions endpoint (/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions)",
     itravelCall: "Pessimistic session lock & post-booking amendments (PDF Sec 5.3 Pg 147, Sec 5.9 Pg 158 & Sec 6.2 Pg 196)",
     rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner rules."
