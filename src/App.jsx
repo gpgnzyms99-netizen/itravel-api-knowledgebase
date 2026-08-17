@@ -191,7 +191,7 @@ export default function App() {
                 className={activeTab === 'reqs' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('reqs'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'REQS', interaction_type: 'CLICK' }); }}
               >
-                <CheckSquare size={16} /> Elevate Requirements Matrix
+                <CheckSquare size={16} /> Business Requirements Matrix
               </button>
               <button 
                 className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
@@ -244,7 +244,7 @@ export default function App() {
                 <h2 style={{ fontSize: '24px', fontWeight: '700', letterSpacing: '-0.01em', margin: 0 }}>Multi-Modal Business Guide: Land Tour (V4 / Tropics) + River Cruise (iTravel)</h2>
               </div>
               <p style={{ fontSize: '15px', color: 'var(--slate-200)', maxWidth: '950px', lineHeight: '1.6' }}>
-                This multi-modal workflow demonstrates how The Travel Corporation (TTC) bundles <strong>Land Tours (pulled via TravCorp V4 from Tropics/Longitude)</strong> with <strong>Uniworld River Cruises (via iTravel Connect v6.0)</strong> inside a unified <strong>Super PNR Shopping Cart</strong> to satisfy the 10 TTC Elevate High-Level Requirements.
+                This multi-modal workflow demonstrates how The Travel Corporation (TTC) bundles <strong>Land Tours (pulled via TravCorp V4 from Tropics/Longitude)</strong> with <strong>Uniworld River Cruises (via iTravel Connect v6.0)</strong> inside a unified <strong>Super PNR Shopping Cart</strong> to satisfy the 10 TTC Business Requirements.
               </p>
             </div>
 
@@ -328,13 +328,13 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: ELEVATE HIGH-LEVEL REQUIREMENTS MATRIX */}
+        {/* TAB 2: BUSINESS HIGH-LEVEL REQUIREMENTS MATRIX */}
         {activeTab === 'reqs' && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>TTC Elevate Specification</span>
+              <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>TTC Business Specification</span>
               <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>High Level Requirements to API Call Mapping Matrix</h2>
-              <p style={{ color: 'var(--color-text-muted)' }}>Explicit mapping between the 10 High-Level Requirements from the TTC Elevate specification and their corresponding iTravel Connect & TravCorp V4 API implementations.</p>
+              <p style={{ color: 'var(--color-text-muted)' }}>Explicit mapping between the 10 High-Level Requirements from the TTC Business specification and their corresponding iTravel Connect & TravCorp V4 API implementations.</p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -894,7 +894,7 @@ export default function App() {
               <div>
                 <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
                 <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
-                <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Elevate.</p>
+                <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Business Architecture.</p>
               </div>
 
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -923,7 +923,7 @@ export default function App() {
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
                   <td style={{ padding: '12px 16px', fontWeight: '700' }}>Backend Source Systems</td>
-                  <td style={{ padding: '12px 16px' }}>Tropics (Guided Tour Booking Engine) & Longitude</td>
+                  <td style={{ padding: '12px 16px' }}>Tropics (Guided Tour Booking Engine)</td>
                   <td style={{ padding: '12px 16px' }}>iTravel Cruise Engine v6.0 & Super PNR Master Store</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
@@ -951,16 +951,16 @@ export default function App() {
         {activeTab === 'qa' && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
-              <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Elevate Operating Model Assessment</span>
+              <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Business Operating Model Assessment</span>
               <h2 className="parent-title-dt" style={{ marginTop: '8px', color: 'var(--navy-900)' }}>Architecture & Operating Model Risks — Evidence & Solutions Matrix</h2>
-              <p style={{ color: 'var(--color-text-muted)' }}>Technical API & POC evidence addressing the 28 risk questions from the Elevate Third-Party Architecture Assessment.</p>
+              <p style={{ color: 'var(--color-text-muted)' }}>Technical API & POC evidence addressing the risk questions from the Third-Party Business Architecture Assessment.</p>
             </div>
 
             {/* EA Governance Banner */}
             <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-card)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <HelpCircle size={24} color="#1d4ed8" />
               <div style={{ fontSize: '13.5px', color: 'var(--slate-800)', lineHeight: '1.5' }}>
-                <strong>Governance Note:</strong> The technical responses below reflect the <strong>AI-Synthesized Architectural Assessment</strong> grounded in iTravel Cruise v6.0 contracts, TravCorp V4 APIs, and Elevate requirements.
+                <strong>Governance Note:</strong> The technical responses below reflect the <strong>AI-Synthesized Architectural Assessment</strong> grounded in iTravel Cruise v6.0 contracts, TravCorp V4 APIs, and Business requirements.
                 <br />
                 <span style={{ color: '#1e40af', fontWeight: '700' }}>Status: AI Answer = YES | Final Confirmation (YES / NO) to be formally signed off by the TTC Enterprise Architecture (EA) Team.</span>
               </div>
