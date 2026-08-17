@@ -649,13 +649,95 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Architecture Diagram Artwork Image */}
-                  <div style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', border: '2px solid var(--gold-500)', boxShadow: 'var(--shadow-section)', marginBottom: '20px' }}>
-                    <img 
-                      src="/itravel_architecture_diagram.png" 
-                      alt="iTravel OMS Gateway Integration Topology Artwork" 
-                      style={{ width: '100%', height: 'auto', display: 'block' }} 
-                    />
+                  {/* Solid Box & Line Architecture Diagram Component */}
+                  <div style={{ background: 'var(--navy-900)', color: '#fff', padding: '24px', borderRadius: 'var(--radius-card)', border: '2px solid var(--gold-500)', boxShadow: 'var(--shadow-section)', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--navy-800)', paddingBottom: '12px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>System Architecture Topology</span>
+                      <span style={{ fontSize: '11px', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>Single Gateway Model</span>
+                    </div>
+
+                    {/* Top Tier: Frontend UI */}
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                      <div style={{ background: '#1e293b', border: '2px solid #38bdf8', padding: '16px 24px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '540px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>NORTHBOUND FRONTEND CLIENTS</div>
+                        <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginTop: '4px' }}>TTC Consumer Web Portals & Travel Agent B2B UI</div>
+                        <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Single Customer Shopping Cart / Guest Booking Session</div>
+                      </div>
+                    </div>
+
+                    {/* Down Connector Line & Protocol Badge */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '4px 0' }}>
+                      <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
+                      <span style={{ fontSize: '11px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '3px 12px', borderRadius: '12px', letterSpacing: '0.02em' }}>REST / JSON over HTTPS (OAuth 2.0 JWT)</span>
+                      <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
+                    </div>
+
+                    {/* Middle Tier: Orchestration Gateway */}
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', border: '2px solid var(--gold-500)', padding: '20px 28px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '700px', boxShadow: '0 6px 16px rgba(0,0,0,0.4)' }}>
+                        <div style={{ display: 'inline-block', fontSize: '11px', fontWeight: '800', background: 'var(--gold-500)', color: '#000', padding: '2px 10px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>CENTRAL ORCHESTRATION GATEWAY</div>
+                        <div style={{ fontSize: '18px', fontWeight: '800', color: '#fff' }}>iTravel Connect OMS Gateway (/v7/rest)</div>
+                        <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '6px 0 0 0', lineHeight: '1.5' }}>
+                          Single Entry Point for UI • Validates Rules Engine & Transit Buffers • Calculates Blended Commissions • Manages Super PNR Order Basket & Guest Invoices
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Split Connector Lines */}
+                    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', maxWidth: '880px', margin: '0 auto' }}>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
+                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#7c3aed', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>RPC REST/SOAP v6.0</span>
+                        <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
+                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>PowerShopping Sync</span>
+                        <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
+                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#ca8a04', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>REST / V4 Integration API</span>
+                        <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Tier: Southbound Backend Systems */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginTop: '4px' }}>
+                      
+                      {/* System 1: iTravel Cruise Engine */}
+                      <div style={{ background: '#1e1b4b', border: '2px solid #a855f7', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#c084fc', textTransform: 'uppercase' }}>CRUISE INVENTORY SYSTEM</div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>iTravel Cruise Engine v6.0</div>
+                        <p style={{ fontSize: '11px', color: '#e9d5ff', margin: 0, lineHeight: '1.4' }}>
+                          Uniworld Cabin Holds, Dining Allotments, Sailing Rates, Deck Plans & Cruise PNR Master Store.
+                        </p>
+                      </div>
+
+                      {/* System 2: PowerShopping Cache */}
+                      <div style={{ background: '#0c4a6e', border: '2px solid #38bdf8', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#7dd3fc', textTransform: 'uppercase' }}>HIGH-SPEED SEARCH CACHE</div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>PowerShopping Cache Tier</div>
+                        <p style={{ fontSize: '11px', color: '#bae6fd', margin: 0, lineHeight: '1.4' }}>
+                          Pre-aggregated cruise availability, promotions & starting fare search cache for high-concurrency lookups.
+                        </p>
+                      </div>
+
+                      {/* System 3: TravCorp V4 Tropics Adapter */}
+                      <div style={{ background: '#451a03', border: '2px solid #f59e0b', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#fde047', textTransform: 'uppercase' }}>LAND TOUR SYSTEM</div>
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>TravCorp V4 Adapter (Tropics)</div>
+                        <p style={{ fontSize: '11px', color: '#fef08a', margin: 0, lineHeight: '1.4' }}>
+                          Guided Land Tours (Trafalgar, Insight, Contiki), Operating Points, Tour Departures & Hotel Allotments.
+                        </p>
+                      </div>
+
+                    </div>
+
+                    {/* Strict Isolation Notice */}
+                    <div style={{ background: '#0284c7', color: '#fff', padding: '10px 16px', borderRadius: 'var(--radius-accordion)', marginTop: '20px', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <span>🔒 <strong>Architectural Rule:</strong> UI NEVER interacts directly with TravCorp V4 or iTravel Cruise v6.0. All requests pass strictly through iTravel OMS Gateway (/v7/rest).</span>
+                    </div>
                   </div>
 
                   {/* Principles & Confirmation */}
