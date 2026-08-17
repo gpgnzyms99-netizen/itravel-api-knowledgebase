@@ -602,33 +602,229 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 5: AGENCY & TRADE RULES */}
+        {/* TAB 4: AGENCY, TRADE & COMMISSION HUB */}
         {activeTab === 'trade' && (
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <h2 className="parent-title-dt">Agency, Agent, Consortia & Commission Rules</h2>
-            <p style={{ color: 'var(--color-text-muted)' }}>How iTravel natively manages trade channels, parent/child agency networks, preferred consortia pricing, and commission settlement.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            
+            {/* Executive Hero Banner */}
+            <div className="card" style={{ background: 'linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%)', color: '#fff', padding: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <ShieldCheck size={28} color="var(--gold-500)" />
+                <h2 style={{ fontSize: '24px', fontWeight: '700', margin: 0 }}>Agency Data Model, Commission Engine & Booking Channels</h2>
+              </div>
+              <p style={{ fontSize: '15px', color: 'var(--slate-200)', maxWidth: '950px', lineHeight: '1.6', margin: 0 }}>
+                Deep-dive into how The Travel Corporation (TTC) unifies travel agent identities across legacy systems (Tropics & Longitude), executes multi-brand commission calculations, and enables bookings via both <strong>B2B Advisor UI Portals</strong> and <strong>Headless REST APIs</strong>.
+              </p>
+            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
-                <h3 className="child-title-dt" style={{ marginBottom: '8px' }}>Parent / Child Agency Hierarchy</h3>
-                <p style={{ fontSize: '13px', color: 'var(--slate-700)' }}>Head-office parent agencies manage multiple child branches with consolidated credit limits, multi-market currency associations, and centralized billing statements.</p>
+            {/* SECTION 1: AGENCY DATA MODEL & CROSS-SYSTEM ID RESOLUTION */}
+            <div className="card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Users size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>1. Agency Data Model & Cross-System ID Resolution</h3>
+              </div>
+              <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
+                Travel agencies often possess different legacy identifiers in Tropics (e.g., <code>AG-101</code>) and Longitude (e.g., <code>LG-999</code>). The solution leverages <strong>Salesforce MDM</strong> as the central identity authority to map agency credentials into a single canonical <code>BookingOwner</code> schema.
+              </p>
+
+              {/* Data Model Hierarchy Diagram Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', borderTop: '4px solid var(--navy-900)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase', marginBottom: '4px' }}>Level 1: Network / Consortia</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 8px 0' }}>AgencyConsortium</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Consortia alliances (Virtuoso, AAA, Signature, Ensemble, CLIA). Defines top-level override benefits, preferred commission tiers, and co-op marketing agreements.</p>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', borderTop: '4px solid #0284c7' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>Level 2: Head Office / Branch</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 8px 0' }}>OrgUnitCode & RequestorID</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Maps the physical agency location or PCC (Pseudo City Code). Manages agency credit limits, currency settings, and consolidated monthly financial statements.</p>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', borderTop: '4px solid #7c3aed' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>Level 3: Individual Advisor</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 8px 0' }}>RequestingUserID</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Consultant-level identity tracking. Ties individual travel advisors to sales incentives, booking history, and Okta SSO JWT authentication claims.</p>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', borderTop: '4px solid #166534' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Level 4: Cross-System Translation</div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 8px 0' }}>Salesforce MDM Layer</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Bi-directionally syncs agent records: <code>Tropics ID (AG-101)</code> &lt;-&gt; <code>Longitude ID (LG-999)</code> &lt;-&gt; <code>Okta User UUID</code> &lt;-&gt; <code>iTravel PCC</code>.</p>
+                </div>
+
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
-                <h3 className="child-title-dt" style={{ marginBottom: '8px' }}>Consortia Alliances</h3>
-                <p style={{ fontSize: '13px', color: 'var(--slate-700)' }}>Agencies map directly to networks (Virtuoso, AAA, Signature, Ensemble, CLIA, ABTA). Consortia association triggers preferred pricing tiers and bonus overrides.</p>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
-                <h3 className="child-title-dt" style={{ marginBottom: '8px' }}>Commission Engine</h3>
-                <p style={{ fontSize: '13px', color: 'var(--slate-700)' }}>Supports base + bonus commissions, FIT vs package commission variances, commission payout redirection (PayToSelf vs PayOutAgencyCode), and automated recalls on cancellations.</p>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
-                <h3 className="child-title-dt" style={{ marginBottom: '8px' }}>Gross vs Net Invoicing</h3>
-                <p style={{ fontSize: '13px', color: 'var(--slate-700)' }}>NetPayApplicable = true allows agents to deduct commission at booking and pay net. NetPayApplicable = false requires gross collection with commission payout cycles.</p>
+              {/* JSON Payload Spec Box */}
+              <div style={{ background: 'var(--navy-900)', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--gold-500)', color: '#38bdf8' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase' }}>iTravel BookingOwner Canonical JSON Contract:</span>
+                  <span style={{ fontSize: '11px', color: 'var(--slate-400)' }}>POST /api/v6/createBooking</span>
+                </div>
+                <pre style={{ margin: 0, fontSize: '12px', overflowX: 'auto', lineHeight: '1.5' }}>{`{
+  "BookingOwner": {
+    "RequestorType": "AGENCY",
+    "RequestorID": "PCC_NY_8842",       // Canonical Agency PCC / Account ID
+    "RequestingUserID": "ADV_SMITH_99", // Consultant User ID (Okta Claims)
+    "OrgUnitCode": "BRANCH_MANHATTAN", // Agency Branch Code
+    "AgencyConsortium": "VIRTUOSO",    // Consortia Alliance (Triggers Perks)
+    "PayToSelf": false,                // Pay commission to agency HQ vs consultant
+    "PayOutAgencyCode": "HQ_GLOBAL_01",// Override payment target agency
+    "NetPayApplicable": true,          // TRUE = Net Billing, FALSE = Gross Billing
+    "channel": "B2B_PORTAL",
+    "BusinessType": "RETAIL"
+  }
+}`}</pre>
               </div>
             </div>
+
+            {/* SECTION 2: MULTI-PRODUCT COMMISSION CALCULATION ENGINE */}
+            <div className="card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Briefcase size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>2. Multi-Product Commission Calculation Engine & Invoicing Modes</h3>
+              </div>
+              <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
+                When a booking contains multiple products (e.g. 7-Day Swiss Tour + 7-Day Rhine River Cruise), iTravel OMS evaluates commission rules per line-item, factors in consortia bonuses, and supports both <strong>Gross Invoicing</strong> and <strong>Net Invoicing</strong>.
+              </p>
+
+              {/* Invoicing Comparison Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '2px solid #0284c7' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                    <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>MODE A: GROSS BILLING</span>
+                  </div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 10px 0' }}>NetPayApplicable = false</h4>
+                  <ul style={{ paddingLeft: '18px', fontSize: '13px', color: 'var(--slate-700)', margin: '0 0 16px 0', lineHeight: '1.6' }}>
+                    <li>Advisor collects <strong>Full Retail Price ($10,000)</strong> from the customer.</li>
+                    <li>iTravel processes payment for full gross amount ($10,000) via credit card token.</li>
+                    <li>iTravel generates a <strong>Commission Ledger Entry ($1,540)</strong> in the Super PNR.</li>
+                    <li>Commission is paid out to the agency via monthly ACH / EFT batch cycle.</li>
+                  </ul>
+                  <div style={{ background: '#e0f2fe', padding: '10px 14px', borderRadius: 'var(--radius-accordion)', fontSize: '12px', fontWeight: '700', color: '#0369a1' }}>
+                    Customer Charged: $10,000 | Payout to Agency: $1,540
+                  </div>
+                </div>
+
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '2px solid #166534' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                    <span style={{ background: '#dcfce7', color: '#166534', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>MODE B: NET BILLING (DEDUCT AT SOURCE)</span>
+                  </div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 10px 0' }}>NetPayApplicable = true</h4>
+                  <ul style={{ paddingLeft: '18px', fontSize: '13px', color: 'var(--slate-700)', margin: '0 0 16px 0', lineHeight: '1.6' }}>
+                    <li>Advisor collects <strong>Full Retail Price ($10,000)</strong> from the customer directly.</li>
+                    <li>Advisor retains earned commission ($1,540) in agency bank account immediately.</li>
+                    <li>iTravel charges agency credit card or credit line for <strong>Net Amount ($8,460)</strong>.</li>
+                    <li>Customer invoice still displays full retail price ($10,000) with zero commission disclosure.</li>
+                  </ul>
+                  <div style={{ background: '#dcfce7', padding: '10px 14px', borderRadius: 'var(--radius-accordion)', fontSize: '12px', fontWeight: '700', color: '#166534' }}>
+                    Customer Charged: $10,000 | Remitted to iTravel: $8,460
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Commission Calculation Breakdown Table */}
+              <div style={{ background: '#fff', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', overflow: 'hidden' }}>
+                <div style={{ background: 'var(--navy-900)', color: '#fff', padding: '14px 20px', fontSize: '14px', fontWeight: '700' }}>
+                  Multi-Product Blended Commission Breakdown Example (Virtuoso Agency)
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                  <thead>
+                    <tr style={{ background: '#f1f5f9', color: 'var(--navy-900)' }}>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Line Item Product</th>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Source Backend</th>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Gross Price</th>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Base Rate</th>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Consortia Bonus</th>
+                      <th style={{ padding: '10px 16px', borderBottom: '2px solid var(--slate-300)' }}>Total Commission</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                      <td style={{ padding: '12px 16px', fontWeight: '700' }}>Swiss Alps Land Tour</td>
+                      <td style={{ padding: '12px 16px' }}><code style={{ background: '#e0f2fe', color: '#0369a1', padding: '2px 6px', borderRadius: '4px' }}>Tropics / V4</code></td>
+                      <td style={{ padding: '12px 16px' }}>$4,000</td>
+                      <td style={{ padding: '12px 16px' }}>12% ($480)</td>
+                      <td style={{ padding: '12px 16px', color: '#166534', fontWeight: '700' }}>+1% ($40)</td>
+                      <td style={{ padding: '12px 16px', fontWeight: '700', color: 'var(--navy-900)' }}>$520 (13.0%)</td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                      <td style={{ padding: '12px 16px', fontWeight: '700' }}>Rhine River Cruise Suite</td>
+                      <td style={{ padding: '12px 16px' }}><code style={{ background: '#f3e8ff', color: '#6b21a8', padding: '2px 6px', borderRadius: '4px' }}>Uniworld / iTravel</code></td>
+                      <td style={{ padding: '12px 16px' }}>$6,000</td>
+                      <td style={{ padding: '12px 16px' }}>15% ($900)</td>
+                      <td style={{ padding: '12px 16px', color: '#166534', fontWeight: '700' }}>+2% ($120)</td>
+                      <td style={{ padding: '12px 16px', fontWeight: '700', color: 'var(--navy-900)' }}>$1,020 (17.0%)</td>
+                    </tr>
+                    <tr style={{ background: '#f0fdf4', fontWeight: '800' }}>
+                      <td style={{ padding: '12px 16px', color: '#166534' }}>TOTAL BUNDLED PACKAGE</td>
+                      <td style={{ padding: '12px 16px' }}>Super PNR Ledger</td>
+                      <td style={{ padding: '12px 16px' }}>$10,000</td>
+                      <td style={{ padding: '12px 16px' }}>$1,380</td>
+                      <td style={{ padding: '12px 16px', color: '#166534' }}>+$160</td>
+                      <td style={{ padding: '12px 16px', color: '#166534', fontSize: '14px' }}>$1,540 (15.4% Blended)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* SECTION 3: BOOKING METHODS (UI PORTAL VS HEADLESS REST API) */}
+            <div className="card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Code size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>3. Dual Booking Pathways: B2B Advisor UI vs Headless REST API</h3>
+              </div>
+              <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
+                Bookings can be initiated either interactively by travel advisors through the <strong>B2B Trade Web Portal</strong> or headlessly via automated <strong>REST API integrations</strong> (GDS, Travelsets, external agency engines).
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+                
+                {/* Pathway 1: UI Portal */}
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: 'var(--navy-900)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>PATHWAY 1: B2B ADVISOR UI PORTAL</span>
+                  </div>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    Designed for travel advisors, call center agents, and B2C web guests seeking a visual, step-by-step shopping experience.
+                  </p>
+                  
+                  <div style={{ background: '#fff', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div><strong>1. Authentication:</strong> Advisor logs in via Okta / Salesforce SSO with single sign-on.</div>
+                    <div><strong>2. Multi-Modal Search:</strong> Advisor selects Swiss Land Tour + Rhine Cruise in visual cart.</div>
+                    <div><strong>3. Interactive Cabin Grid:</strong> Selects deck suites and hotel room categories.</div>
+                    <div><strong>4. Transit Buffer Check:</strong> UI alerts advisor if transfer buffer is under 3 hours.</div>
+                    <div><strong>5. Checkout & Payment:</strong> Enters customer card or selects Net Billing remittals.</div>
+                    <div><strong>6. Instant Super PNR:</strong> Downloads single consolidated PDF guest invoice.</div>
+                  </div>
+                </div>
+
+                {/* Pathway 2: Headless REST API */}
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: 'var(--gold-500)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>PATHWAY 2: HEADLESS REST API</span>
+                  </div>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    Designed for high-throughput GDS connections, external agency booking engines, and partner integrations.
+                  </p>
+                  
+                  <div style={{ background: '#fff', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div><strong>1. OAuth 2.0 Bearer Token:</strong> Call <code>POST /oauth/token</code> to get 30-min JWT.</div>
+                    <div><strong>2. Availability Search:</strong> Submit search payload to <code>POST /api/v6/cruiseAggrAvailabilitySearch</code>.</div>
+                    <div><strong>3. Place Temporary Hold:</strong> Call <code>POST /api/v6/cruiseCabinHold</code> (15-min TTL lock).</div>
+                    <div><strong>4. Create Booking Order:</strong> Submit JSON to <code>POST /api/v6/createBooking</code> with full payload.</div>
+                    <div><strong>5. Response Payload:</strong> Returns <code>SuperPNR</code>, Tropics <code>v4BookingRef</code>, and invoice URL.</div>
+                    <div><strong>6. Webhook Notifications:</strong> Receives async updates via <code>/api/v6/webhooks/orders</code>.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
         )}
 
