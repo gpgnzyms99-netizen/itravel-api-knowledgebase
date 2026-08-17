@@ -6,10 +6,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Aggregate Sailing Availability Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-cruise",
     method: "POST",
-    endpointPath: "/v7/rest/cruiseAggrAvailabilitySearch",
-    description: "High-throughput RPC search message pair executing on the iTravel Connect /v7/rest API Gateway for finding available cruise sailings based on date range, geographic region, ship code, and passenger count.",
+    endpointPath: "/iTravel/selling/api/public-cruise/cruiseAggrAvailabilitySearch",
+    description: "High-throughput RPC search message pair executing on the iTravel public cruise RPC surface for finding available cruise sailings based on date range, geographic region, ship code, and passenger count.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel (e.g. B2BAPI@TENANT)" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer authentication JWT" },
@@ -52,20 +52,20 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "TravCorp V4 queries tour departures via /brands/{brand}/tours/{tourId}/options/{optionId}/departures; iTravel uses a Powershopping cached tier under /v7/rest to serve sub-second search results.",
+    v4Comparison: "TravCorp V4 queries tour departures via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability; iTravel uses /iTravel/selling/api/public-power-shopping cache tier.",
     errorCodes: ["ERR_INVALID_DATE_RANGE", "ERR_NO_SAILINGS_FOUND", "ITRVL_CRUISE_AVAIL_SYS_00002"]
   },
   {
     id: "portal_oauth",
     sectionNumber: "Portal 1.1",
     title: "OAuth 2.0 /token (Client Credentials)",
-    displayName: "iTravel Connect Authorization Server Token Endpoint",
+    displayName: "iTravel Connect Dedicated Auth Server Token Endpoint",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "Developer Portal & OAuth Spec",
+    source: "Dedicated Auth Host & OAuth Spec",
     method: "POST",
     endpointPath: "/token",
-    description: "Issues short-lived signed JWT bearer tokens (30-minute TTL) required for authenticating across all iTravel Connect /v7/rest APIs.",
+    description: "Issues short-lived signed JWT bearer tokens (30-minute TTL) on the dedicated Auth Host required for authenticating across all iTravel Connect API surfaces.",
     headers: [
       { name: "Content-Type", type: "String", required: true, description: "application/x-www-form-urlencoded" }
     ],
@@ -81,7 +81,7 @@ export const API_KNOWLEDGE_BASE = [
   "expires_in": 1800,
   "scope": "cruise:read cruise:write"
 }`,
-    v4Comparison: "V4 uses session headers/API keys; iTravel Connect /v7/rest uses strict 30-min JWT bearer tokens with auto-refresh via POST /token.",
+    v4Comparison: "V4 uses session headers/API keys; iTravel Connect uses strict 30-min JWT bearer tokens issued by POST /token on dedicated Auth host.",
     errorCodes: ["ITRVL_AUTH_401_UNAUTHORIZED", "ITRVL_AUTH_403_FORBIDDEN"]
   },
   {
@@ -91,9 +91,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Category-Level Availability & Fare Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-cruise",
     method: "POST",
-    endpointPath: "/v7/rest/cruiseCategoryAvailabilitySearch",
+    endpointPath: "/iTravel/selling/api/public-cruise/cruiseCategoryAvailabilitySearch",
     description: "Fetches available cabin categories (Suites, Balcony, Oceanview, Inside), deck allocations, and base fare breakdowns for a selected sailing.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
@@ -123,7 +123,7 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "V4 handles room types at tour option level via /brands/{brand}/tours/{tourId}/options; iTravel provides deep 3D ship category and deck breakdown.",
+    v4Comparison: "V4 handles room types at tour option level via /brands/{brand}/tours/{tourId}/options/{optionId}; iTravel provides deep 3D ship category and deck breakdown.",
     errorCodes: ["ERR_SAILING_NOT_FOUND", "ERR_INVALID_OCCUPANCY"]
   },
   {
@@ -133,9 +133,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Fetch Applicable Promotions & Discounts",
     lifecycle: "Promotions & Pricing",
     lifecycleBadge: "Promotions",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-cruise",
     method: "POST",
-    endpointPath: "/v7/rest/fetchApplicablePromotions",
+    endpointPath: "/iTravel/selling/api/public-cruise/fetchApplicablePromotions",
     description: "Evaluates eligible promotional codes, early bird discounts, and past-guest loyalty offers for a given sailing and category.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
@@ -161,7 +161,7 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "iTravel rules engine evaluates combinability rules dynamically across multi-product baskets.",
+    v4Comparison: "V4 evaluates tour quotes via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote; iTravel rules engine evaluates combinability rules across multi-product baskets.",
     errorCodes: ["ERR_INVALID_PROMO_CODE", "ERR_PROMO_EXPIRED"]
   },
   {
@@ -171,12 +171,12 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Availability Search",
     lifecycle: "Cabin Selection",
     lifecycleBadge: "Cabins",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-cruise",
     method: "POST",
-    endpointPath: "/v7/rest/cruiseCabinAvailabilitySearch",
+    endpointPath: "/iTravel/selling/api/public-cruise/cruiseCabinAvailabilitySearch",
     description: "Fetches specific physical cabin numbers on chosen decks, along with bed configurations and accessibility features.",
     headers: [
-      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
     ],
     parameters: [
@@ -213,9 +213,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Inventory Hold",
     lifecycle: "Inventory Lock",
     lifecycleBadge: "Holds",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-cruise",
     method: "POST",
-    endpointPath: "/v7/rest/cruiseCabinHold",
+    endpointPath: "/iTravel/selling/api/public-cruise/cruiseCabinHold",
     description: "Places a temporary inventory hold on a specific cabin number for a specified duration while the order basket is completed.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
@@ -247,10 +247,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Create Reservation (Preview vs Commit)",
     lifecycle: "Booking Creation",
     lifecycleBadge: "Booking",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-booking",
     method: "POST",
-    endpointPath: "/v7/rest/createBooking",
-    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the multi-product order to generate a Super PNR.",
+    endpointPath: "/iTravel/selling/api/public-booking/createBooking",
+    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the multi-product order on the public-booking RPC surface (REST resource: POST /v7/rest/bookings).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
@@ -290,7 +290,7 @@ export const API_KNOWLEDGE_BASE = [
   "DepositDue": { "Currency": "USD", "Amount": 500.00 },
   "DepositDueDate": "2026-08-24T23:59:59Z"
 }`,
-    v4Comparison: "V4 creates a tour booking reference via POST /booking; iTravel creates a Super PNR that encapsulates Tour, Cruise, Air, Hotel, and Optionals as one basket.",
+    v4Comparison: "V4 creates a tour booking reference via POST /booking; iTravel creates a Super PNR that encapsulates Tour, Cruise, Air, Hotel, and Optionals as one basket via POST /v7/rest/bookings.",
     errorCodes: ["ERR_PAYMENT_DECLINED", "ERR_INVALID_PASSENGER_DATA", "ERR_EXPIRED_HOLD"]
   },
   {
@@ -300,9 +300,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Freeze Reservation (Servicing Lock)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-booking",
     method: "POST",
-    endpointPath: "/v7/rest/freezeBooking",
+    endpointPath: "/iTravel/selling/api/public-booking/freezeBooking",
     description: "Applies a pessimistic servicing session lock on a booking to prevent concurrent edits during active advisor modifications.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
@@ -329,9 +329,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Modify Reservation (Amendments & Upgrades)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-booking",
     method: "POST",
-    endpointPath: "/v7/rest/modify",
+    endpointPath: "/iTravel/selling/api/public-booking/modify",
     description: "Executes price-neutral or price-affecting modifications (passenger detail changes, category upgrades, date shifts, adding/removing ancillaries).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
@@ -363,9 +363,9 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Cancel Booking & Penalty Evaluation",
     lifecycle: "Cancellation & Repricing",
     lifecycleBadge: "Cancellation",
-    source: "PDF v6.0 & iTravel /v7/rest Surface",
+    source: "PDF v6.0 & /iTravel/selling/api/public-booking",
     method: "POST",
-    endpointPath: "/v7/rest/cancelBooking",
+    endpointPath: "/iTravel/selling/api/public-booking/cancelBooking",
     description: "Cancels full booking or specific line items, evaluates cancellation penalties, and issues refund vouchers or credit notes.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
@@ -446,6 +446,6 @@ export const QUIZ_QUESTIONS = [
     question: "What is the Time-To-Live (TTL) of the signed OAuth 2.0 JWT access token issued by iTravel Connect?",
     options: ["15 minutes", "30 minutes", "12 hours", "24 hours"],
     correctAnswer: 1,
-    explanation: "iTravel Connect OAuth 2.0 tokens issued via POST /token have a 30-minute expiration period."
+    explanation: "iTravel Connect OAuth 2.0 tokens issued via POST /token on the dedicated Auth Host have a 30-minute expiration period."
   }
 ];

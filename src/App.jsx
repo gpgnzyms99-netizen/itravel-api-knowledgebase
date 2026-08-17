@@ -613,7 +613,7 @@ export default function App() {
                 <h2 style={{ fontSize: '24px', fontWeight: '700', margin: 0 }}>Agency Data Model, Commission Engine & Booking Channels</h2>
               </div>
               <p style={{ fontSize: '15px', color: 'var(--slate-200)', maxWidth: '950px', lineHeight: '1.6', margin: 0 }}>
-                Deep-dive into how The Travel Corporation (TTC) unifies travel agent identities across legacy systems (<strong>Tropics / V4</strong> — <em>note: iTravel Connect completely replaces Longitude</em>), executes multi-brand commission calculations, and enables bookings via both <strong>B2B Advisor UI Portals</strong> and <strong>Headless REST APIs</strong>.
+                Deep-dive into how The Travel Corporation (TTC) unifies travel agent identities across legacy systems (<strong>Tropics / V4</strong> and live <strong>Longitude</strong> — <em>note: iTravel Connect is contracted to replace Longitude by End of 2027</em>), executes multi-brand commission calculations, and enables bookings via both <strong>B2B Advisor UI Portals</strong> and <strong>Headless REST APIs</strong>.
               </p>
             </div>
 
@@ -624,7 +624,7 @@ export default function App() {
                 <h3 className="parent-title-dt" style={{ margin: 0, color: '#92400e' }}>Open Decision Point for TTC: Agency Mastering Authority</h3>
               </div>
               <p style={{ fontSize: '14px', color: '#78350f', margin: '0 0 16px 0', lineHeight: '1.5' }}>
-                While <strong>iTravel Connect directly replaces Longitude</strong>, TTC must formally finalize which platform acts as the <strong>System of Record / Golden Master for Agency Accounts</strong>:
+                While <strong>iTravel Connect is contracted to replace Longitude by End of 2027</strong>, TTC must formally finalize which platform acts as the <strong>System of Record / Golden Master for Agency Accounts</strong>:
               </p>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
@@ -659,7 +659,7 @@ export default function App() {
                 <h3 className="parent-title-dt" style={{ margin: 0 }}>1. Agency Data Model & Cross-System ID Resolution</h3>
               </div>
               <p style={{ color: 'var(--color-text-muted)', margin: 0 }}>
-                Legacy agency accounts in Tropics (e.g., <code>AG-101</code>) are resolved into a canonical <code>BookingOwner</code> schema by translating records through the chosen Master authority (Salesforce MDM or iTravel OMS). <em>Note: iTravel Connect completely replaces Longitude in the target architecture.</em>
+                Legacy agency accounts in Tropics (e.g., <code>AG-101</code>) and Longitude are resolved into a canonical <code>BookingOwner</code> schema by translating records through the chosen Master authority (Salesforce MDM or iTravel OMS). <em>Note: iTravel Connect is contracted to replace Longitude by End of 2027.</em>
               </p>
 
               {/* Data Model Hierarchy Diagram Cards */}
@@ -686,7 +686,7 @@ export default function App() {
                 <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', borderTop: '4px solid #166534' }}>
                   <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Level 4: Cross-System Translation</div>
                   <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 8px 0' }}>Master Resolution Layer</h4>
-                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Bi-directionally syncs agent records: <code>Tropics ID (AG-101)</code> &lt;-&gt; <code>Okta User UUID</code> &lt;-&gt; <code>iTravel PCC</code> (Longitude is fully decommissioned).</p>
+                  <p style={{ fontSize: '13px', color: 'var(--slate-700)', margin: 0 }}>Bi-directionally syncs agent records: <code>Tropics / Longitude ID</code> &lt;-&gt; <code>Okta User UUID</code> &lt;-&gt; <code>iTravel PCC</code> (Longitude replacement target: End 2027).</p>
                 </div>
 
               </div>
