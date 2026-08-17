@@ -1,121 +1,156 @@
-export const BUSINESS_JOURNEYS = [
+export const ELEVATE_REQUIREMENTS = [
+  {
+    id: "req_1",
+    category: "Unified Booking Basket",
+    requirement: "Ability to book multiple products (e.g. tours, cruises, rail) in a single shopping cart while maintaining records in legacy systems (Tropics, Longitude).",
+    itravelApi: "createBookingRQ/RS (Super PNR Basket Mode)",
+    v4Api: "v4 /api/v4/tourDepartures & /api/v4/bookings",
+    howItWorks: "iTravel creates a master Super PNR basket containing both the river cruise line item and the land tour line item. Sync adapters push sub-records down to Tropics (for land tours) and Longitude."
+  },
+  {
+    id: "req_2",
+    category: "Flexible Booking Conditions",
+    requirement: "Support variable deposit policies, payment schedules, cancellation rules, and bundled promotional pricing across brands.",
+    itravelApi: "fetchApplicablePromotionsRQ/RS & createBookingRQ/RS (IsPreview = true)",
+    v4Api: "v4 /api/v4/pricing & promotion rules",
+    howItWorks: "Preview mode dry-runs pricing across both land tour and cruise products, applying combined multi-product discounts and outputting a single unified deposit schedule."
+  },
+  {
+    id: "req_3",
+    category: "Single Customer Invoice",
+    requirement: "Consolidate invoices for all products into one unified document for the guest.",
+    itravelApi: "iTravel Invoice & Itinerary Generation API / Super PNR",
+    v4Api: "V4 Guest Documents API",
+    howItWorks: "iTravel aggregates line items from Tropics (tour) and iTravel (cruise) onto a single, brand-aligned customer invoice with consolidated payment terms."
+  },
+  {
+    id: "req_4",
+    category: "Travel Agent Integration",
+    requirement: "Correctly identify agents across systems (different IDs in Tropics vs Longitude), handle consortia relationships, and compute accurate bundled commissions.",
+    itravelApi: "BookingOwner Object (NetPayApplicable, PayToSelf, AgencyConsortium)",
+    v4Api: "Salesforce MDM Agent Translation Service",
+    howItWorks: "Salesforce/MDM resolves agent IDs between Tropics and Longitude, mapping them to the iTravel BookingOwner context to trigger consortia benefits and calculate blended commission."
+  },
+  {
+    id: "req_5",
+    category: "Configurable Rules Engine",
+    requirement: "Implement a configurable rules engine to manage product combinations (tours + cruises), transfer times, check-in/check-out logic, and pricing.",
+    itravelApi: "iTravel Rules Engine Microservice / Transfer Buffer Validator",
+    v4Api: "V4 Tour Compatibility Service",
+    howItWorks: "Evaluates physical transit times between the land tour drop-off location and the river cruise pier embarkation port, enforcing minimum check-in buffer windows."
+  },
+  {
+    id: "req_6",
+    category: "Canonical Data Model",
+    requirement: "Standardise location and destination data for linking components, supporting geolocation and hub-based connectivity.",
+    itravelApi: "iTravel Location & Hub Master APIs (/api/v6/masters/locations)",
+    v4Api: "V4 Geography & Operating Point APIs",
+    howItWorks: "Uses canonical IATA / UN-LOCODE and geo-coordinates to link hotel hubs with cruise docking piers."
+  },
+  {
+    id: "req_7",
+    category: "Authentication & Single Sign-On",
+    requirement: "Single sign-on for travel agents having different IDs in Longitude and Tropics, managing legacy logins during migration.",
+    itravelApi: "OAuth 2.0 /token Endpoint with JWT Claims",
+    v4Api: "Legacy Tropics / Longitude Auth Proxy",
+    howItWorks: "Agents authenticate once via Okta/Salesforce SSO; signed JWT bearer tokens carry normalized agent identities down to both V4 and iTravel APIs."
+  },
+  {
+    id: "req_8",
+    category: "Scalability for Future Products",
+    requirement: "Prepare for additional product types (e.g. rail, chartered ships, transfers) without major architectural redesign.",
+    itravelApi: "iTravel Generic LineItem Schema (Type = CRUISE | TOUR | RAIL | TRANSFER)",
+    v4Api: "V4 Ancillary Extension Schema",
+    howItWorks: "The Super PNR basket is built on an extensible JSON array of line items, allowing rail or transfer components to be attached seamlessly."
+  },
+  {
+    id: "req_9",
+    category: "Salesforce / MDM Integration",
+    requirement: "Leverage Salesforce / MDM for travel agent ID mapping and potential use of PCQI for order management.",
+    itravelApi: "Salesforce PCQI & Account Sync Webber Hooks",
+    v4Api: "Salesforce Agent Sync API",
+    howItWorks: "Syncs agency profile updates, credit limits, and agent status bi-directionally between Salesforce CRM and iTravel OMS."
+  },
+  {
+    id: "req_10",
+    category: "Timeline Awareness (4Q2026 Rollout)",
+    requirement: "Initial Omni rollout expected by 4Q2026 (new online booking cart for Uniworld & Touring brands); bundled capability needed between April & September.",
+    itravelApi: "iTravel Omni-Basket API v6.0",
+    v4Api: "V4 Distribution API",
+    howItWorks: "Phased deployment delivering single-product cruise/tour carts by 4Q2026 followed by multi-modal bundled carts for the 2027 selling season."
+  }
+];
+
+export const MULTI_MODAL_JOURNEYS = [
   {
     step: 1,
-    stageName: "1. Search & Discovery",
-    tagline: "Find Sailings & Real-Time Rates",
-    description: "Enables customers and travel advisors to search for available cruises across regions, sailings, and dates with sub-second response times.",
-    businessValue: "Drives conversion by delivering instant search results across all global cruise routes without database lag.",
-    apisUsed: [
-      {
-        title: "cruiseAggrAvailabilitySearchRQ/RS",
-        role: "Aggregate Sailing Search",
-        whatItDoes: "Searches thousands of voyage combinations based on travel dates, vessel code, passenger counts, and geographic regions (e.g. Rhine, Danube, Mediterranean)."
-      },
-      {
-        title: "OAuth /token (iTravel Connect)",
-        role: "Secure Authentication",
-        whatItDoes: "Authenticates travel agency channels and partners using secure OAuth 2.0 bearer tokens."
-      }
-    ]
+    stageName: "1. Multi-Modal Search & Hub Connectivity",
+    tagline: "Search Land Tours (V4) + River Cruises (iTravel) Simultaneously",
+    description: "Customer or agent searches for a combined European holiday (e.g. 7-Day Swiss Alps Land Tour + 7-Day Rhine River Cruise).",
+    businessValue: "Drives higher yield per booking by cross-selling land tours and river cruises in a single search flow.",
+    v4Call: "/api/v4/tourDepartures (Fetches Tropics land tour departures & hotel hubs)",
+    itravelCall: "/api/v6/cruiseAggrAvailabilitySearch (Fetches Uniworld Rhine river sailings)",
+    rulesEngineCall: "Evaluates canonical hub geolocation to verify tour end-point connects to cruise pier."
   },
   {
     step: 2,
-    stageName: "2. Cabin Category & Fare Choice",
-    tagline: "Select Room Types & Fare Conditions",
-    description: "Displays available room categories (Grand Suites, French Balcony, Oceanview), deck allocations, and base fare pricing.",
-    businessValue: "Maximizes yield and average order value (AOV) by encouraging category upsells to premium suites.",
-    apisUsed: [
-      {
-        title: "cruiseCategoryAvailabilitySearchRQ/RS",
-        role: "Category & Fare Breakdown",
-        whatItDoes: "Fetches category-level availability, taxes/fees, refundable vs non-refundable fare types, and room upgrades."
-      }
-    ]
+    stageName: "2. Synchronized Room & Cabin Selection",
+    tagline: "Choose Hotel Room Category (V4) & Cruise Cabin (iTravel)",
+    description: "Advisor selects hotel room extension via Tropics V4 and specific river cruise suite on Deck 3 via iTravel.",
+    businessValue: "Provides a seamless upsell experience across both land accommodations and ship categories.",
+    v4Call: "/api/v4/tourOptions (Hotel category & optional land experiences)",
+    itravelCall: "/api/v6/cruiseCategoryAvailabilitySearch & cruiseCabinAvailabilitySearch (Ship deck grid & cabin numbers)",
+    rulesEngineCall: "Validates bed configuration consistency across hotel and ship suite."
   },
   {
     step: 3,
-    stageName: "3. Promotions & Consortia Benefits",
-    tagline: "Apply Discounts & Trade Overrides",
-    description: "Evaluates eligible promotional codes, early bird discounts, loyalty perks, and trade network overrides (Virtuoso, AAA, Signature).",
-    businessValue: "Protects margins by ensuring combinability rules are strictly enforced while delivering targeted partner incentives.",
-    apisUsed: [
-      {
-        title: "fetchApplicablePromotionsRQ/RS",
-        role: "Promotions Engine",
-        whatItDoes: "Evaluates combinable discounts, past-guest loyalty savings, and exclusive consortia amenities."
-      }
-    ]
+    stageName: "3. Rules Engine & Transit Buffer Validation",
+    tagline: "Validate Check-In/Check-Out Logic & Minimum Connection Times",
+    description: "Configurable rules engine calculates buffer time between land tour hotel check-out and ship embarkation check-in.",
+    businessValue: "Eliminates operational mis-connections and customer dissatisfaction caused by impossible transfer timelines.",
+    v4Call: "V4 Operating Points API (Hotel drop-off timestamp)",
+    itravelCall: "iTravel Embarkation Schedule API (Pier boarding cutoff time)",
+    rulesEngineCall: "Enforces 3-hour minimum transfer buffer window between land tour drop-off and pier boarding."
   },
   {
     step: 4,
-    stageName: "4. Physical Cabin & Inventory Lock",
-    tagline: "Select Exact Cabin & Hold Inventory",
-    description: "Allows guests or advisors to pick a specific physical cabin number on a deck and place a temporary 15-minute hold.",
-    businessValue: "Prevents double-booking and inventory leakage while the guest completes passenger information and payment.",
-    apisUsed: [
-      {
-        title: "cruiseCabinAvailabilitySearchRQ/RS",
-        role: "Physical Cabin Search",
-        whatItDoes: "Retrieves specific cabin numbers, deck locations, bed configurations (King/Twin), and accessibility features."
-      },
-      {
-        title: "cruiseCabinHoldRQ/RS",
-        role: "Temporary Cabin Hold",
-        whatItDoes: "Locks a physical cabin for up to 15 minutes. Automatically releases inventory if the booking is not completed."
-      }
-    ]
+    stageName: "4. Bundled Promotions & Consortia Overrides",
+    tagline: "Combine Multi-Product Discounts & Virtuoso Benefits",
+    description: "Evaluates combined promotions (e.g. '$1,000 Off when booking Tour + Cruise together') plus consortia perks.",
+    businessValue: "Incentivizes multi-product bookings while enforcing strict discount combinability rules.",
+    v4Call: "V4 Tour Promotion Engine",
+    itravelCall: "/api/v6/fetchApplicablePromotions (Evaluates multi-product bundle promo codes)",
+    rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes."
   },
   {
     step: 5,
-    stageName: "5. Multi-Product Order & Booking Confirmation",
-    tagline: "Dry-Run Validation & Super PNR Creation",
-    description: "Validates the complete order basket (Cruise + Hotel + Air + Tours), calculates deposit schedules, and commits the booking.",
-    businessValue: "Unifies multi-product travel packages under a single Super PNR reference, supporting Net vs Gross agency billing.",
-    apisUsed: [
-      {
-        title: "createBookingRQ/RS (Preview Mode)",
-        role: "Dry-Run Basket Validation",
-        whatItDoes: "Calculates total pricing, taxes, deposit due dates, and cancellation penalties without committing to the database."
-      },
-      {
-        title: "createBookingRQ/RS (Commit Mode)",
-        role: "Order Confirmation",
-        whatItDoes: "Commits the booking, generates the Super PNR & Reservation ID, allocates inventory, and records trade commission."
-      }
-    ]
+    stageName: "5. Agent SSO & Inventory Holds",
+    tagline: "Resolve Tropics/Longitude Agent IDs & Place Synchronized Holds",
+    description: "Translates travel agent identities across legacy systems and places temporary holds on both tour allotment and ship cabin.",
+    businessValue: "Protects inventory across land and water for 15 minutes while guest passport details are collected.",
+    v4Call: "Salesforce MDM ID Mapper & Tropics Allotment Hold",
+    itravelCall: "/api/v6/cruiseCabinHold (Holds Cabin 301 for 15 minutes)",
+    rulesEngineCall: "Maps Agent ID 789 (Tropics) <-> Agent User 456 (Longitude) <-> iTravel PCC."
   },
   {
     step: 6,
-    stageName: "6. Servicing & Modifications",
-    tagline: "Manage Edits, Upgrades & Session Locks",
-    description: "Handles post-booking modifications like guest name changes, cabin upgrades, date shifts, and ancillary additions.",
-    businessValue: "Prevents data corruption or duplicate edits when call center agents and web self-service users access the same booking.",
-    apisUsed: [
-      {
-        title: "freezeBookingRQ/RS",
-        role: "Servicing Session Lock",
-        whatItDoes: "Applies a pessimistic lock on the reservation while an advisor is actively modifying the booking."
-      },
-      {
-        title: "modifyRQ/RS",
-        role: "Booking Amendment",
-        whatItDoes: "Executes price-neutral or price-affecting amendments, recalculating total pricing and deposit adjustments."
-      }
-    ]
+    stageName: "6. Unified Basket & Single Customer Invoice",
+    tagline: "Dry-Run Preview & Commit to Super PNR Basket",
+    description: "Validates the multi-product order, generates a single unified guest invoice, and commits records to Tropics and iTravel.",
+    businessValue: "Delivers a single customer invoice and Super PNR reference while preserving legacy backend records.",
+    v4Call: "/api/v4/bookings (Creates sub-booking record in Tropics)",
+    itravelCall: "/api/v6/createBooking (Creates master Super PNR basket and unified invoice)",
+    rulesEngineCall: "Calculates consolidated deposit due dates and Net vs Gross agency billing."
   },
   {
     step: 7,
-    stageName: "7. Cancellation & Financial Settlement",
-    tagline: "Cancel Bookings, Penalties & Refunds",
-    description: "Processes full or partial cancellations, computes contractual cancellation penalties, and issues credit vouchers.",
-    businessValue: "Automates financial settlement, recalls agency commission, and posts GL credit notes accurately.",
-    apisUsed: [
-      {
-        title: "cancelBookingRQ/RS",
-        role: "Cancellation & Penalties",
-        whatItDoes: "Cancels reservations, evaluates penalty schedules based on departure proximity, and releases inventory back to open stock."
-      }
-    ]
+    stageName: "7. Bundled Servicing & Commission Settlement",
+    tagline: "Collision-Free Modifications & Blended Commission Payout",
+    description: "Handles post-booking servicing with freeze locks and calculates accurate agent commissions across bundled products.",
+    businessValue: "Prevents concurrent editing race conditions and ensures accurate agency payouts across multi-brand packages.",
+    v4Call: "V4 Servicing API & Tropics Commission Ledger",
+    itravelCall: "/api/v6/freezeBooking & /api/v6/modify (Pessimistic session lock)",
+    rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner rules."
   }
 ];
 
@@ -123,53 +158,53 @@ export const BUSINESS_PERSONAS = [
   {
     id: "persona_pm",
     title: "Product Managers & Business Analysts",
-    focus: "Mapping Business Requirements to API Capabilities",
+    focus: "Mapping High-Level Requirements to Multi-Modal APIs",
     keyQuestions: [
-      "Which API do we call to show cruise search results on our website?",
-      "How do we preview total package price and deposit due dates before charging the customer?"
+      "How do we book a land tour (Tropics) and river cruise (iTravel) in a single cart?",
+      "How do we preview total package price and unified deposit due dates?"
     ],
     recommendedAPIs: [
-      "cruiseAggrAvailabilitySearchRQ/RS — High-speed search",
-      "createBookingRQ/RS (IsPreview = true) — Pricing & deposit preview"
+      "V4 /api/v4/tourDepartures + iTravel cruiseAggrAvailabilitySearch — Multi-modal search",
+      "iTravel createBookingRQ/RS (IsPreview = true) — Unified pricing & deposit preview"
     ]
   },
   {
     id: "persona_trade",
     title: "Travel Agency & Commercial Leads",
-    focus: "Agency Commission, Consortia & Net Billing",
+    focus: "Salesforce MDM ID Mapping, Consortia & Net Billing",
     keyQuestions: [
-      "How does the system know if an agency pays Net or Gross?",
-      "How do we apply Virtuoso or AAA consortia amenities?"
+      "How does the system map an agent who has different IDs in Tropics and Longitude?",
+      "How are commissions calculated for bundled tour + cruise bookings?"
     ],
     recommendedAPIs: [
-      "BookingOwner payload in createBookingRQ — NetPayApplicable & PayToSelf settings",
-      "fetchApplicablePromotionsRQ/RS — Consortia offer evaluation"
+      "Salesforce/MDM ID Translation Service — Single Sign-On mapping",
+      "BookingOwner in createBookingRQ — NetPayApplicable & bundled commission ledger"
     ]
   },
   {
     id: "persona_ops",
     title: "Operations & Contact Center Leads",
-    focus: "Preventing Editing Collisions & Temporary Holds",
+    focus: "Transfer Time Rules Engine & Freeze Locks",
     keyQuestions: [
-      "What stops a web agent and a call center agent from overwriting each other's edits?",
-      "How long can a cabin be held while an advisor takes guest passport details?"
+      "What prevents booking a land tour drop-off that arrives after the cruise pier boarding cutoff?",
+      "How do we lock a booking while an advisor updates guest details?"
     ],
     recommendedAPIs: [
-      "freezeBookingRQ/RS — Session locking (LockToken)",
-      "cruiseCabinHoldRQ/RS — 15-minute temporary inventory hold"
+      "Configurable Rules Engine — Transfer time buffer validator",
+      "iTravel freezeBookingRQ/RS — Pessimistic lock token (LockToken)"
     ]
   },
   {
     id: "persona_finance",
     title: "Finance & Revenue Management",
-    focus: "Deposit Schedules, Penalties & Settlement",
+    focus: "Single Customer Invoice, Penalties & Tropics Sync",
     keyQuestions: [
-      "When is the deposit due and how are cancellation penalties computed?",
-      "How does commission recall work if a travel advisor cancels a booking?"
+      "Can we issue one single consolidated invoice to the guest for both tour and cruise?",
+      "How are cancellation penalties split between Tropics and iTravel?"
     ],
     recommendedAPIs: [
-      "createBookingRQ/RS — DepositDueDate and DepositAmount output",
-      "cancelBookingRQ/RS — Penalty evaluation & commission recall"
+      "iTravel Super PNR Invoice Engine — Consolidated guest billing document",
+      "iTravel cancelBookingRQ/RS + V4 Cancel — Automated penalty & credit note sync"
     ]
   }
 ];
