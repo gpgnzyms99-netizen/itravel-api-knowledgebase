@@ -188,18 +188,6 @@ export default function App() {
                 <CheckSquare size={16} /> Elevate Requirements Matrix
               </button>
               <button 
-                className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
-              >
-                <BookOpen size={16} /> API Technical Catalog
-              </button>
-              <button 
-                className={activeTab === 'quiz' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('quiz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QUIZ', interaction_type: 'CLICK' }); }}
-              >
-                <Award size={16} /> Team Quiz Hub
-              </button>
-              <button 
                 className={activeTab === 'trade' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
               >
