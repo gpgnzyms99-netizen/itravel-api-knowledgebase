@@ -199,7 +199,7 @@ export const ELEVATE_REQUIREMENTS = [
     id: "req_2",
     category: "Flexible Booking Conditions",
     requirement: "Support variable deposit policies, payment schedules, cancellation rules, and bundled promotional pricing across brands.",
-    itravelApi: "fetchApplicablePromotionsRQ/RS & POST /v7/rest/bookings (IsPreview = true)",
+    itravelApi: "fetchApplicablePromotionsRQ/RS & POST /v7/rest/bookings (IsNotCommit = true)",
     v4Api: "V4 /brands/{brand}/.../departures/{id}/quote & promotion rules",
     howItWorks: "UI calls iTravel preview mode via REST. iTravel OMS orchestrates pricing queries across V4 land tours and iTravel cruises, returning a single unified deposit schedule and bundled promo discounts."
   },
@@ -231,7 +231,7 @@ export const ELEVATE_REQUIREMENTS = [
     id: "req_6",
     category: "Canonical Data Model",
     requirement: "Standardize product representations, guest profiles, locations, and pricing across all TTC systems.",
-    itravelApi: "iTravel Canonical Schema (GuestProfile, LineItem, OperatingPoint)",
+    itravelApi: "iTravel Canonical Schema (Passengers, LineItem, OperatingPoints)",
     v4Api: "V4 /api/v4/operatingPoints & /api/v4/locations",
     howItWorks: "Maps legacy Tropics structures to standardized JSON schema with UN-LOCODE / IATA location codes, enabling cross-brand compatibility."
   },
@@ -352,7 +352,7 @@ export const MULTI_MODAL_JOURNEYS = [
     description: "The advisor commits the booking. iTravel OMS executes a dry-run validation, creates a master Super PNR shopping cart, generates a single unified customer invoice, and writes sub-records to Tropics and iTravel.",
     businessValue: "Delivers a single consolidated guest invoice and master PNR reference for the entire trip, eliminating guest confusion from receiving separate bills from Trafalgar and Uniworld.",
     uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBooking)",
-    uiCallBusinessDetails: "How it works: UI submits the full multi-product payload (`IsPreview=false`, guest profiles, tokenized payment token). OMS Gateway creates the order and returns master Super PNR reference 'SUPER-88492'.",
+    uiCallBusinessDetails: "How it works: UI submits the full multi-product payload (`IsNotCommit=false`, guest profiles, tokenized payment token). OMS Gateway creates the order and returns master Super PNR reference 'SUPER-88492'.",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
     v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 `POST /booking` to commit the land tour sub-booking in Tropics, receiving the canonical Tropics `{bookingReference}` string parameter (e.g. `B-1048291`).",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",

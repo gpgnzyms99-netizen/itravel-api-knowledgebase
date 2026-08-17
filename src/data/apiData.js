@@ -324,20 +324,20 @@ export const API_KNOWLEDGE_BASE = [
     source: "PDF Sec 4.11 Pg 108 | Connect REST: POST /v7/rest/bookings",
     method: "POST",
     endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking",
-    description: "Supports dual execution modes via IsPreview parameter: Preview Mode (IsPreview = true) performs dry-run basket validation, tax/fee calculation, and pricing without committing inventory or state; Commit Mode (IsPreview = false) validates pricing, commits inventory, generates the master Super PNR reservation, and schedules deposit milestones. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking (Exposed on Connect REST as POST /v7/rest/bookings).",
+    description: "Supports dual execution modes via IsNotCommit parameter: Preview Mode (IsNotCommit = true) performs dry-run basket validation, tax/fee calculation, and pricing without committing inventory or state; Commit Mode (IsNotCommit = false) validates pricing, commits inventory, generates the master Super PNR reservation, and schedules deposit milestones. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking (Exposed on Connect REST as POST /v7/rest/bookings).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
       { name: "x-pcc", type: "String", required: true, description: "Agency PCC / Code" }
     ],
     parameters: [
-      { name: "IsPreview", type: "Boolean", required: true, description: "True = DRY RUN validation; False = COMMIT order" },
+      { name: "IsNotCommit", type: "Boolean", required: true, description: "True = Preview Mode (dry-run validation without committing state); False = Commit Mode (creates reservation)" },
       { name: "BookingOwner", type: "Object", required: true, description: "Agency, Agent, Consortium, and Net/Gross billing mode" },
       { name: "ItineraryDetails", type: "Object", required: true, description: "Sailing, Cabin, Dining, Ancillaries" },
-      { name: "Passengers", type: "Array", required: true, description: "Passenger contact, passport, and loyalty details" }
+      { name: "Passengers", type: "Array", required: true, description: "Passenger contact, passport, CustomerProfileId, and CrmID details" }
     ],
     requestPayload: `{
-  "IsPreview": false,
+  "IsNotCommit": false,
   "BookingOwner": {
     "RequestorType": "Agency",
     "RequestorID": "AGENCY_NORTH_01",
@@ -436,7 +436,7 @@ export const API_KNOWLEDGE_BASE = [
     ],
     parameters: [
       { name: "ReservationID", type: "String", required: true, description: "Reservation ID" },
-      { name: "PaymentDetails", type: "Object", required: true, description: "Card or Agency Net Account token" }
+      { name: "Payments", type: "Array/Object", required: true, description: "Payments array/object (FopType, FopCode, PaymentToken, Card or Agency Net Account)" }
     ],
     requestPayload: `{ "ReservationID": "RES_900122", "Amount": 500.00 }`,
     responsePayload: `{ "Status": "PAYMENT_SUCCESS", "TransactionID": "TX_99201" }`,
@@ -590,15 +590,15 @@ export const QUIZ_QUESTIONS = [
   },
   {
     id: 2,
-    question: "What is the key difference between IsPreview = true and IsPreview = false in createBookingRQ / POST /v7/rest/bookings?",
+    question: "What is the key difference between IsNotCommit = true and IsNotCommit = false in createBookingRQ / POST /v7/rest/bookings?",
     options: [
-      "Preview creates a temporary hold; Commit cancels the hold",
-      "Preview dry-runs pricing/penalties without saving state; Commit creates the Super PNR and commits payment",
-      "Preview is for B2C; Commit is for B2B",
-      "Preview is for single products; Commit is for packages"
+      "IsNotCommit: true creates a temporary hold; IsNotCommit: false cancels the hold",
+      "IsNotCommit: true (Preview Mode) dry-runs pricing/penalties without saving state; IsNotCommit: false (Commit Mode) creates the Super PNR and commits payment",
+      "IsNotCommit is for B2C; Commit is for B2B",
+      "IsNotCommit is for single products; Commit is for packages"
     ],
     correctAnswer: 1,
-    explanation: "IsPreview = true allows dry-run pricing validation without modifying the database state."
+    explanation: "IsNotCommit = true (Preview Mode) allows dry-run pricing validation without modifying the database state or committing inventory."
   },
   {
     id: 3,
