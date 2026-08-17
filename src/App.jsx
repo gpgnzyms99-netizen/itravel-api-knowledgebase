@@ -182,6 +182,12 @@ export default function App() {
                 <Briefcase size={16} /> Multi-Modal Journey
               </button>
               <button 
+                className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
+              >
+                <Code size={16} /> API Interactive Explorer
+              </button>
+              <button 
                 className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
               >
@@ -204,6 +210,12 @@ export default function App() {
                 onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
               >
                 <Layers size={16} /> Technical Architecture
+              </button>
+              <button 
+                className={activeTab === 'quiz' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('quiz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QUIZ', interaction_type: 'CLICK' }); }}
+              >
+                <Award size={16} /> Quiz
               </button>
             </nav>
 
