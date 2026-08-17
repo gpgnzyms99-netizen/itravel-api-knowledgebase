@@ -31,6 +31,12 @@ export const ARCHITECTURE_RISKS_QA = [
         answered: "YES",
         evidence: "iTravel Connect supports direct tokenized payment Gateway integration (paymentToken parameter in createBookingRQ), decoupling card processing from legacy acquirers while mapping payment status to Tropics.",
         apiRef: "createBookingRQ -> PaymentDetails.PaymentToken"
+      },
+      {
+        question: "Multi-Currency Pricing & Settlement (USD, GBP, EUR, AUD, CAD)",
+        answered: "YES",
+        evidence: "iTravel OMS Financial Engine executes real-time FX conversion between Tropics tour departure currency and Uniworld cruise currency, presenting a unified single-currency cart to the guest.",
+        apiRef: "iTravel OMS FX Currency Conversion Engine"
       }
     ]
   },
@@ -46,8 +52,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Consultant-level booking tracking adds complexity.",
         answered: "YES",
-        evidence: "BookingOwner object explicitly contains RequestingUserID (Consultant level) alongside RequestorID (Agency level) and OrgUnitCode (Branch level) in every API request.",
-        apiRef: "BookingOwner.RequestingUserID"
+        evidence: "BookingOwner schema explicitly encapsulates RequestorType, RequestorID (Agency), RequestingUserID (Consultant), OrgUnitCode (Branch), AgencyConsortium, PayToSelf, PayOutAgencyCode, NetPayApplicable, channel, and BusinessType in every request.",
+        apiRef: "BookingOwner Complete Schema (RequestorType, RequestingUserID, PayOutAgencyCode, etc.)"
       },
       {
         question: "AAA / TST consultant level API keys",
