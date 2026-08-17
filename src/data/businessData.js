@@ -354,7 +354,7 @@ export const MULTI_MODAL_JOURNEYS = [
     uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBooking)",
     uiCallBusinessDetails: "How it works: UI submits the full multi-product payload (`IsPreview=false`, guest profiles, tokenized payment token). OMS Gateway creates the order and returns master Super PNR reference 'SUPER-88492'.",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
-    v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 /booking to commit the land tour sub-booking in Tropics, receiving a real numeric Tropics sub-booking reference (e.g. Tropics Booking Ref `1048291`).",
+    v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 `POST /booking` to commit the land tour sub-booking in Tropics, receiving the canonical Tropics `{bookingReference}` string parameter (e.g. `B-1048291`).",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",
     itravelCallBusinessDetails: "How it works: iTravel OMS writes the master Super PNR record containing both line items (Tour + Cruise), generates the single guest invoice PDF, and stores payment authorization.",
     rulesEngineCall: "Calculates consolidated deposit due dates, payment schedule milestones, and Net vs Gross agency billing terms.",
