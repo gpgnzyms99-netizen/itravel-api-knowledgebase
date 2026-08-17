@@ -287,18 +287,18 @@ export const MULTI_MODAL_JOURNEYS = [
   },
   {
     step: 2,
-    stageName: "2. Synchronized Room & Category Selection",
-    tagline: "UI selects Room + Category -> iTravel OMS queries V4 options + Ship categories",
-    description: "The advisor selects specific accommodations for both segments: a Deluxe Twin Hotel Room extension for the Trafalgar land tour segment and a Category 1 French Balcony Stateroom on the Uniworld river vessel.",
-    businessValue: "Delivers a seamless upsell experience across both land accommodations and ship stateroom categories in real time.",
+    stageName: "2. Synchronized Room Type & Cabin Category Selection",
+    tagline: "UI selects Tour Room Type + Cruise Stateroom -> iTravel OMS queries V4 room options + Ship categories",
+    description: "The advisor selects specific accommodation parameters for both segments: Tour Room Type & Occupancy (Single / Double / Twin / Triple room plus optional pre/post hotel nights) for the Trafalgar land tour segment in Tropics (V4), and Stateroom Category (e.g. Category 1 French Balcony Suite, Cabin 204) for the Uniworld river vessel in iTravel Connect.",
+    businessValue: "Delivers a seamless upsell experience across both land tour room occupancy types and ship stateroom deck categories in real time.",
     uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch | PDF Sec 4.3 Pg 23 (cruiseCategoryAvailabilitySearch) & PDF Sec 4.6 Pg 56 (cruiseCabinAvailabilitySearch)",
-    uiCallBusinessDetails: "How it works: The UI requests exact cabin category availability, deck plan locations, and land tour room extension options. iTravel OMS returns available cabin numbers and hotel bed configurations in a single unified JSON response.",
+    uiCallBusinessDetails: "How it works: The UI submits passenger counts (e.g., 2 Adults) and requests available Tour Room Types (Twin/Double) from Tropics alongside live Cruise Stateroom Deck Grids and Cabin Numbers from Uniworld.",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}",
-    v4CallBusinessDetails: "How it works: iTravel OMS fetches land tour room upgrade options, single supplements, pre/post hotel night allotments, and optional experience packages from Tropics via V4 REST endpoints.",
+    v4CallBusinessDetails: "How it works: iTravel OMS queries Tropics V4 to fetch tour room type availability (Single, Twin, Double, Triple), single supplement surcharges, pre/post hotel night room extensions, and optional tour experience packages.",
     itravelCall: "iTravel OMS queries category availability (PDF Sec 4.3 Pg 23) and cabin deck grid (PDF Sec 4.6 Pg 56)",
-    itravelCallBusinessDetails: "How it works: iTravel OMS queries the Uniworld Cruise Engine to pull live stateroom deck grids, physical cabin availability (e.g., Cabin 204 on Deck 2), and dining session allotments.",
-    rulesEngineCall: "Validates bed configuration consistency and passenger occupancy limits across hotel rooms and ship staterooms.",
-    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates passenger counts (e.g. 2 Adults + 1 Child) against max occupancy rules for both the Tropics hotel room and the Uniworld stateroom. Prevents mis-matched configurations (e.g. selecting a double-bed hotel room but a twin-bed ship cabin)."
+    itravelCallBusinessDetails: "How it works: iTravel OMS queries the Uniworld Cruise Engine to pull live stateroom deck grids, category availability (e.g. French Balcony), physical cabin availability (e.g. Cabin 204 on Deck 2), and bed setup options (Twin vs Queen).",
+    rulesEngineCall: "Validates bed configuration consistency and passenger occupancy limits across hotel room types and ship staterooms.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates passenger counts against max occupancy rules for both the Tropics tour room type (e.g. Single vs Double) and the Uniworld stateroom. Prevents mis-matched configurations (e.g. selecting a Single room for the land tour but a Double-occupancy cabin for the cruise)."
   },
   {
     step: 3,
