@@ -669,11 +669,11 @@ export default function App() {
                 {/* Tropics V4 Raw Capabilities */}
                 <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
                   <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '6px' }}>Backend Inventory System</div>
-                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '10px' }}>Tropics V4 Inventory Capabilities</h4>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '10px' }}>Tropics V4 Real Capabilities & Limitations</h4>
                   <ul style={{ fontSize: '13px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: '1.5' }}>
-                    <li><strong>Hotel Allotment Dates:</strong> Manages pre/post land tour hotel room night allotments via <code>/brands/&#123;brand&#125;/tours/&#123;tourId&#125;/options/&#123;optionId&#125;/departures/&#123;departureId&#125;/availability</code>.</li>
-                    <li><strong>Geographic Operating Points:</strong> Standardizes motorcoach pickup/drop-off locations and hotel transfer points via <code>/api/v4/operatingPoints</code> & <code>/api/v4/locations</code>.</li>
-                    <li><strong>Tour Passenger Manifests:</strong> Controls motorcoach seating limits, single supplement availability, and optional experience packages.</li>
+                    <li><strong>Tour Departure Status (What V4 Returns):</strong> <code>/brands/&#123;brand&#125;/tours/&#123;tourId&#125;/options/&#123;optionId&#125;/departures/&#123;departureId&#125;/availability</code> returns tour departure status (e.g. <code>AVAILABLE</code>, <code>GUARANTEED</code>, <code>LIMITED</code>) and option flags, but <strong>does NOT return raw hotel allotment calendars or room night dates</strong>.</li>
+                    <li><strong>Operating Points (What V4 Returns):</strong> <code>/api/v4/operatingPoints</code> & <code>/api/v4/locations</code> return static location codes (e.g. <code>ZRH_HOTEL_01</code>) and scheduled pickup points, but <strong>does NOT return real-time motorcoach GPS tracking or dynamic transfer schedules</strong>.</li>
+                    <li><strong>Tour Option Add-Ons:</strong> Pre/post hotel nights are requested as structured option add-ons attached to the main tour departure rather than queried as open hotel inventory.</li>
                   </ul>
                 </div>
 
