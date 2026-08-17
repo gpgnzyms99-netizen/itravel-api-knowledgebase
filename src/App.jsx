@@ -182,6 +182,12 @@ export default function App() {
                 <Briefcase size={16} /> Multi-Modal Journey
               </button>
               <button 
+                className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
+              >
+                <AlertTriangle size={16} /> Risks & Evidence Q&A
+              </button>
+              <button 
                 className={activeTab === 'reqs' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('reqs'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'REQS', interaction_type: 'CLICK' }); }}
               >
@@ -197,13 +203,7 @@ export default function App() {
                 className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
               >
-                <Layers size={16} /> V4 vs iTravel
-              </button>
-              <button 
-                className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
-              >
-                <AlertTriangle size={16} /> Risks & Evidence Q&A
+                <Layers size={16} /> Technical Architecture
               </button>
             </nav>
 
@@ -248,31 +248,12 @@ export default function App() {
               </p>
             </div>
 
-            {/* Integration Architecture Topology Card */}
-            <div className="card" style={{ padding: '24px', background: '#f8fafc', border: '2px solid var(--navy-900)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <GitMerge size={22} color="var(--navy-900)" />
-                <h3 className="parent-title-dt" style={{ margin: 0 }}>{OMS_ARCHITECTURE_TOPOLOGY.title}</h3>
-              </div>
-              <p style={{ fontSize: '14px', fontWeight: '600', color: '#0369a1', marginBottom: '16px' }}>{OMS_ARCHITECTURE_TOPOLOGY.subtitle}</p>
-
-              <pre style={{ background: 'var(--navy-900)', color: '#38bdf8', padding: '20px', borderRadius: 'var(--radius-card)', fontSize: '12px', overflowX: 'auto', border: '1px solid var(--gold-500)' }}>
-                {OMS_ARCHITECTURE_TOPOLOGY.diagram}
-              </pre>
-
-              <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', marginTop: '16px' }}>
-                <h4 className="child-title-dt" style={{ marginBottom: '10px', color: '#15803d' }}>Architectural Confirmation & Principles:</h4>
-                <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--slate-800)', margin: 0 }}>
-                  {OMS_ARCHITECTURE_TOPOLOGY.keyTakeaways.map((item, idx) => (
-                    <li key={idx} style={{ marginBottom: '8px', lineHeight: '1.5' }}><strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
             {/* Interactive End-to-End Multi-Modal Journey Stepper */}
             <div className="card" style={{ padding: '24px' }}>
-              <h3 className="parent-title-dt" style={{ marginBottom: '8px' }}>1. End-to-End Multi-Modal Customer Journey</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <Compass size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>End-to-End Multi-Modal Customer Journey</h3>
+              </div>
               <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>Select any step in the multi-product booking lifecycle to see the exact V4 API calls, iTravel API calls, and Rules Engine validations triggered:</p>
 
               {/* Journey Steps Horizontal Tabs */}
@@ -342,42 +323,6 @@ export default function App() {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Persona Views */}
-            <div className="card" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <Users size={22} color="var(--navy-900)" />
-                <h3 className="parent-title-dt" style={{ margin: 0 }}>2. Persona Reference ("I am a...")</h3>
-              </div>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>Multi-modal guidance tailored for key project roles:</p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-                {BUSINESS_PERSONAS.map((p) => (
-                  <div key={p.id} style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <div>
-                      <div style={{ backgroundColor: 'var(--navy-900)', color: '#fff', padding: '6px 12px', borderRadius: 'var(--radius-icon)', fontSize: '12px', fontWeight: '700', display: 'inline-block', marginBottom: '12px' }}>
-                        {p.title}
-                      </div>
-                      <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '12px' }}>{p.focus}</p>
-
-                      <h5 style={{ fontSize: '11px', fontWeight: '700', color: 'var(--navy-800)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Key Questions Solved:</h5>
-                      <ul style={{ paddingLeft: '18px', fontSize: '12px', color: 'var(--slate-700)', marginBottom: '16px' }}>
-                        {p.keyQuestions.map((q, idx) => (
-                          <li key={idx} style={{ marginBottom: '6px' }}>{q}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div style={{ background: '#fff', padding: '12px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)' }}>
-                      <h5 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase' }}>Recommended APIs:</h5>
-                      {p.recommendedAPIs.map((api, idx) => (
-                        <div key={idx} style={{ fontSize: '12px', fontWeight: '600', color: 'var(--navy-900)', marginTop: '4px' }}>• {api}</div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
           </div>
@@ -687,14 +632,39 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 6: ARCHITECTURE COMPARISON */}
+        {/* TAB 5: TECHNICAL ARCHITECTURE & PROTOCOL TOPOLOGY */}
         {activeTab === 'arch' && (
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <div>
-              <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
-              <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
-              <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Elevate.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Integration Architecture Topology Card */}
+            <div className="card" style={{ padding: '24px', background: '#f8fafc', border: '2px solid var(--navy-900)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <GitMerge size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>{OMS_ARCHITECTURE_TOPOLOGY.title}</h3>
+              </div>
+              <p style={{ fontSize: '14px', fontWeight: '600', color: '#0369a1', marginBottom: '16px' }}>{OMS_ARCHITECTURE_TOPOLOGY.subtitle}</p>
+
+              <pre style={{ background: 'var(--navy-900)', color: '#38bdf8', padding: '20px', borderRadius: 'var(--radius-card)', fontSize: '12px', overflowX: 'auto', border: '1px solid var(--gold-500)' }}>
+                {OMS_ARCHITECTURE_TOPOLOGY.diagram}
+              </pre>
+
+              <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)', marginTop: '16px' }}>
+                <h4 className="child-title-dt" style={{ marginBottom: '10px', color: '#15803d' }}>Architectural Confirmation & Principles:</h4>
+                <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--slate-800)', margin: 0 }}>
+                  {OMS_ARCHITECTURE_TOPOLOGY.keyTakeaways.map((item, idx) => (
+                    <li key={idx} style={{ marginBottom: '8px', lineHeight: '1.5' }}><strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
+
+            {/* Platform Comparison Table */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
+                <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
+                <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Elevate.</p>
+              </div>
 
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
@@ -743,6 +713,7 @@ export default function App() {
               </tbody>
             </table>
           </div>
+        </div>
         )}
 
         {/* TAB 5: ARCHITECTURE & OPERATING MODEL RISKS Q&A EVIDENCE MATRIX */}
