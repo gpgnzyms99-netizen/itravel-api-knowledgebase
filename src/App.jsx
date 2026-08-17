@@ -696,36 +696,55 @@ export default function App() {
         {/* TAB 6: ARCHITECTURE COMPARISON */}
         {activeTab === 'arch' && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <h2 className="parent-title-dt">TravCorp V4 vs iTravel Architecture Matrix</h2>
+            <div>
+              <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
+              <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
+              <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Elevate.</p>
+            </div>
 
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ background: 'var(--navy-900)', color: '#fff' }}>
-                  <th style={{ padding: '12px 16px', borderRadius: 'var(--radius-icon) 0 0 0' }}>Dimension</th>
-                  <th style={{ padding: '12px 16px' }}>TravCorp V4 (Distribution API)</th>
-                  <th style={{ padding: '12px 16px', borderRadius: '0 var(--radius-icon) 0 0' }}>iTravel Connect (IBS OMS)</th>
+                  <th style={{ padding: '12px 16px', borderRadius: 'var(--radius-icon) 0 0 0', width: '22%' }}>Dimension</th>
+                  <th style={{ padding: '12px 16px', width: '39%' }}>TravCorp V4 (Distribution API)</th>
+                  <th style={{ padding: '12px 16px', borderRadius: '0 var(--radius-icon) 0 0', width: '39%' }}>iTravel Connect (IBS OMS)</th>
                 </tr>
               </thead>
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Abstraction</td>
-                  <td style={{ padding: '12px 16px' }}>Touring product (brand, tour, option, departure)</td>
-                  <td style={{ padding: '12px 16px' }}>Order Basket & Super PNR (multi-product bundle)</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Platform Owner / Provider</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '600', color: '#0284c7' }}>The Travel Corporation (TTC Internal Tech)</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '600', color: '#7c3aed' }}>IBS Software (iTravel Product Suite)</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Search Architecture</td>
-                  <td style={{ padding: '12px 16px' }}>Direct database reads against source</td>
-                  <td style={{ padding: '12px 16px' }}>Cached Powershopping tier for sub-second search</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Core System Role</td>
+                  <td style={{ padding: '12px 16px' }}>Touring Product Distribution API & Inventory Gateway</td>
+                  <td style={{ padding: '12px 16px' }}>Central Order Management System (OMS) & Gateway</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Concurrency & Locking</td>
-                  <td style={{ padding: '12px 16px' }}>Scoped to single booking reference</td>
-                  <td style={{ padding: '12px 16px' }}>Pessimistic freeze locks & 8 distinct booking states</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Business Domains</td>
+                  <td style={{ padding: '12px 16px' }}>Guided Land Tours (Trafalgar, Insight, Contiki, Costsaver)</td>
+                  <td style={{ padding: '12px 16px' }}>Uniworld River Cruises & Multi-Modal Bundled Carts</td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Strategic Position</td>
-                  <td style={{ padding: '12px 16px' }}>Touring Product & Inventory Master</td>
-                  <td style={{ padding: '12px 16px' }}>Basket Composition & Multi-Product Servicing Layer</td>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Backend Source Systems</td>
+                  <td style={{ padding: '12px 16px' }}>Tropics (Guided Tour Booking Engine) & Longitude</td>
+                  <td style={{ padding: '12px 16px' }}>iTravel Cruise Engine v6.0 & Super PNR Master Store</td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>UI Integration Topology</td>
+                  <td style={{ padding: '12px 16px' }}>Invoked internally by iTravel OMS (Never called from UI)</td>
+                  <td style={{ padding: '12px 16px' }}>Exposes single unified REST API Gateway directly to UI</td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Abstraction</td>
+                  <td style={{ padding: '12px 16px' }}>Touring product (brand, tour, option, departure)</td>
+                  <td style={{ padding: '12px 16px' }}>Multi-Product Order Basket & Super PNR</td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                  <td style={{ padding: '12px 16px', fontWeight: '700' }}>Key Responsibilities</td>
+                  <td style={{ padding: '12px 16px' }}>Land tour departures, hotel allotments, optional experiences</td>
+                  <td style={{ padding: '12px 16px' }}>Cruise cabin holds, transit buffer rules engine, unified guest invoice, net billing</td>
                 </tr>
               </tbody>
             </table>
