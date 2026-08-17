@@ -290,29 +290,7 @@ export default function App() {
               )}
             </div>
 
-            {/* Target Business Personas Grid */}
-            <div className="card" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <Users size={22} color="var(--navy-900)" />
-                <h3 className="parent-title-dt" style={{ margin: 0 }}>Business Personas & Operational Value</h3>
-              </div>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>How the iTravel OMS & V4 integration transforms daily operations across key stakeholder roles:</p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-                {BUSINESS_PERSONAS.map((p, idx) => (
-                  <div key={idx} style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div>
-                      <span className="badge badge-booking" style={{ background: 'var(--navy-900)', color: '#fff' }}>{p.role}</span>
-                      <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--navy-900)', marginTop: '8px', marginBottom: '4px' }}>{p.title}</h4>
-                      <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>{p.focus}</p>
-                    </div>
-                    <div style={{ background: '#fff', padding: '12px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)' }}>
-                      <p style={{ fontSize: '13px', color: 'var(--slate-800)', margin: 0, lineHeight: '1.5' }}><strong>Value:</strong> {p.value}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
           </div>
         )}
