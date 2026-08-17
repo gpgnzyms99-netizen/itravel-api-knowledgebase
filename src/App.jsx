@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE, QUIZ_QUESTIONS } from './data/apiData';
-import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut } from 'lucide-react';
+import { BUSINESS_JOURNEYS, BUSINESS_PERSONAS } from './data/businessData';
+import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -18,11 +19,14 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const [activeTab, setActiveTab] = useState('kb'); // 'kb' | 'quiz' | 'arch' | 'trade'
+  const [activeTab, setActiveTab] = useState('biz'); // Default to 'biz' for Business Audience! ('biz' | 'kb' | 'quiz' | 'trade' | 'arch')
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedEndpoint, setSelectedEndpoint] = useState(API_KNOWLEDGE_BASE[0]);
   const [copiedField, setCopiedField] = useState(null);
+
+  // Business Guide Selected Journey Step
+  const [selectedJourneyStep, setSelectedJourneyStep] = useState(BUSINESS_JOURNEYS[0]);
 
   // Quiz State
   const [quizIndex, setQuizIndex] = useState(0);
@@ -40,7 +44,6 @@ export default function App() {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    // Authorized Access Passcode
     if (passwordInput.trim() === 'itravel2026' || passwordInput.trim() === 'ttc2026') {
       setIsAuthenticated(true);
       localStorage.setItem('itravel_kb_authenticated', 'true');
@@ -166,17 +169,23 @@ export default function App() {
               </div>
               <h1 style={{ fontSize: '22px', fontWeight: '700', letterSpacing: '-0.02em', margin: 0 }}>iTravel Connect & Cruise API Knowledge Base</h1>
             </div>
-            <p style={{ fontSize: '12px', color: 'var(--slate-400)', marginTop: '4px' }}>Unified Technical Reference, OpenAPI Specifications, & Team Assessment Hub</p>
+            <p style={{ fontSize: '12px', color: 'var(--slate-400)', marginTop: '4px' }}>Unified Business Capability Reference, Technical OpenAPI Specifications, & Team Assessment Hub</p>
           </div>
 
           {/* Navigation Tabs & Logout */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <nav style={{ display: 'flex', gap: '8px' }}>
               <button 
+                className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
+              >
+                <Briefcase size={16} /> Business Guide ("Which API Does What?")
+              </button>
+              <button 
                 className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
               >
-                <BookOpen size={16} /> API Catalog
+                <BookOpen size={16} /> API Technical Catalog
               </button>
               <button 
                 className={activeTab === 'quiz' ? 'btn-accent' : 'btn-primary'}
@@ -223,6 +232,184 @@ export default function App() {
 
       {/* Main Content Area */}
       <main style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '24px auto', padding: '0 24px' }}>
+        
+        {/* TAB 1: BUSINESS GUIDE ("WHICH API DOES WHAT?") */}
+        {activeTab === 'biz' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            
+            {/* Executive Hero Banner */}
+            <div className="card" style={{ background: 'linear-gradient(135deg, var(--navy-900) 0%, var(--navy-800) 100%)', color: '#fff', padding: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <Compass size={28} color="var(--gold-500)" />
+                <h2 style={{ fontSize: '24px', fontWeight: '700', letterSpacing: '-0.01em', margin: 0 }}>Business Audience Guide: "Which API Does What?"</h2>
+              </div>
+              <p style={{ fontSize: '15px', color: 'var(--slate-200)', maxWidth: '900px', lineHeight: '1.6' }}>
+                Designed specifically for Product Managers, Business Analysts, Commercial Leads, and Operations Managers. This guide maps the end-to-end guest booking journey directly to iTravel Connect APIs and explains their commercial impact in plain business terms.
+              </p>
+            </div>
+
+            {/* Interactive End-to-End Guest Journey Stepper */}
+            <div className="card" style={{ padding: '24px' }}>
+              <h3 className="parent-title-dt" style={{ marginBottom: '8px' }}>1. End-to-End Guest Booking Journey</h3>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>Select any step in the customer lifecycle to see which iTravel APIs power that stage and what commercial goals they accomplish:</p>
+
+              {/* Journey Steps Horizontal Tabs */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px', marginBottom: '24px' }}>
+                {BUSINESS_JOURNEYS.map((j) => (
+                  <button
+                    key={j.step}
+                    onClick={() => { setSelectedJourneyStep(j); trackTelemetry({ block_type: 'JOURNEY_STEP', block_id: `STEP_${j.step}`, interaction_type: 'CLICK' }); }}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 'var(--radius-accordion)',
+                      border: selectedJourneyStep.step === j.step ? '2px solid var(--gold-500)' : '1px solid var(--color-border-subtle)',
+                      backgroundColor: selectedJourneyStep.step === j.step ? 'var(--navy-900)' : '#f8fafc',
+                      color: selectedJourneyStep.step === j.step ? '#fff' : 'var(--navy-900)',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <div style={{ fontSize: '11px', fontWeight: '800', color: selectedJourneyStep.step === j.step ? 'var(--gold-500)' : 'var(--color-text-muted)', textTransform: 'uppercase' }}>Step {j.step}</div>
+                    <div style={{ fontSize: '13px', fontWeight: '700', marginTop: '2px' }}>{j.stageName.split('. ')[1]}</div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected Journey Step Detail Box */}
+              {selectedJourneyStep && (
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span className="badge badge-shopping" style={{ background: 'var(--gold-500)', color: '#fff' }}>Step {selectedJourneyStep.step} of 7</span>
+                      <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>{selectedJourneyStep.stageName} — {selectedJourneyStep.tagline}</h2>
+                    </div>
+                  </div>
+
+                  <p style={{ fontSize: '14px', color: 'var(--color-text-main)' }}>{selectedJourneyStep.description}</p>
+
+                  <div style={{ background: '#f0fdf4', padding: '14px 18px', borderRadius: 'var(--radius-accordion)', border: '1px solid #bbf7d0' }}>
+                    <h5 style={{ fontWeight: '700', color: '#166534', marginBottom: '4px' }}>Commercial & Business Impact</h5>
+                    <p style={{ fontSize: '13px', color: '#15803d', margin: 0 }}>{selectedJourneyStep.businessValue}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>Which iTravel APIs Power This Step?</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px' }}>
+                      {selectedJourneyStep.apisUsed.map((api) => (
+                        <div key={api.title} style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--color-border-subtle)', boxShadow: 'var(--shadow-tag)' }}>
+                          <code style={{ fontSize: '13px', fontWeight: '800', color: 'var(--navy-900)', background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px' }}>{api.title}</code>
+                          <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-800)', margin: '8px 0 4px 0' }}>{api.role}</h5>
+                          <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>{api.whatItDoes}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Persona Views: "I am a..." Section */}
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <Users size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>2. Role-Based Quick Reference ("I am a...")</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '20px' }}>Find the exact APIs relevant to your specific operational role:</p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                {BUSINESS_PERSONAS.map((p) => (
+                  <div key={p.id} style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ backgroundColor: 'var(--navy-900)', color: '#fff', padding: '6px 12px', borderRadius: 'var(--radius-icon)', fontSize: '12px', fontWeight: '700', display: 'inline-block', marginBottom: '12px' }}>
+                        {p.title}
+                      </div>
+                      <p style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-text-muted)', marginBottom: '12px' }}>{p.focus}</p>
+
+                      <h5 style={{ fontSize: '12px', fontWeight: '700', color: 'var(--navy-800)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>Key Questions Solved:</h5>
+                      <ul style={{ paddingLeft: '18px', fontSize: '12px', color: 'var(--slate-700)', marginBottom: '16px' }}>
+                        {p.keyQuestions.map((q, idx) => (
+                          <li key={idx} style={{ marginBottom: '6px' }}>{q}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div style={{ background: '#fff', padding: '12px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)' }}>
+                      <h5 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase' }}>Recommended APIs:</h5>
+                      {p.recommendedAPIs.map((api, idx) => (
+                        <div key={idx} style={{ fontSize: '12px', fontWeight: '600', color: 'var(--navy-900)', marginTop: '4px' }}>• {api}</div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Plain-English Business Capability Matrix */}
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <HelpCircle size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0 }}>3. Plain-English "Which API Does What?" Lookup Table</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '16px' }}>Direct mapping between business questions and iTravel Connect API capabilities:</p>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ background: 'var(--navy-900)', color: '#fff' }}>
+                    <th style={{ padding: '12px 16px', borderRadius: 'var(--radius-icon) 0 0 0' }}>Business Goal / Question</th>
+                    <th style={{ padding: '12px 16px' }}>iTravel API Endpoint</th>
+                    <th style={{ padding: '12px 16px', borderRadius: '0 var(--radius-icon) 0 0' }}>What It Accomplishes (Business Terms)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Search sailings & routes on our website"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>cruiseAggrAvailabilitySearchRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Fetches sub-second available cruises, ship codes, dates, ports of call, and starting prices.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Show suite & balcony room availability"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>cruiseCategoryAvailabilitySearchRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Breaks down room categories, deck levels, base fares, taxes/fees, and refundable pricing.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Apply early-bird or Virtuoso promos"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>fetchApplicablePromotionsRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Evaluates combinable discounts, past-guest loyalty savings, and consortia amenities.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Hold a cabin for 15 minutes while filling details"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>cruiseCabinHoldRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Locks a specific physical cabin number for 15 minutes. Auto-releases if abandoned.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Preview pricing and deposit schedules (Dry Run)"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>createBookingRQ/RS (IsPreview = true)</code></td>
+                    <td style={{ padding: '12px 16px' }}>Dry-runs full package pricing, taxes, deposit due dates, and cancellation penalties without committing state.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Commit order & issue Super PNR"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>createBookingRQ/RS (IsPreview = false)</code></td>
+                    <td style={{ padding: '12px 16px' }}>Commits payment, locks inventory, generates Super PNR reference, and records trade commission mode.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Prevent editing collisions during active modifications"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>freezeBookingRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Applies a session lock (`LockToken`) so call center agents and web agents cannot edit the same booking at the same time.</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>"Cancel booking & compute penalty refund"</td>
+                    <td style={{ padding: '12px 16px' }}><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>cancelBookingRQ/RS</code></td>
+                    <td style={{ padding: '12px 16px' }}>Cancels booking, calculates contractual cancellation penalties, recalls agency commission, and issues credit vouchers.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        )}
+
+        {/* TAB 2: TECHNICAL API CATALOG */}
         {activeTab === 'kb' && (
           <div>
             {/* Search and Filter Bar */}
@@ -367,6 +554,7 @@ export default function App() {
           </div>
         )}
 
+        {/* TAB 3: QUIZ HUB */}
         {activeTab === 'quiz' && (
           <div className="card" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px' }}>
             {!quizCompleted ? (
@@ -454,6 +642,7 @@ export default function App() {
           </div>
         )}
 
+        {/* TAB 4: AGENCY & TRADE RULES */}
         {activeTab === 'trade' && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <h2 className="parent-title-dt">Agency, Agent, Consortia & Commission Rules</h2>
@@ -483,6 +672,7 @@ export default function App() {
           </div>
         )}
 
+        {/* TAB 5: ARCHITECTURE COMPARISON */}
         {activeTab === 'arch' && (
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <h2 className="parent-title-dt">TravCorp V4 vs iTravel Architecture Matrix</h2>
@@ -525,7 +715,7 @@ export default function App() {
       {/* Footer */}
       <footer style={{ backgroundColor: 'var(--navy-900)', color: 'var(--slate-400)', padding: '20px 32px', marginTop: 'auto', borderTop: '1px solid var(--navy-800)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
-          <p>© 2026 The Travel Corporation (TTC) & IBS Software. Password Protected iTravel Knowledge Base.</p>
+          <p>© 2026 The Travel Corporation (TTC) & IBS Software. Business & Technical iTravel Knowledge Base.</p>
           <p>OpenAPI 3.0 Compliant | Amplitude Telemetry Active</p>
         </div>
       </footer>
