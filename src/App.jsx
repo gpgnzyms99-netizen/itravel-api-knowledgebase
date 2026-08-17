@@ -267,27 +267,27 @@ export default function App() {
 
                   <div>
                     <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>API Orchestration & Rules Engine Mapping</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
                       
                       {/* UI Call */}
                       <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
                         <div style={{ fontSize: '11px', fontWeight: '800', color: '#15803d', textTransform: 'uppercase', marginBottom: '4px' }}>Frontend UI → OMS Gateway</div>
                         <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Single UI REST Call</h5>
-                        <code style={{ fontSize: '12px', background: '#dcfce7', color: '#14532d', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.uiCall}</code>
+                        <code style={{ fontSize: '12px', background: '#dcfce7', color: '#14532d', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.uiCall}</code>
                       </div>
 
                       {/* V4 Land Tour Component */}
                       <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
                         <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>TravCorp V4 Adapter (Tropics)</div>
                         <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Land Tour Component</h5>
-                        <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.v4Call}</code>
+                        <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.v4Call}</code>
                       </div>
 
                       {/* iTravel Cruise Component */}
                       <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
                         <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>iTravel Connect Gateway</div>
                         <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>River Cruise Component</h5>
-                        <code style={{ fontSize: '12px', background: '#f3e8ff', color: '#6b21a8', padding: '4px 8px', borderRadius: '4px', display: 'block' }}>{selectedJourneyStep.itravelCall}</code>
+                        <code style={{ fontSize: '12px', background: '#f3e8ff', color: '#6b21a8', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.itravelCall}</code>
                       </div>
 
                     </div>
