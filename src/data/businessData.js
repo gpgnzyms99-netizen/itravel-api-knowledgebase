@@ -40,7 +40,7 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Disparate IDs across systems; requires mapping or centralised solution.",
         answered: "YES",
-        evidence: "Resolved via Salesforce MDM translation layer. MDM maps Tropics Agent ID (AG-101) and Longitude Agent ID (LG-999) to canonical BookingOwner.RequestorID and x-pcc header in iTravel.",
+        evidence: "Resolved via Master translation layer (Salesforce MDM / iTravel Agency Module). Maps legacy Tropics Agent ID (AG-101) to canonical BookingOwner.RequestorID and x-pcc header in iTravel (Longitude is decommissioned).",
         apiRef: "v4 /api/v4/travelAgents & BookingOwner.RequestorID"
       },
       {
@@ -98,7 +98,7 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Legacy logins vs new unified login approach.",
         answered: "YES",
-        evidence: "Okta / Salesforce SSO issues OAuth 2.0 JWTs carrying both modern claims and legacy Tropics/Longitude credentials.",
+        evidence: "Okta / Salesforce SSO issues OAuth 2.0 JWTs carrying both modern claims and legacy Tropics/iTravel credentials.",
         apiRef: "OAuth 2.0 /oauth/token Bearer JWT"
       },
       {
@@ -149,9 +149,9 @@ export const ARCHITECTURE_RISKS_QA = [
         apiRef: "v4 /api/v4/pricing -> minimumFloorPrice"
       },
       {
-        question: "Different deposit, payment, and cancellation rules in Tropics vs Longitude.",
+        question: "Different deposit, payment, and cancellation rules in Tropics vs Cruise (Note: iTravel replaces Longitude)",
         answered: "YES",
-        evidence: "iTravel OMS calculates the most restrictive deposit/cancellation rule across land tour and cruise components and presents a single unified terms schedule on the invoice.",
+        evidence: "iTravel OMS calculates the most restrictive deposit/cancellation rule across land tour (Tropics) and river cruise (iTravel) components and presents a single unified terms schedule on the invoice.",
         apiRef: "iTravel Consolidated Terms Engine"
       },
       {
