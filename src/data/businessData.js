@@ -1,3 +1,227 @@
+export const ARCHITECTURE_RISKS_QA = [
+  {
+    category: "Architecture Validations & Decisions",
+    items: [
+      {
+        question: "Ensure that the final solution caters for all brands hosted in Tropics (i.e. AA, BV, CH, CS, GE, IV, LG, TT)",
+        answered: "YES",
+        evidence: "The TravCorp V4 Adapter layer communicates with Tropics brand IDs (brandCode parameter in /api/v4/tourDepartures). The iTravel OMS BookingOwner and LineItem schemas support all 8 Tropics brands dynamically via brand routing rules.",
+        apiRef: "v4 /api/v4/tourDepartures & iTravel LineItem.BrandCode"
+      },
+      {
+        question: "Third party APIs integration strategy",
+        answered: "YES",
+        evidence: "iTravel OMS Gateway acts as a BFF (Backend-For-Frontend), exposing REST/JSON for external partners while orchestrating internal third-party calls (Amadeus, Cybersource, V4 Adapter, Uniworld Cruise Engine).",
+        apiRef: "iTravel OMS REST API Gateway"
+      },
+      {
+        question: "Dynamica integration (into OMS or not?)",
+        answered: "YES",
+        evidence: "Dynamica (CRM / Tour Operations) integrates via async webhook events emitted by iTravel OMS on POST /api/v6/createBooking and modify lifecycle events rather than direct UI polling.",
+        apiRef: "iTravel Webhook Event Bus (/api/v6/webhooks/orders)"
+      },
+      {
+        question: "Master vs. system of record booking management (incl. retrieval of master booking if not all channels are on iTravel front end)",
+        answered: "YES",
+        evidence: "iTravel OMS acts as the Master Super PNR Store for multi-modal orders, while generating sub-booking PNRs in Tropics (v4BookingRef) for legacy channel retrieval via /api/v4/bookings/{id}.",
+        apiRef: "iTravel Super PNR & v4 /api/v4/bookings/{id}"
+      },
+      {
+        question: "Payment system direct integration in iTravel vs. existing Cybersource/Elavon integration and acquirer links.",
+        answered: "YES",
+        evidence: "iTravel Connect supports direct tokenized payment Gateway integration (paymentToken parameter in createBookingRQ), decoupling card processing from legacy acquirers while mapping payment status to Tropics.",
+        apiRef: "createBookingRQ -> PaymentDetails.PaymentToken"
+      }
+    ]
+  },
+  {
+    category: "Travel Agent Identification",
+    items: [
+      {
+        question: "Disparate IDs across systems; requires mapping or centralised solution.",
+        answered: "YES",
+        evidence: "Resolved via Salesforce MDM translation layer. MDM maps Tropics Agent ID (AG-101) and Longitude Agent ID (LG-999) to canonical BookingOwner.RequestorID and x-pcc header in iTravel.",
+        apiRef: "v4 /api/v4/travelAgents & BookingOwner.RequestorID"
+      },
+      {
+        question: "Consultant-level booking tracking adds complexity.",
+        answered: "YES",
+        evidence: "BookingOwner object explicitly contains RequestingUserID (Consultant level) alongside RequestorID (Agency level) and OrgUnitCode (Branch level) in every API request.",
+        apiRef: "BookingOwner.RequestingUserID"
+      },
+      {
+        question: "AAA / TST consultant level API keys",
+        answered: "YES",
+        evidence: "OAuth 2.0 /oauth/token grant carries consultant-level claims inside the signed JWT bearer token, passing AgencyConsortium = 'AAA' or 'TST' in header context.",
+        apiRef: "OAuth 2.0 JWT Claims & BookingOwner.AgencyConsortium"
+      }
+    ]
+  },
+  {
+    category: "Data Mastering & Standardisation",
+    items: [
+      {
+        question: "Customer Data mastering",
+        answered: "YES",
+        evidence: "Salesforce CRM serves as Customer MDM. GuestProfile array in createBookingRQ passes MDMCustomerID to synchronize guest history across iTravel and Tropics.",
+        apiRef: "createBookingRQ -> GuestProfile.MDMCustomerID"
+      },
+      {
+        question: "Handling of canonical destinations and transfer logic.",
+        answered: "YES",
+        evidence: "Uses UN-LOCODE / IATA location masters in /api/v6/masters/locations matched against V4 /api/v4/operatingPoints and /api/v4/locations.",
+        apiRef: "v4 /api/v4/operatingPoints & iTravel Location Masters"
+      },
+      {
+        question: "IBS agency management module vs. MDM/Salesforce/Tropics IDs/Longitude IDs/TAP login/Firebase",
+        answered: "YES",
+        evidence: "Salesforce MDM acts as single source of truth for agent identities, publishing sync webhooks to iTravel OMS and V4 Adapter (/api/v4/travelAgents/sync).",
+        apiRef: "Salesforce MDM Webhooks & v4 /api/v4/travelAgents/sync"
+      },
+      {
+        question: "Current models (e.g., Tropics airport-based) may not fully support geolocation needs.",
+        answered: "YES",
+        evidence: "iTravel OMS Rules Engine converts airport-based Tropics codes to exact lat/long geo-coordinates for GIS buffer validation.",
+        apiRef: "iTravel Rules Engine GIS Distance Validator"
+      },
+      {
+        question: "Customer profiles in iTravel (incl. credits & FTCs) vs. all other TTC profiles",
+        answered: "YES",
+        evidence: "Future Travel Credits (FTC) and guest loyalty tiers are validated via Salesforce MDM and passed into createBookingRQ under PaymentDetails.FormOfPayment = 'FTC'.",
+        apiRef: "PaymentDetails.FormOfPayment = 'FTC'"
+      }
+    ]
+  },
+  {
+    category: "Authentication Migration & GDPR Compliance",
+    items: [
+      {
+        question: "Legacy logins vs new unified login approach.",
+        answered: "YES",
+        evidence: "Okta / Salesforce SSO issues OAuth 2.0 JWTs carrying both modern claims and legacy Tropics/Longitude credentials.",
+        apiRef: "OAuth 2.0 /oauth/token Bearer JWT"
+      },
+      {
+        question: "Need for re-registration of agents.",
+        answered: "YES",
+        evidence: "Okta migration scripts bulk-provision agent profiles from Salesforce MDM, eliminating manual agent re-registration.",
+        apiRef: "Okta / Salesforce MDM User Sync"
+      },
+      {
+        question: "Ensure GDPR compliance while having data and profiles scattered across platforms",
+        answered: "YES",
+        evidence: "PII data anonymization webhooks propagate Right-To-Be-Forgotten (RTBF) requests from Salesforce MDM down to iTravel OMS and Tropics DB.",
+        apiRef: "iTravel GDPR Anonymization API (/api/v6/privacy/anonymize)"
+      }
+    ]
+  },
+  {
+    category: "Rules Engine & Policy Management",
+    items: [
+      {
+        question: "Avoid rule conflicts and overwrites.",
+        answered: "YES",
+        evidence: "iTravel Rules Engine Microservice enforces priority-based evaluation trees with explicit override precedence (Consortia > Promo Code > Standard Rate).",
+        apiRef: "iTravel Rules Engine Microservice"
+      },
+      {
+        question: "Ensure maintainability and transparency (historical issues with coded rules).",
+        answered: "YES",
+        evidence: "Externalized JSON/DMN decision tables in iTravel OMS replace hardcoded legacy C#/SQL triggers.",
+        apiRef: "iTravel DMN Decision Matrix"
+      },
+      {
+        question: "Need to amend reservation platforms to remove logic, booking integrity checks, validations and policies use.",
+        answered: "YES",
+        evidence: "Centralizes booking integrity checks (deposit rules, age limits, transit windows) in iTravel OMS before dispatching requests to Tropics.",
+        apiRef: "iTravel Pre-Commit Validation Engine"
+      },
+      {
+        question: "Margin Management (Amadeus Air Margin Manager is external)",
+        answered: "YES",
+        evidence: "Net vs Gross billing control via BookingOwner.NetPayApplicable enables margin calculations prior to external air ticketing.",
+        apiRef: "BookingOwner.NetPayApplicable"
+      },
+      {
+        question: "Get Floor price flowing from tropics to rules engine.",
+        answered: "YES",
+        evidence: "V4 Adapter retrieves minimumFloorPrice from Tropics /api/v4/pricing to feed the OMS Rules Engine.",
+        apiRef: "v4 /api/v4/pricing -> minimumFloorPrice"
+      },
+      {
+        question: "Different deposit, payment, and cancellation rules in Tropics vs Longitude.",
+        answered: "YES",
+        evidence: "iTravel OMS calculates the most restrictive deposit/cancellation rule across land tour and cruise components and presents a single unified terms schedule on the invoice.",
+        apiRef: "iTravel Consolidated Terms Engine"
+      },
+      {
+        question: "Promotions and discounts vary by brand; need logic for bundle-level offers.",
+        answered: "YES",
+        evidence: "fetchApplicablePromotionsRQ/RS evaluates multi-product combinability rules for bundled discounts.",
+        apiRef: "fetchApplicablePromotionsRQ/RS"
+      }
+    ]
+  },
+  {
+    category: "Commission & Product Management",
+    items: [
+      {
+        question: "Multiple commission structures per brand, product, agency, groups and consortia.",
+        answered: "YES",
+        evidence: "BookingOwner schema evaluates AgencyConsortium (Virtuoso, AAA) and PayToSelf overrides to compute split commissions per line item.",
+        apiRef: "BookingOwner.AgencyConsortium & PayToSelf"
+      },
+      {
+        question: "Risk of misalignment when combining products.",
+        answered: "YES",
+        evidence: "iTravel OMS generates a line-item commission breakdown ledger in the Super PNR before syncing sub-bookings to Tropics.",
+        apiRef: "iTravel Super PNR Commission Ledger"
+      },
+      {
+        question: "Canonical model for all suppliers' products.",
+        answered: "YES",
+        evidence: "Unified LineItem schema (Type = CRUISE | TOUR | RAIL | TRANSFER).",
+        apiRef: "iTravel LineItem Generic Schema"
+      },
+      {
+        question: "Cabins vs rooms management",
+        answered: "YES",
+        evidence: "cruiseCabinAvailabilitySearch maps physical ship cabins (deck grids), while V4 Adapter maps land tour hotel room categories.",
+        apiRef: "cruiseCabinAvailabilitySearch & v4 /api/v4/tourOptions"
+      },
+      {
+        question: "Age restrictions (contractually and OP based) and validations",
+        answered: "YES",
+        evidence: "Rules engine validates passenger BirthDate against product minimum age constraints (e.g. Contiki 18-35 vs Uniworld 8+).",
+        apiRef: "Passenger.BirthDate & Rules Engine Validation"
+      }
+    ]
+  },
+  {
+    category: "Business Cycle & Post-Booking Servicing",
+    items: [
+      {
+        question: "Notifications and alerts (e.g. hotel changes) from Tropics or OMS?",
+        answered: "YES",
+        evidence: "Webhook event bus (/api/v6/webhooks/itinerary-alerts) dispatches automated SMS/email alerts to guests upon hotel or schedule changes.",
+        apiRef: "iTravel Webhooks (/api/v6/webhooks/itinerary-alerts)"
+      },
+      {
+        question: "Post booking transactions, amendments, cancellations",
+        answered: "YES",
+        evidence: "Full post-booking lifecycle supported via modifyRQ/RS, freezeBookingRQ/RS (pessimistic lock), and cancelBookingRQ/RS.",
+        apiRef: "modifyRQ/RS, freezeBookingRQ/RS, cancelBookingRQ/RS"
+      },
+      {
+        question: "Finance processes, payments reconciliation, revenue recognition.",
+        answered: "YES",
+        evidence: "Super PNR ledger tracks gross cash receipts vs net revenue recognition, syncing sub-ledger entries to Tropics and SAP/Oracle Financials.",
+        apiRef: "Super PNR Revenue Ledger Sync"
+      }
+    ]
+  }
+];
+
 export const OMS_ARCHITECTURE_TOPOLOGY = {
   title: "iTravel OMS Gateway & Protocol Topology",
   subtitle: "REST/JSON for External Gateway & Optional internal gRPC/HTTP2 for East-West Microservices",
@@ -19,7 +243,7 @@ export const OMS_ARCHITECTURE_TOPOLOGY = {
 |  * Super PNR Basket Composition & Single Customer Invoice         |
 +-------------------------------------------------------------------+
              /                    |                    \
-            /  Internal           |  Internal           \  REST/JSON
+            /  Internal           |  Internal           \  REST / JSON
            /   gRPC / HTTP2       |  gRPC / HTTP2        \ Adapter
           v                       v                       v
 +-------------------+   +-------------------+   +-------------------+

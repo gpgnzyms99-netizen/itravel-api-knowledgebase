@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE, QUIZ_QUESTIONS } from './data/apiData';
-import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, BUSINESS_PERSONAS, OMS_ARCHITECTURE_TOPOLOGY } from './data/businessData';
-import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass, CheckSquare, Server, Cpu, GitMerge } from 'lucide-react';
+import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, BUSINESS_PERSONAS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
+import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass, CheckSquare, Server, Cpu, GitMerge, FileText, AlertTriangle } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -198,6 +198,12 @@ export default function App() {
                 onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
               >
                 <Layers size={16} /> V4 vs iTravel
+              </button>
+              <button 
+                className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
+              >
+                <AlertTriangle size={16} /> Risks & Evidence Q&A
               </button>
             </nav>
 
@@ -736,6 +742,54 @@ export default function App() {
                 </tr>
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* TAB 5: ARCHITECTURE & OPERATING MODEL RISKS Q&A EVIDENCE MATRIX */}
+        {activeTab === 'qa' && (
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Elevate Operating Model Assessment</span>
+              <h2 className="parent-title-dt" style={{ marginTop: '8px', color: 'var(--navy-900)' }}>Architecture & Operating Model Risks — Evidence & Solutions Matrix</h2>
+              <p style={{ color: 'var(--color-text-muted)' }}>Direct answers (YES/NO) and technical API/POC evidence addressing the 28 risk questions from the Elevate Third-Party Architecture Assessment.</p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {ARCHITECTURE_RISKS_QA.map((cat, idx) => (
+                <div key={idx} style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', borderBottom: '2px solid var(--navy-900)', paddingBottom: '8px' }}>
+                    <AlertTriangle size={20} color="#dc2626" />
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--navy-900)', margin: 0 }}>{cat.category}</h3>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {cat.items.map((item, itemIdx) => (
+                      <div key={itemIdx} style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                          <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: 0, flex: 1 }}>
+                            "{item.question}"
+                          </h4>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800', textTransform: 'uppercase' }}>
+                            <CheckCircle size={14} color="#166534" />
+                            {item.answered}
+                          </span>
+                        </div>
+
+                        <div style={{ background: '#f0fdf4', padding: '12px 16px', borderRadius: 'var(--radius-accordion)', border: '1px solid #bbf7d0' }}>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Technical Evidence & Solution:</div>
+                          <p style={{ fontSize: '13px', color: '#14532d', margin: 0, lineHeight: '1.5', fontWeight: '500' }}>{item.evidence}</p>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-500)' }}>API / Contract Reference:</span>
+                          <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>{item.apiRef}</code>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>
