@@ -17,8 +17,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Dynamica integration (into OMS or not?)",
         answered: "YES",
-        evidence: "Dynamica (CRM / Tour Operations) integrates via async webhook events emitted by iTravel OMS on createBookingRQ/RS and modifyRQ/RS lifecycle events rather than direct UI polling.",
-        apiRef: "iTravel Webhook Event Bus"
+        evidence: "Dynamica (CRM / Tour Operations) integrates via async outbound webhook events emitted by iTravel OMS on createBookingRQ/RS and modifyRQ/RS lifecycle events rather than direct UI polling.",
+        apiRef: "iTravel Async Outbound Event Bus"
       },
       {
         question: "Master vs. system of record booking management (incl. retrieval of master booking if not all channels are on iTravel front end)",
@@ -58,7 +58,7 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "AAA / TST consultant level API keys",
         answered: "YES",
-        evidence: "OAuth 2.0 POST /token grant on the Auth host carries consultant-level claims inside the signed JWT bearer token, passing AgencyConsortium = 'AAA' or 'TST' in header context.",
+        evidence: "OAuth 2.0 POST /token grant on the dedicated Auth host carries consultant-level claims inside the signed JWT bearer token, passing AgencyConsortium = 'AAA' or 'TST' in header context.",
         apiRef: "OAuth 2.0 JWT Claims & BookingOwner.AgencyConsortium"
       }
     ]
@@ -75,14 +75,14 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Handling of canonical destinations and transfer logic.",
         answered: "YES",
-        evidence: "Uses UN-LOCODE / IATA location masters in iTravel Location Master matched against V4 /ssp/brands/{brand}/regions/.../departures/{id}/operatingPoints.",
-        apiRef: "V4 SSP Operating Points & iTravel Location Masters"
+        evidence: "Uses UN-LOCODE / IATA location masters in iTravel Location Master matched against V4 SSP transfer sub-resources.",
+        apiRef: "V4 SSP Transfers & iTravel Location Masters"
       },
       {
         question: "IBS agency management module vs. MDM/Salesforce/Tropics IDs/TAP login/Firebase",
         answered: "YES",
         evidence: "TTC Open Decision Point: Salesforce MDM (Option A) or iTravel OMS (Option B) acts as the Golden Agency Master. Note: Longitude is currently active in Uniworld operations and is contracted to be replaced by iTravel Connect by End of 2027.",
-        apiRef: "Salesforce MDM / iTravel Agency Module Sync (Target Replacement 4Q2027)"
+        apiRef: "Salesforce MDM / iTravel Agency Module Sync (Target Replacement End 2027)"
       },
       {
         question: "Current models (e.g., Tropics airport-based) may not fully support geolocation needs.",
@@ -117,7 +117,7 @@ export const ARCHITECTURE_RISKS_QA = [
         question: "Ensure GDPR compliance while having data and profiles scattered across platforms",
         answered: "YES",
         evidence: "PII data anonymization webhooks propagate Right-To-Be-Forgotten (RTBF) requests from Salesforce MDM down to iTravel OMS and Tropics DB.",
-        apiRef: "iTravel GDPR Anonymization API"
+        apiRef: "iTravel GDPR Anonymization Pipeline"
       }
     ]
   },
@@ -163,7 +163,7 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Promotions and discounts vary by brand; need logic for bundle-level offers.",
         answered: "YES",
-        evidence: "fetchApplicablePromotionsRQ/RS evaluates multi-product combinability rules for bundled discounts under /iTravel/selling/api/public-cruise/fetchApplicablePromotions.",
+        evidence: "fetchApplicablePromotionsRQ/RS evaluates multi-product combinability rules for bundled discounts via public-be-cruise promotions service.",
         apiRef: "fetchApplicablePromotionsRQ/RS"
       }
     ]
@@ -192,8 +192,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Cabins vs rooms management",
         answered: "YES",
-        evidence: "cruiseCabinAvailabilitySearch maps physical ship cabins (deck grids), while V4 Adapter maps land tour hotel room categories via /brands/{brand}/tours/{tourId}/options/{optionId}.",
-        apiRef: "cruiseCabinAvailabilitySearch & V4 Tour Options"
+        evidence: "Category availability search maps ship categories, while V4 Adapter maps land tour hotel room categories via /brands/{brand}/tours/{tourId}/options/{optionId}.",
+        apiRef: "Category Availability & V4 Tour Options"
       },
       {
         question: "Age restrictions (contractually and OP based) and validations",
@@ -209,13 +209,13 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Notifications and alerts (e.g. hotel changes) from Tropics or OMS?",
         answered: "YES",
-        evidence: "Webhook event bus dispatches automated SMS/email alerts to guests upon hotel or schedule changes.",
-        apiRef: "iTravel Webhooks"
+        evidence: "Async event bus dispatches automated SMS/email alerts to guests upon hotel or schedule changes.",
+        apiRef: "iTravel Outbound Notifications"
       },
       {
         question: "Post booking transactions, amendments, cancellations",
         answered: "YES",
-        evidence: "Full post-booking lifecycle supported via modifyRQ/RS, freezeBookingRQ/RS (pessimistic lock), and cancelBookingRQ/RS under /iTravel/selling/api/public-booking/.",
+        evidence: "Full post-booking lifecycle supported via modifyRQ/RS, freezeBookingRQ/RS (pessimistic lock), and cancelBookingRQ/RS.",
         apiRef: "modifyRQ/RS, freezeBookingRQ/RS, cancelBookingRQ/RS"
       },
       {
@@ -230,7 +230,7 @@ export const ARCHITECTURE_RISKS_QA = [
 
 export const OMS_ARCHITECTURE_TOPOLOGY = {
   title: "iTravel OMS Gateway & Protocol Topology",
-  subtitle: "Standard REST/JSON over HTTPS for REST Surface & RPC Public Surfaces",
+  subtitle: "REST Resource Surface & IBS RPC Services",
   diagram: `
 +-------------------------------------------------------------------+
 |                        FRONTEND CLIENT UI                          |
@@ -244,8 +244,8 @@ export const OMS_ARCHITECTURE_TOPOLOGY = {
 |                   iTRAVEL OMS GATEWAY / ADAPTER                   |
 |                  (Single Point of Orchestration)                  |
 |                                                                   |
-|  * Public REST Gateway (/v7/rest/bookings)                        |
-|  * Public RPC Surface (/iTravel/selling/api/public-booking)       |
+|  * Public REST Gateway (POST /v7/rest/bookings)                   |
+|  * Public Power-Shopping (POST /v7/rest/public-power-shopping)    |
 |  * Configurable Rules Engine & Super PNR Single Customer Invoice  |
 +-------------------------------------------------------------------+
              /                    |                    \
@@ -255,12 +255,12 @@ export const OMS_ARCHITECTURE_TOPOLOGY = {
 +-------------------+   +-------------------+   +-------------------+
 |  iTRAVEL CRUISE   |   |   POWERSHOPPING   |   |    TRAVCORP V4    |
 | INVENTORY ENGINE  |   |    CACHE TIER     |   |   ADAPTER LAYER   |
-| (Ship Cabins)     |   | (Fast Search DB)  |   | (Tropics Engine)  |
+| (Ship Categories) |   | (Fast Search DB)  |   | (Tropics Engine)  |
 +-------------------+   +-------------------+   +-------------------+
 `,
   keyTakeaways: [
     "External Interface (North-South): REST / JSON over HTTPS with OAuth 2.0 JWT Bearer authentication (issued via POST /token on dedicated Auth host) is the standard protocol for all UI portals, B2B agency connections, and external integrations.",
-    "iTravel Connect Surfaces: REST resource endpoints exist at /v7/rest/bookings, while RPC message pairs execute on /iTravel/selling/api/public-booking and /iTravel/selling/api/public-cruise.",
+    "iTravel Connect Surface: Canonical REST booking resource is POST /v7/rest/bookings, while power-shopping endpoints reside under /v7/rest/public-power-shopping/cruises/fetch.",
     "TravCorp V4 Adapter Interface: Connects via standard REST / JSON over HTTPS to TravCorp V4 endpoints (/brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability, /booking, /bookings/{bookingReference}).",
     "Protocol Summary: All client and internal integration flows run over clean REST/JSON APIs on HTTPS."
   ]
@@ -271,15 +271,15 @@ export const ELEVATE_REQUIREMENTS = [
     id: "req_1",
     category: "Unified Booking Basket",
     requirement: "Ability to book multiple products (e.g. tours, cruises, rail) in a single shopping cart while maintaining records in legacy systems (Tropics, Longitude).",
-    itravelApi: "createBookingRQ/RS (/iTravel/selling/api/public-booking/createBooking or REST /v7/rest/bookings)",
+    itravelApi: "POST /v7/rest/bookings (Connect REST) & createBookingRQ/RS (IBS RPC)",
     v4Api: "V4 /brands/{brand}/.../departures/{id}/book & /booking (REST/JSON)",
-    howItWorks: "UI calls iTravel OMS createBooking via REST/JSON. iTravel OMS internally calls V4 Adapter to write land tour records to Tropics, while saving cruise line items in iTravel. UI receives one Super PNR."
+    howItWorks: "UI calls iTravel OMS createBooking via REST/JSON (POST /v7/rest/bookings). iTravel OMS internally calls V4 Adapter to write land tour records to Tropics, while saving cruise line items in iTravel. UI receives one Super PNR."
   },
   {
     id: "req_2",
     category: "Flexible Booking Conditions",
     requirement: "Support variable deposit policies, payment schedules, cancellation rules, and bundled promotional pricing across brands.",
-    itravelApi: "fetchApplicablePromotionsRQ/RS & createBookingRQ/RS (IsPreview = true)",
+    itravelApi: "fetchApplicablePromotionsRQ/RS & POST /v7/rest/bookings (IsPreview = true)",
     v4Api: "V4 /brands/{brand}/.../departures/{id}/quote & promotion rules",
     howItWorks: "UI calls iTravel preview mode via REST. iTravel OMS orchestrates pricing queries across V4 land tours and iTravel cruises, returning a single unified deposit schedule and bundled promo discounts."
   },
@@ -304,15 +304,15 @@ export const ELEVATE_REQUIREMENTS = [
     category: "Configurable Rules Engine",
     requirement: "Implement a configurable rules engine to manage product combinations (tours + cruises), transfer times, check-in/check-out logic, and pricing.",
     itravelApi: "iTravel Rules Engine Microservice / Transfer Buffer Validator",
-    v4Api: "V4 SSP Operating Points",
-    howItWorks: "Queries V4 SSP operating points for land tour drop-off times/hubs and compares against iTravel pier embarkation cutoff, enforcing a minimum 3-hour transfer buffer."
+    v4Api: "V4 SSP Transfers & Locations",
+    howItWorks: "Queries V4 SSP transfer endpoints for land tour drop-off times/hubs and compares against iTravel pier embarkation cutoff, enforcing a minimum 3-hour transfer buffer."
   },
   {
     id: "req_6",
     category: "Canonical Data Model",
     requirement: "Standardise location and destination data for linking components, supporting geolocation and hub-based connectivity.",
     itravelApi: "iTravel Location & Hub Master APIs",
-    v4Api: "V4 SSP Locations & Operating Points",
+    v4Api: "V4 SSP Locations & Transfers",
     howItWorks: "Uses canonical UN-LOCODE / IATA location codes and geo-coordinates to link hotel drop-off hubs with river cruise docking piers."
   },
   {
@@ -335,7 +335,7 @@ export const ELEVATE_REQUIREMENTS = [
     id: "req_9",
     category: "Salesforce / MDM Integration",
     requirement: "Leverage Salesforce / MDM for travel agent ID mapping and potential use of order management sync.",
-    itravelApi: "Salesforce Account Sync & Order Webhooks",
+    itravelApi: "Salesforce Account Sync & Outbound Order Webhooks",
     v4Api: "V4 Agent Sync via Salesforce MDM",
     howItWorks: "Syncs agency profile updates, credit limits, and agent status bi-directionally between Salesforce CRM and iTravel OMS."
   },
@@ -356,21 +356,21 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "UI calls iTravel OMS -> OMS queries Cruise + V4 Land Tour internally",
     description: "Customer searches for a combined European holiday (7-Day Swiss Land Tour + 7-Day Rhine River Cruise). UI makes ONE call to iTravel OMS Gateway.",
     businessValue: "Drives higher yield per booking by cross-selling land tours and river cruises in a single search flow.",
-    uiCall: "POST /iTravel/selling/api/public-cruise/cruiseAggrAvailabilitySearch (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (REST/JSON over HTTPS)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability",
-    itravelCall: "iTravel OMS calls /iTravel/selling/api/public-power-shopping cache tier",
+    itravelCall: "iTravel OMS calls Connect public-power-shopping cache tier",
     rulesEngineCall: "Evaluates canonical hub geolocation to verify tour end-point connects to cruise pier."
   },
   {
     step: 2,
-    stageName: "2. Synchronized Room & Cabin Selection",
-    tagline: "UI selects Room + Cabin -> iTravel OMS queries V4 options + Ship deck grid",
-    description: "Advisor selects hotel room extension via Tropics V4 and specific river cruise suite on Deck 3 via iTravel.",
+    stageName: "2. Synchronized Room & Category Selection",
+    tagline: "UI selects Room + Category -> iTravel OMS queries V4 options + Ship categories",
+    description: "Advisor selects hotel room extension via Tropics V4 and river cruise category via Connect.",
     businessValue: "Provides a seamless upsell experience across both land accommodations and ship categories.",
-    uiCall: "POST /iTravel/selling/api/public-cruise/cruiseCategoryAvailabilitySearch (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (Category Availability)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}",
-    itravelCall: "iTravel OMS calls /iTravel/selling/api/public-cruise/cruiseCabinAvailabilitySearch",
-    rulesEngineCall: "Validates bed configuration consistency across hotel and ship suite."
+    itravelCall: "iTravel OMS queries category availability on public-power-shopping tier",
+    rulesEngineCall: "Validates bed configuration consistency across hotel and ship category."
   },
   {
     step: 3,
@@ -379,7 +379,7 @@ export const MULTI_MODAL_JOURNEYS = [
     description: "Configurable rules engine calculates buffer time between land tour hotel check-out and ship embarkation check-in.",
     businessValue: "Eliminates operational mis-connections and customer dissatisfaction caused by impossible transfer timelines.",
     uiCall: "Handled internally inside iTravel OMS Rules Engine Microservice",
-    v4Call: "V4 -> SSP Operating Points (Hotel drop-off operating point & ETA)",
+    v4Call: "V4 -> SSP Transfers (Hotel drop-off operating point & ETA)",
     itravelCall: "iTravel Embarkation Schedule API (Pier boarding cutoff time)",
     rulesEngineCall: "Enforces 3-hour minimum transfer buffer window between land tour drop-off and pier boarding."
   },
@@ -389,9 +389,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Combine Multi-Product Discounts & Virtuoso Benefits",
     description: "Evaluates combined promotions (e.g. '$1,000 Off when booking Tour + Cruise together') plus consortia perks.",
     businessValue: "Incentivizes multi-product bookings while enforcing strict discount combinability rules.",
-    uiCall: "POST /iTravel/selling/api/public-cruise/fetchApplicablePromotions (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions (REST/JSON over HTTPS)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote",
-    itravelCall: "/iTravel/selling/api/public-cruise/fetchApplicablePromotions (Evaluates multi-product bundle promo codes)",
+    itravelCall: "/v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions (Evaluates multi-product bundle promo codes)",
     rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes."
   },
   {
@@ -400,9 +400,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Resolve Tropics Agent IDs & Place Synchronized Holds",
     description: "Translates travel agent identities across legacy systems and places temporary holds on both tour allotment and ship cabin.",
     businessValue: "Protects inventory across land and water for 15 minutes while guest passport details are collected.",
-    uiCall: "POST /iTravel/selling/api/public-cruise/cruiseCabinHold (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruise-code}/cabins/hold (REST/JSON over HTTPS)",
     v4Call: "iTravel OMS calls V4 -> /internal/sellingCompany/{sellingCompanyId}/marketVariation/.../commissions & Tropics Allotment Hold",
-    itravelCall: "/iTravel/selling/api/public-cruise/cruiseCabinHold (Holds Cabin 301 for 15 minutes)",
+    itravelCall: "Connect public-be-cruise hold endpoint (Holds Cabin for 15 minutes)",
     rulesEngineCall: "Maps Agent ID 789 (Tropics) <-> Agent User in Salesforce MDM <-> iTravel PCC."
   },
   {
@@ -411,7 +411,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Dry-Run Preview & Commit to Super PNR Basket",
     description: "Validates the multi-product order, generates a single unified guest invoice, and commits records to Tropics and iTravel.",
     businessValue: "Delivers a single customer invoice and Super PNR reference while preserving legacy backend records.",
-    uiCall: "POST /v7/rest/bookings or /iTravel/selling/api/public-booking/createBooking (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/bookings (REST/JSON over HTTPS)",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice",
     rulesEngineCall: "Calculates consolidated deposit due dates and Net vs Gross agency billing."
@@ -465,7 +465,7 @@ export const BUSINESS_PERSONAS = [
       "How do we lock a booking while an advisor updates guest details?"
     ],
     recommendedAPIs: [
-      "V4 SSP Operating Points & Configurable Rules Engine transfer validator",
+      "V4 SSP Transfers & Configurable Rules Engine transfer validator",
       "iTravel freezeBookingRQ/RS — Pessimistic lock token (LockToken)"
     ]
   },

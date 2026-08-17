@@ -695,7 +695,7 @@ export default function App() {
               <div style={{ background: 'var(--navy-900)', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--gold-500)', color: '#38bdf8' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase' }}>iTravel BookingOwner Canonical JSON Contract:</span>
-                  <span style={{ fontSize: '11px', color: 'var(--slate-400)' }}>POST /api/v6/createBooking</span>
+                  <span style={{ fontSize: '11px', color: 'var(--slate-400)' }}>POST /v7/rest/bookings</span>
                 </div>
                 <pre style={{ margin: 0, fontSize: '12px', overflowX: 'auto', lineHeight: '1.5' }}>{`{
   "BookingOwner": {
@@ -848,12 +848,12 @@ export default function App() {
                   </p>
                   
                   <div style={{ background: '#fff', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div><strong>1. OAuth 2.0 Bearer Token:</strong> Call <code>POST /token</code> to get 30-min JWT.</div>
-                    <div><strong>2. Availability Search:</strong> Submit search payload to <code>POST /v7/rest/cruiseAggrAvailabilitySearch</code>.</div>
-                    <div><strong>3. Place Temporary Hold:</strong> Call <code>POST /v7/rest/cruiseCabinHold</code> (15-min TTL lock).</div>
-                    <div><strong>4. Create Booking Order:</strong> Submit JSON to <code>POST /v7/rest/createBooking</code> with full payload.</div>
+                    <div><strong>1. OAuth 2.0 Bearer Token:</strong> Call <code>POST /token</code> on dedicated Auth host to get 30-min JWT.</div>
+                    <div><strong>2. Availability Search:</strong> Submit search payload to <code>POST /v7/rest/public-power-shopping/cruises/fetch</code>.</div>
+                    <div><strong>3. Place Temporary Hold:</strong> Call <code>POST /v7/rest/public-be-cruise/cruises/{'{cruiseCode}'}/cabins/hold</code> (15-min TTL lock).</div>
+                    <div><strong>4. Create Booking Order:</strong> Submit JSON to canonical Connect endpoint <code>POST /v7/rest/bookings</code> with full payload.</div>
                     <div><strong>5. Response Payload:</strong> Returns <code>SuperPNR</code>, Tropics <code>v4BookingRef</code>, and invoice URL.</div>
-                    <div><strong>6. Webhook Notifications:</strong> Receives async updates via <code>/v7/rest/webhooks/orders</code>.</div>
+                    <div><strong>6. Webhook Notifications:</strong> Receives async updates via outbound webhook event bus.</div>
                   </div>
                 </div>
 
