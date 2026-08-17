@@ -1,0 +1,10 @@
+{
+  "appName": "iTravel API Knowledge Base",
+  "version": "1.0.0",
+  "environment": "production",
+  "telemetry": {
+    "enabled": true,
+    "provider": "Amplitude",
+    "defaultLocale": "en-US"
+  }
+}

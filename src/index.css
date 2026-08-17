@@ -1,0 +1,135 @@
+:root {
+  /* Tier 1: Primitives */
+  --gold-300: #d4a373;
+  --gold-500: #b8860b;
+  --navy-900: #0a192f;
+  --navy-800: #112240;
+  --navy-700: #1d2d50;
+  --slate-100: #f8fafc;
+  --slate-200: #e2e8f0;
+  --slate-400: #94a3b8;
+  --slate-700: #334155;
+  --emerald-500: #10b981;
+  --crimson-600: #c8102e;
+
+  /* Tier 2: Semantic Tokens */
+  --color-primary: var(--navy-900);
+  --color-primary-light: var(--navy-800);
+  --color-accent: var(--gold-500);
+  --color-accent-light: var(--gold-300);
+  --color-background-canvas: #f4f6f9;
+  --color-background-card: #ffffff;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #ffffff;
+  --color-border-subtle: #e2e8f0;
+
+  /* Tier 3: Component Tokens */
+  --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-section: 0 20px 30px -10px rgba(10, 25, 47, 0.12);
+  --shadow-tag: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-image: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-footer: 0 -4px 12px rgba(0, 0, 0, 0.03);
+
+  --radius-card: 16px;
+  --radius-image: 12px;
+  --radius-accordion: 8px;
+  --radius-icon: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--color-background-canvas);
+  color: var(--color-text-main);
+  line-height: 1.5;
+}
+
+.parent-title-dt {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--navy-900);
+  letter-spacing: -0.02em;
+}
+
+.child-title-dt {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy-800);
+}
+
+.btn-primary {
+  background-color: var(--navy-900);
+  color: var(--color-text-inverse);
+  padding: 10px 20px;
+  border-radius: var(--radius-accordion);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background-color: var(--navy-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-tag);
+}
+
+.btn-accent {
+  background-color: var(--gold-500);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--radius-accordion);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-accent:hover {
+  background-color: #966f07;
+}
+
+.card {
+  background-color: var(--color-background-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border-subtle);
+  padding: 24px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-icon);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-tag);
+}
+
+.badge-shopping { background-color: #e0f2fe; color: #0369a1; }
+.badge-booking { background-color: #dcfce7; color: #15803d; }
+.badge-servicing { background-color: #fef3c7; color: #b45309; }
+.badge-cancellation { background-color: #ffe4e6; color: #be123c; }
+.badge-promotions { background-color: #f3e8ff; color: #6b21a8; }
+.badge-cabins { background-color: #e0e7ff; color: #3730a3; }
+.badge-holds { background-color: #ffedd5; color: #c2410c; }
+
+pre {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 16px;
+  border-radius: var(--radius-accordion);
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 13px;
+  overflow-x: auto;
+}
