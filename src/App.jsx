@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE } from './data/apiData';
 import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle } from 'lucide-react';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
