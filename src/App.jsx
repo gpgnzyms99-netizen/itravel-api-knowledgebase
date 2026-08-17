@@ -244,7 +244,7 @@ export default function App() {
                 <h2 style={{ fontSize: '24px', fontWeight: '700', letterSpacing: '-0.01em', margin: 0 }}>Multi-Modal Business Guide: Land Tour (V4 / Tropics) + River Cruise (iTravel)</h2>
               </div>
               <p style={{ fontSize: '15px', color: 'var(--slate-200)', maxWidth: '950px', lineHeight: '1.6' }}>
-                This multi-modal workflow demonstrates how The Travel Corporation (TTC) bundles <strong>Land Tours (pulled via TravCorp V4 from Tropics/Longitude)</strong> with <strong>Uniworld River Cruises (via iTravel Connect v6.0)</strong> inside a unified <strong>Super PNR Shopping Cart</strong> to satisfy the 10 TTC Business Requirements.
+                This multi-modal workflow demonstrates how The Travel Corporation (TTC) bundles <strong>Land Tours (pulled via TravCorp V4 from Tropics)</strong> with <strong>Uniworld River Cruises (via iTravel Connect /v7/rest Gateway)</strong> inside a unified <strong>Super PNR Shopping Cart</strong> to satisfy the 10 TTC Business Requirements.
               </p>
             </div>
 
@@ -848,12 +848,12 @@ export default function App() {
                   </p>
                   
                   <div style={{ background: '#fff', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div><strong>1. OAuth 2.0 Bearer Token:</strong> Call <code>POST /oauth/token</code> to get 30-min JWT.</div>
-                    <div><strong>2. Availability Search:</strong> Submit search payload to <code>POST /api/v6/cruiseAggrAvailabilitySearch</code>.</div>
-                    <div><strong>3. Place Temporary Hold:</strong> Call <code>POST /api/v6/cruiseCabinHold</code> (15-min TTL lock).</div>
-                    <div><strong>4. Create Booking Order:</strong> Submit JSON to <code>POST /api/v6/createBooking</code> with full payload.</div>
+                    <div><strong>1. OAuth 2.0 Bearer Token:</strong> Call <code>POST /token</code> to get 30-min JWT.</div>
+                    <div><strong>2. Availability Search:</strong> Submit search payload to <code>POST /v7/rest/cruiseAggrAvailabilitySearch</code>.</div>
+                    <div><strong>3. Place Temporary Hold:</strong> Call <code>POST /v7/rest/cruiseCabinHold</code> (15-min TTL lock).</div>
+                    <div><strong>4. Create Booking Order:</strong> Submit JSON to <code>POST /v7/rest/createBooking</code> with full payload.</div>
                     <div><strong>5. Response Payload:</strong> Returns <code>SuperPNR</code>, Tropics <code>v4BookingRef</code>, and invoice URL.</div>
-                    <div><strong>6. Webhook Notifications:</strong> Receives async updates via <code>/api/v6/webhooks/orders</code>.</div>
+                    <div><strong>6. Webhook Notifications:</strong> Receives async updates via <code>/v7/rest/webhooks/orders</code>.</div>
                   </div>
                 </div>
 
