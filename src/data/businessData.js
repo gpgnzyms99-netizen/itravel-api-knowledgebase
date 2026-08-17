@@ -356,9 +356,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "UI calls iTravel OMS -> OMS queries Cruise + V4 Land Tour internally",
     description: "Customer searches for a combined European holiday (7-Day Swiss Land Tour + 7-Day Rhine River Cruise). UI makes ONE call to iTravel OMS Gateway.",
     businessValue: "Drives higher yield per booking by cross-selling land tours and river cruises in a single search flow.",
-    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (REST/JSON over HTTPS) | PDF Sec 4.2 Pg 11 (cruiseAggrAvailabilitySearchRQ/RS)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability",
-    itravelCall: "iTravel OMS calls Connect public-power-shopping cache tier",
+    itravelCall: "iTravel OMS calls Connect public-power-shopping tier (PDF Sec 4.2 Pg 11)",
     rulesEngineCall: "Evaluates canonical hub geolocation to verify tour end-point connects to cruise pier."
   },
   {
@@ -367,9 +367,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "UI selects Room + Category -> iTravel OMS queries V4 options + Ship categories",
     description: "Advisor selects hotel room extension via Tropics V4 and river cruise category via Connect.",
     businessValue: "Provides a seamless upsell experience across both land accommodations and ship categories.",
-    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (Category Availability)",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch | PDF Sec 4.3 Pg 23 (cruiseCategoryAvailabilitySearchRQ/RS) & PDF Sec 4.6 Pg 56 (cruiseCabinAvailabilitySearchRQ/RS)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}",
-    itravelCall: "iTravel OMS queries category availability on public-power-shopping tier",
+    itravelCall: "iTravel OMS queries category availability (PDF Sec 4.3 Pg 23) and cabin deck grid (PDF Sec 4.6 Pg 56)",
     rulesEngineCall: "Validates bed configuration consistency across hotel and ship category."
   },
   {
@@ -378,7 +378,7 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Validate Check-In/Check-Out Logic & Minimum Connection Times",
     description: "Configurable rules engine calculates buffer time between land tour hotel check-out and ship embarkation check-in.",
     businessValue: "Eliminates operational mis-connections and customer dissatisfaction caused by impossible transfer timelines.",
-    uiCall: "Handled internally inside iTravel OMS Rules Engine Microservice",
+    uiCall: "Handled internally inside iTravel OMS Rules Engine Microservice | PDF Sec 4.9 Pg 84 (fetchApplicableAncillaryRuleRQ/RS)",
     v4Call: "V4 -> SSP Transfers (Hotel drop-off operating point & ETA)",
     itravelCall: "iTravel Embarkation Schedule API (Pier boarding cutoff time)",
     rulesEngineCall: "Enforces 3-hour minimum transfer buffer window between land tour drop-off and pier boarding."
@@ -389,9 +389,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Combine Multi-Product Discounts & Virtuoso Benefits",
     description: "Evaluates combined promotions (e.g. '$1,000 Off when booking Tour + Cruise together') plus consortia perks.",
     businessValue: "Incentivizes multi-product bookings while enforcing strict discount combinability rules.",
-    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions | PDF Sec 4.4 Pg 34 (fetchApplicablePromotionsRQ/RS) & PDF Sec 4.5 Pg 41 (applyPromoRQ/RS)",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote",
-    itravelCall: "/v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions (Evaluates multi-product bundle promo codes)",
+    itravelCall: "Evaluates multi-product bundle promo codes (PDF Sec 4.4 Pg 34 & Sec 4.5 Pg 41)",
     rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes."
   },
   {
@@ -400,9 +400,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Resolve Tropics Agent IDs & Place Synchronized Holds",
     description: "Translates travel agent identities across legacy systems and places temporary holds on both tour allotment and ship cabin.",
     businessValue: "Protects inventory across land and water for 15 minutes while guest passport details are collected.",
-    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruise-code}/cabins/hold (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold | PDF Sec 4.8 Pg 77 (cruiseCabinHoldRQ/RS)",
     v4Call: "iTravel OMS calls V4 -> /internal/sellingCompany/{sellingCompanyId}/marketVariation/.../commissions & Tropics Allotment Hold",
-    itravelCall: "Connect public-be-cruise hold endpoint (Holds Cabin for 15 minutes)",
+    itravelCall: "Connect public-be-cruise hold endpoint (PDF Sec 4.8 Pg 77 - Holds Cabin for 15 minutes)",
     rulesEngineCall: "Maps Agent ID 789 (Tropics) <-> Agent User in Salesforce MDM <-> iTravel PCC."
   },
   {
@@ -411,9 +411,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Dry-Run Preview & Commit to Super PNR Basket",
     description: "Validates the multi-product order, generates a single unified guest invoice, and commits records to Tropics and iTravel.",
     businessValue: "Delivers a single customer invoice and Super PNR reference while preserving legacy backend records.",
-    uiCall: "POST /v7/rest/bookings (REST/JSON over HTTPS)",
+    uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBookingRQ/RS)",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
-    itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice",
+    itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",
     rulesEngineCall: "Calculates consolidated deposit due dates and Net vs Gross agency billing."
   },
   {
@@ -422,9 +422,9 @@ export const MULTI_MODAL_JOURNEYS = [
     tagline: "Collision-Free Modifications & Blended Commission Payout",
     description: "Handles post-booking servicing with freeze locks and calculates accurate agent commissions across bundled products.",
     businessValue: "Prevents concurrent editing race conditions and ensures accurate agency payouts across multi-brand packages.",
-    uiCall: "POST /iTravel/selling/api/public-booking/freezeBooking & modify (REST/JSON over HTTPS)",
+    uiCall: "POST /iTravel/selling/api/public-booking/freezeBooking, modify & cancelBooking | PDF Sec 5.3 Pg 147 (freezeBookingRQ/RS), PDF Sec 5.9 Pg 158 (modifyRQ/RS) & PDF Sec 6.2 Pg 196 (cancelBookingRQ/RS)",
     v4Call: "iTravel OMS updates Tropics Commission Ledger via V4 Commissions endpoint",
-    itravelCall: "/iTravel/selling/api/public-booking/freezeBooking & modify (Pessimistic session lock)",
+    itravelCall: "Pessimistic session lock & post-booking amendments (PDF Sec 5.3 Pg 147, Sec 5.9 Pg 158 & Sec 6.2 Pg 196)",
     rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner rules."
   }
 ];

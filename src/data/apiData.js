@@ -6,10 +6,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Aggregate Sailing Availability Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 4.2, Pg 11)",
+    source: "PDF Sec 4.2 Pg 11 | REST: /v7/rest/public-power-shopping/cruises/fetch",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-power-shopping/cruiseAggrAvailabilitySearch",
-    description: "High-throughput sailing availability search message pair defined in Section 4.2 (Page 11) of the 241-page iTravel Cruise API Functional Guide PDF. REST Mapping: /v7/rest/public-power-shopping/cruises/fetch.",
+    description: "High-throughput sailing availability search defined in PDF v6.0 Section 4.2 (Page 11). Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel (e.g. B2BAPI@TENANT)" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer authentication JWT" },
@@ -52,7 +52,7 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "TravCorp V4 queries tour departures via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability; iTravel uses Section 4.2 cruiseAggrAvailabilitySearchRQ.",
+    v4Comparison: "TravCorp V4 queries tour departures via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability; iTravel uses PDF Sec 4.2 cruiseAggrAvailabilitySearchRQ.",
     errorCodes: ["ERR_INVALID_DATE_RANGE", "ERR_NO_SAILINGS_FOUND", "ITRVL_CRUISE_AVAIL_SYS_00002"]
   },
   {
@@ -62,7 +62,7 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "iTravel Connect Dedicated Auth Server Token Endpoint",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "Dedicated Auth Host & OAuth Spec",
+    source: "Dedicated Auth Host | POST /token",
     method: "POST",
     endpointPath: "/token",
     description: "Issues short-lived signed JWT bearer tokens (30-minute TTL) on the dedicated Auth Host required for authenticating across all iTravel Connect API surfaces.",
@@ -91,10 +91,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Category-Level Availability & Fare Search",
     lifecycle: "Shopping & Search",
     lifecycleBadge: "Shopping",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 4.3, Pg 23)",
+    source: "PDF Sec 4.3 Pg 23 | REST: /v7/rest/public-power-shopping/cruises/fetch",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-power-shopping/cruiseCategoryAvailabilitySearch",
-    description: "Fetches available cabin categories, deck allocations, and base fare breakdowns defined in Section 4.3 (Page 23) of the 241-page iTravel Cruise API Functional Guide PDF. REST Mapping: /v7/rest/public-power-shopping/cruises/fetch.",
+    description: "Category availability & fare search defined in PDF v6.0 Section 4.3 (Page 23). Connect REST mapping: POST /v7/rest/public-power-shopping/cruises/fetch.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer authentication JWT" }
@@ -123,7 +123,7 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "V4 handles room types at tour option level via /brands/{brand}/tours/{tourId}/options/{optionId}; iTravel provides category-level availability in Sec 4.3.",
+    v4Comparison: "V4 handles room types at tour option level via /brands/{brand}/tours/{tourId}/options/{optionId}; iTravel provides category-level availability in PDF Sec 4.3 Pg 23.",
     errorCodes: ["ERR_SAILING_NOT_FOUND", "ERR_INVALID_OCCUPANCY"]
   },
   {
@@ -133,10 +133,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Fetch Applicable Promotions & Discounts",
     lifecycle: "Promotions & Pricing",
     lifecycleBadge: "Promotions",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 4.4, Pg 34)",
+    source: "PDF Sec 4.4 Pg 34 | REST: /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-be-cruise/fetchApplicablePromotions",
-    description: "Evaluates eligible promotional codes and past-guest loyalty offers defined in Section 4.4 (Page 34) of the 241-page iTravel Cruise API Functional Guide PDF. REST Mapping: /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions.",
+    description: "Evaluates eligible promotional codes and past-guest loyalty offers defined in PDF v6.0 Section 4.4 (Page 34). Connect REST mapping: /v7/rest/public-be-cruise/cruises/{cruiseCode}/promotions.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -161,8 +161,37 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "V4 evaluates tour quotes via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote; iTravel evaluates combinability in Sec 4.4.",
+    v4Comparison: "V4 evaluates tour quotes via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote; iTravel evaluates combinability in PDF Sec 4.4 Pg 34.",
     errorCodes: ["ERR_INVALID_PROMO_CODE", "ERR_PROMO_EXPIRED"]
+  },
+  {
+    id: "ep_4_5",
+    sectionNumber: "4.5",
+    title: "applyPromoRQ/RS",
+    displayName: "Apply Promotional Discount Code",
+    lifecycle: "Promotions & Pricing",
+    lifecycleBadge: "Promotions",
+    source: "PDF Sec 4.5 Pg 41 | REST: /v7/rest/public-be-cruise/cruises/promotions/apply",
+    method: "POST",
+    endpointPath: "/iTravel/selling/api/public-be-cruise/applyPromo",
+    description: "Applies a validated promo code or agency override discount to an active basket as defined in PDF v6.0 Section 4.5 (Page 41).",
+    headers: [
+      { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
+      { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
+    ],
+    parameters: [
+      { name: "PromoCode", type: "String", required: true, description: "Promotional discount code" }
+    ],
+    requestPayload: `{
+  "PromoCode": "EARLY_BIRD_2027",
+  "SailingID": "SL_UNI_2027_RH05"
+}`,
+    responsePayload: `{
+  "Status": "PROMO_APPLIED",
+  "DiscountApplied": { "Currency": "USD", "Amount": 500.00 }
+}`,
+    v4Comparison: "Applies promo discount across multi-modal basket in iTravel.",
+    errorCodes: ["ERR_INVALID_PROMO"]
   },
   {
     id: "ep_4_6",
@@ -171,10 +200,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Availability Search",
     lifecycle: "Cabin Selection",
     lifecycleBadge: "Cabins",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 4.6, Pg 56)",
+    source: "PDF Sec 4.6 Pg 56 | RPC: /iTravel/selling/api/public-cruise/cruiseCabinAvailabilitySearch",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-cruise/cruiseCabinAvailabilitySearch",
-    description: "Physical cabin availability search explicitly published in Section 4.6 (Pages 56–69) and Section 5.6 (Pages 152–153) of the 241-page iTravel Cruise API Functional Guide PDF. Returns available physical cabin numbers, deck levels, and bed configurations.",
+    description: "Physical cabin availability search defined in Section 4.6 (Pages 56–69) and Section 5.6 (Pages 152–153) of the 241-page PDF. Returns available physical cabin numbers, deck levels, and bed configurations.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Booking channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -202,7 +231,7 @@ export const API_KNOWLEDGE_BASE = [
     }
   ]
 }`,
-    v4Comparison: "V4 relies on hotel room option codes; iTravel Cruise API Sec 4.6 maintains physical ship deck grid and cabin mappings.",
+    v4Comparison: "V4 relies on hotel room option codes; iTravel Cruise API Sec 4.6 Pg 56 maintains physical ship deck grid and cabin mappings.",
     errorCodes: ["ERR_NO_CABINS_AVAILABLE", "ERR_INVALID_DECK"]
   },
   {
@@ -212,10 +241,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Physical Cabin Inventory Hold",
     lifecycle: "Inventory Lock",
     lifecycleBadge: "Holds",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 4.8, Pg 77)",
+    source: "PDF Sec 4.8 Pg 77 | REST: /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-be-cruise/cruiseCabinHold",
-    description: "Places a temporary inventory hold on a cabin defined in Section 4.8 (Page 77) of the 241-page iTravel Cruise API Functional Guide PDF. REST Mapping: /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold.",
+    description: "Places a temporary inventory hold on a cabin defined in PDF v6.0 Section 4.8 (Page 77). Connect REST mapping: /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
@@ -242,14 +271,14 @@ export const API_KNOWLEDGE_BASE = [
   {
     id: "ep_4_11",
     sectionNumber: "4.11",
-    title: "createBookingRQ/RS & POST /v7/rest/bookings",
-    displayName: "Create Reservation (Sec 4.11 & POST /v7/rest/bookings)",
+    title: "createBookingRQ/RS",
+    displayName: "Create Reservation (PDF Sec 4.11 Pg 108 & POST /v7/rest/bookings)",
     lifecycle: "Booking Creation",
     lifecycleBadge: "Booking",
-    source: "PDF v6.0 Sec 4.11 (Pg 108) & Connect REST /v7/rest/bookings",
+    source: "PDF Sec 4.11 Pg 108 | REST: POST /v7/rest/bookings",
     method: "POST",
     endpointPath: "/v7/rest/bookings",
-    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the order. Defined in Section 4.11 (Page 108) of the 241-page PDF as createBookingRQ/RS; exposed on Connect REST as POST /v7/rest/bookings.",
+    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the order. Defined in PDF v6.0 Section 4.11 (Page 108) as createBookingRQ/RS; exposed on Connect REST as POST /v7/rest/bookings.",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
@@ -289,7 +318,7 @@ export const API_KNOWLEDGE_BASE = [
   "DepositDue": { "Currency": "USD", "Amount": 500.00 },
   "DepositDueDate": "2026-08-24T23:59:59Z"
 }`,
-    v4Comparison: "V4 creates a tour booking reference via POST /booking; iTravel creates a Super PNR via POST /v7/rest/bookings (or createBookingRQ/RS in Sec 4.11).",
+    v4Comparison: "V4 creates a tour booking reference via POST /booking; iTravel creates a Super PNR via POST /v7/rest/bookings (or createBookingRQ/RS in PDF Sec 4.11 Pg 108).",
     errorCodes: ["ERR_PAYMENT_DECLINED", "ERR_INVALID_PASSENGER_DATA", "ERR_EXPIRED_HOLD"]
   },
   {
@@ -299,10 +328,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Freeze Reservation (Servicing Lock)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 5.3, Pg 147)",
+    source: "PDF Sec 5.3 Pg 147 | RPC: /iTravel/selling/api/public-booking/freezeBooking",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-booking/freezeBooking",
-    description: "Applies a pessimistic servicing session lock on a booking as defined in Section 5.3 (Page 147) of the 241-page PDF.",
+    description: "Applies a pessimistic servicing session lock on a booking as defined in PDF v6.0 Section 5.3 (Page 147).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -328,10 +357,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Modify Reservation (Amendments & Upgrades)",
     lifecycle: "Servicing & Modification",
     lifecycleBadge: "Servicing",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 5.9, Pg 158)",
+    source: "PDF Sec 5.9 Pg 158 | RPC: /iTravel/selling/api/public-booking/modify",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-booking/modify",
-    description: "Executes price-neutral or price-affecting modifications as defined in Section 5.9 (Page 158) of the 241-page PDF.",
+    description: "Executes price-neutral or price-affecting modifications as defined in PDF v6.0 Section 5.9 (Page 158).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
@@ -362,10 +391,10 @@ export const API_KNOWLEDGE_BASE = [
     displayName: "Cancel Booking & Penalty Evaluation",
     lifecycle: "Cancellation & Repricing",
     lifecycleBadge: "Cancellation",
-    source: "iTravel Cruise API Functional Guide (PDF v6.0 Sec 6.2, Pg 196)",
+    source: "PDF Sec 6.2 Pg 196 | RPC: /iTravel/selling/api/public-booking/cancelBooking",
     method: "POST",
     endpointPath: "/iTravel/selling/api/public-booking/cancelBooking",
-    description: "Cancels full booking or specific line items and evaluates cancellation penalties as defined in Section 6.2 (Page 196) of the 241-page PDF.",
+    description: "Cancels full booking or specific line items and evaluates cancellation penalties as defined in PDF v6.0 Section 6.2 (Page 196).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" }
