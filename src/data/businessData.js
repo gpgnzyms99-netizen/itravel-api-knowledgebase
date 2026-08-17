@@ -73,10 +73,10 @@ export const ARCHITECTURE_RISKS_QA = [
         apiRef: "v4 /api/v4/operatingPoints & iTravel Location Masters"
       },
       {
-        question: "IBS agency management module vs. MDM/Salesforce/Tropics IDs/Longitude IDs/TAP login/Firebase",
+        question: "IBS agency management module vs. MDM/Salesforce/Tropics IDs/TAP login/Firebase (Note: iTravel replaces Longitude)",
         answered: "YES",
-        evidence: "Salesforce MDM acts as single source of truth for agent identities, publishing sync webhooks to iTravel OMS and V4 Adapter (/api/v4/travelAgents/sync).",
-        apiRef: "Salesforce MDM Webhooks & v4 /api/v4/travelAgents/sync"
+        evidence: "TTC Open Decision Point: Salesforce MDM (Option A) or iTravel OMS (Option B) acts as the Golden Agency Master. Note: Longitude is fully decommissioned as iTravel Connect replaces it.",
+        apiRef: "Salesforce MDM / iTravel Agency Module Sync (Longitude Replaced)"
       },
       {
         question: "Current models (e.g., Tropics airport-based) may not fully support geolocation needs.",
