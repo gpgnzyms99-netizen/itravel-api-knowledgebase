@@ -17,8 +17,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Dynamica integration (into OMS or not?)",
         answered: "YES",
-        evidence: "Dynamica (CRM / Tour Operations) integrates via async outbound webhook events emitted by iTravel OMS on createBookingRQ/RS and modifyRQ/RS lifecycle events rather than direct UI polling.",
-        apiRef: "iTravel Async Outbound Event Bus"
+        evidence: "Dynamica (CRM / Tour Operations) integration is proposed via async outbound webhook event notifications (Proposed Extension / To Be Confirmed with IBS Software) on createBookingRQ/RS and modifyRQ/RS lifecycle events rather than direct UI polling.",
+        apiRef: "iTravel Async Outbound Event Bus (Proposed Extension)"
       },
       {
         question: "Master vs. system of record booking management (incl. retrieval of master booking if not all channels are on iTravel front end)",
@@ -29,8 +29,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Payment system direct integration in iTravel vs. existing Cybersource/Elavon integration and acquirer links.",
         answered: "YES",
-        evidence: "iTravel Connect supports direct tokenized payment Gateway integration (paymentToken parameter in createBookingRQ), decoupling card processing from legacy acquirers while mapping payment status to Tropics.",
-        apiRef: "createBookingRQ -> PaymentDetails.PaymentToken"
+        evidence: "iTravel Connect supports direct tokenized payment Gateway integration (`Payments[].PaymentToken` parameter in createBookingRQ), decoupling card processing from legacy acquirers while mapping payment status to Tropics.",
+        apiRef: "createBookingRQ -> Payments[].PaymentToken"
       },
       {
         question: "Multi-Currency Pricing & Settlement (USD, GBP, EUR, AUD, CAD)",
@@ -69,8 +69,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Customer Data mastering",
         answered: "YES",
-        evidence: "Salesforce CRM serves as Customer MDM. GuestProfile array in createBookingRQ passes MDMCustomerID to synchronize guest history across iTravel and Tropics.",
-        apiRef: "createBookingRQ -> GuestProfile.MDMCustomerID"
+        evidence: "Salesforce CRM serves as Customer MDM. `Passengers[].CustomerProfileId` and `Passengers[].CrmID` in createBookingRQ synchronize guest identity and loyalty profiles across iTravel Connect and Tropics.",
+        apiRef: "createBookingRQ -> Passengers[].CustomerProfileId & Passengers[].CrmID"
       },
       {
         question: "Handling of canonical destinations and transfer logic.",
@@ -93,8 +93,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Customer profiles in iTravel (incl. credits & FTCs) vs. all other TTC profiles",
         answered: "YES",
-        evidence: "Future Travel Credits (FTC) and guest loyalty tiers are validated via Salesforce MDM and passed into createBookingRQ under PaymentDetails.FormOfPayment = 'FTC'.",
-        apiRef: "PaymentDetails.FormOfPayment = 'FTC'"
+        evidence: "Future Travel Credits (FTC) and guest loyalty vouchers are validated via Salesforce MDM and passed into createBookingRQ under `Payments[].FopType` = 'VOUCHER' / `Payments[].FopCode` = 'FTC'.",
+        apiRef: "Payments[].FopType & Payments[].FopCode = 'FTC'"
       }
     ]
   },
@@ -145,8 +145,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Age restrictions (contractually and OP based) and validations",
         answered: "YES",
-        evidence: "Rules engine validates passenger BirthDate against product minimum age constraints (e.g. Contiki 18-35 vs Uniworld 8+).",
-        apiRef: "Passenger.BirthDate & Rules Engine Validation"
+        evidence: "Rules engine evaluates passenger `DateOfBirth` against product age policies (e.g., Contiki 18-35 vs Uniworld 8+ — Note: Automated age boundary enforcement is currently listed under Architectural Risks as To Be Qualified with EA & IBS teams).",
+        apiRef: "Passengers[].DateOfBirth & Rules Engine Policy (To Be Qualified)"
       }
     ]
   },
@@ -168,8 +168,8 @@ export const ARCHITECTURE_RISKS_QA = [
       {
         question: "Finance processes, payments reconciliation, revenue recognition.",
         answered: "YES",
-        evidence: "Super PNR ledger tracks gross cash receipts vs net revenue recognition, syncing sub-ledger entries to Tropics and SAP/Oracle Financials.",
-        apiRef: "Super PNR Revenue Ledger Sync"
+        evidence: "Super PNR ledger tracks guest cash receipts, deposit schedules, and line item billing totals. Revenue recognition rules and deferred revenue accounting are performed downstream in Tropics Finance and Enterprise ERPs (SAP/Oracle).",
+        apiRef: "Super PNR Cash & Billing Ledger"
       }
     ]
   }

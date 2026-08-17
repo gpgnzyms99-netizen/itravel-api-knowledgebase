@@ -324,7 +324,7 @@ export const API_KNOWLEDGE_BASE = [
     source: "PDF Sec 4.11 Pg 108 | Connect REST: POST /v7/rest/bookings",
     method: "POST",
     endpointPath: "https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking",
-    description: "Validates basket, computes taxes, fees, deposit schedules, and commits the order. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking. Exposed on Connect REST as POST /v7/rest/bookings.",
+    description: "Supports dual execution modes via IsPreview parameter: Preview Mode (IsPreview = true) performs dry-run basket validation, tax/fee calculation, and pricing without committing inventory or state; Commit Mode (IsPreview = false) validates pricing, commits inventory, generates the master Super PNR reservation, and schedules deposit milestones. Printed URL in PDF: https://dev1.ibsplc.net/iTravel/selling/api/public-booking/v1/rest/bkg/pnr/createBooking (Exposed on Connect REST as POST /v7/rest/bookings).",
     headers: [
       { name: "x-auth-channel", type: "String", required: true, description: "Channel ID" },
       { name: "x-auth-token", type: "String", required: true, description: "Bearer JWT" },
