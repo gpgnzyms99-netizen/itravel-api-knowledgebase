@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { API_KNOWLEDGE_BASE, QUIZ_QUESTIONS } from './data/apiData';
-import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, BUSINESS_PERSONAS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, BookOpen, Award, Layers, ShieldCheck, Code, ArrowRight, CheckCircle, XCircle, Copy, Check, Lock, LogOut, Briefcase, Users, HelpCircle, Compass, CheckSquare, Server, Cpu, GitMerge, FileText, AlertTriangle } from 'lucide-react';
+import { API_KNOWLEDGE_BASE } from './data/apiData';
+import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle } from 'lucide-react';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -19,8 +19,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const [activeTab, setActiveTab] = useState('biz'); // Default to 'biz' ('biz' | 'reqs' | 'trade' | 'arch')
-  const [techSubTab, setTechSubTab] = useState('explorer'); // Sub-tab inside Tech Docs ('explorer' | 'topology' | 'qa')
+  const [activeTab, setActiveTab] = useState('biz'); // Default to 'biz' ('biz' | 'reqs' | 'trade' | 'kb' | 'arch' | 'qa')
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -140,12 +139,30 @@ export default function App() {
 
           {/* Navigation Tabs & Logout */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <nav style={{ display: 'flex', gap: '8px' }}>
+            <nav style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button 
                 className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
                 onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
               >
                 <Briefcase size={16} /> Multi-Modal Journey
+              </button>
+              <button 
+                className={activeTab === 'kb' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('kb'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'KB', interaction_type: 'CLICK' }); }}
+              >
+                <Code size={16} /> API Interactive Explorer
+              </button>
+              <button 
+                className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
+              >
+                <GitMerge size={16} /> Integration Topology
+              </button>
+              <button 
+                className={activeTab === 'qa' ? 'btn-accent' : 'btn-primary'}
+                onClick={() => { setActiveTab('qa'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
+              >
+                <AlertTriangle size={16} /> Risks & Evidence Q&A
               </button>
               <button 
                 className={activeTab === 'reqs' ? 'btn-accent' : 'btn-primary'}
@@ -158,12 +175,6 @@ export default function App() {
                 onClick={() => { setActiveTab('trade'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'TRADE', interaction_type: 'CLICK' }); }}
               >
                 <ShieldCheck size={16} /> Agency & Trade
-              </button>
-              <button 
-                className={activeTab === 'arch' ? 'btn-accent' : 'btn-primary'}
-                onClick={() => { setActiveTab('arch'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'ARCH', interaction_type: 'CLICK' }); }}
-              >
-                <Layers size={16} /> Technical Docs & API Explorer
               </button>
             </nav>
 
@@ -290,12 +301,390 @@ export default function App() {
               )}
             </div>
 
+          </div>
+        )}
 
+        {/* TAB 2: API INTERACTIVE EXPLORER */}
+        {activeTab === 'kb' && (
+          <div>
+            {/* Search and Filter Bar */}
+            <div className="card" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ flex: 1, position: 'relative' }}>
+                  <Search size={18} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--color-text-muted)' }} />
+                  <input
+                    type="text"
+                    placeholder="Search endpoints by title, schema, field, error code, or keyword..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px 12px 42px',
+                      borderRadius: 'var(--radius-accordion)',
+                      border: '1px solid var(--color-border-subtle)',
+                      fontSize: '14px',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Category Pills */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => { setSelectedCategory(cat); trackTelemetry({ block_type: 'CATEGORY_FILTER', block_id: cat, interaction_type: 'CLICK' }); }}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: 'var(--radius-icon)',
+                      border: 'none',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      backgroundColor: selectedCategory === cat ? 'var(--navy-900)' : '#e2e8f0',
+                      color: selectedCategory === cat ? '#fff' : 'var(--slate-700)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Split View: Left List, Right Inspector */}
+            <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '24px' }}>
+              {/* Left Column: Endpoint List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '750px', overflowY: 'auto', paddingRight: '4px' }}>
+                {filteredEndpoints.map((ep) => (
+                  <div
+                    key={ep.id}
+                    className="card"
+                    onClick={() => { setSelectedEndpoint(ep); trackTelemetry({ block_type: 'ENDPOINT_CARD', block_id: ep.id, interaction_type: 'SELECT' }); }}
+                    style={{
+                      padding: '16px',
+                      cursor: 'pointer',
+                      borderColor: selectedEndpoint?.id === ep.id ? 'var(--gold-500)' : 'var(--color-border-subtle)',
+                      borderWidth: selectedEndpoint?.id === ep.id ? '2px' : '1px',
+                      backgroundColor: selectedEndpoint?.id === ep.id ? '#fdfbf7' : '#fff',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span className={`badge badge-${ep.lifecycleBadge.toLowerCase()}`}>{ep.lifecycleBadge}</span>
+                      <span style={{ fontSize: '11px', fontWeight: '700', color: '#475569', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{ep.source}</span>
+                    </div>
+                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '4px' }}>{ep.title}</h3>
+                    <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>{ep.displayName}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right Column: Deep Endpoint Inspector */}
+              {selectedEndpoint && (
+                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ borderBottom: '1px solid var(--color-border-subtle)', pb: '16px', paddingBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <span style={{ backgroundColor: '#10b981', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>{selectedEndpoint.method}</span>
+                      <code style={{ fontSize: '14px', fontWeight: '600', color: 'var(--navy-900)' }}>{selectedEndpoint.endpointPath}</code>
+                      <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: '700', color: '#0369a1', background: '#e0f2fe', padding: '4px 8px', borderRadius: '4px' }}>Source: {selectedEndpoint.source}</span>
+                    </div>
+                    <h2 className="parent-title-dt" style={{ marginBottom: '8px' }}>{selectedEndpoint.displayName} ({selectedEndpoint.title})</h2>
+                    <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>{selectedEndpoint.description}</p>
+                  </div>
+
+                  {/* Mandatory Headers */}
+                  <div>
+                    <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>Mandatory Security & Channel Headers</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                      {selectedEndpoint.headers.map((h) => (
+                        <div key={h.name} style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)' }}>
+                          <code style={{ fontWeight: '700', color: 'var(--navy-900)' }}>{h.name}</code>
+                          <p style={{ fontSize: '11px', color: 'var(--slate-700)', margin: '4px 0 0 0' }}>{h.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sample Payloads */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <h4 className="child-title-dt">Request Payload Example</h4>
+                      <button className="btn-primary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleCopy(selectedEndpoint.requestPayload, 'req')}>
+                        {copiedField === 'req' ? <Check size={14} /> : <Copy size={14} />} {copiedField === 'req' ? 'Copied' : 'Copy Payload'}
+                      </button>
+                    </div>
+                    <pre>{selectedEndpoint.requestPayload}</pre>
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <h4 className="child-title-dt">Response Payload Example</h4>
+                      <button className="btn-primary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleCopy(selectedEndpoint.responsePayload, 'res')}>
+                        {copiedField === 'res' ? <Check size={14} /> : <Copy size={14} />} {copiedField === 'res' ? 'Copied' : 'Copy Payload'}
+                      </button>
+                    </div>
+                    <pre>{selectedEndpoint.responsePayload}</pre>
+                  </div>
+
+                  {/* V4 Comparison & Error Codes */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '16px' }}>
+                    <div style={{ background: '#fefce8', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fef08a' }}>
+                      <h5 style={{ fontWeight: '700', color: '#854d0e', marginBottom: '4px' }}>V4 vs iTravel Architectural Difference</h5>
+                      <p style={{ fontSize: '12px', color: '#713f12', margin: 0 }}>{selectedEndpoint.v4Comparison}</p>
+                    </div>
+                    <div style={{ background: '#fef2f2', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fecaca' }}>
+                      <h5 style={{ fontWeight: '700', color: '#991b1b', marginBottom: '4px' }}>Common Error Codes</h5>
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
+                        {selectedEndpoint.errorCodes.map(err => (
+                          <code key={err} style={{ background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: '700' }}>{err}</code>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: SYSTEM TOPOLOGY & ARCHITECTURE */}
+        {activeTab === 'arch' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Integration Architecture Topology Card */}
+            <div className="card" style={{ padding: '24px', background: '#fff', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-card)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <GitMerge size={22} color="var(--navy-900)" />
+                <div>
+                  <h3 className="parent-title-dt" style={{ margin: 0 }}>iTravel OMS Gateway & Protocol Topology</h3>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>High-Resolution Architectural System Illustration & Protocol Mapping</p>
+                </div>
+              </div>
+
+              {/* Solid Box & Line Architecture Diagram Component */}
+              <div style={{ background: 'var(--navy-900)', color: '#fff', padding: '24px', borderRadius: 'var(--radius-card)', border: '2px solid var(--gold-500)', boxShadow: 'var(--shadow-section)', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--navy-800)', paddingBottom: '12px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>System Architecture Topology</span>
+                  <span style={{ fontSize: '11px', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>Single Gateway Model</span>
+                </div>
+
+                {/* Top Tier: Frontend UI */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                  <div style={{ background: '#1e293b', border: '2px solid #38bdf8', padding: '16px 24px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '540px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+                    <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>NORTHBOUND FRONTEND CLIENTS</div>
+                    <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginTop: '4px' }}>TTC Consumer Web Portals & Travel Agent B2B UI</div>
+                    <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Single Customer Shopping Cart / Guest Booking Session</div>
+                  </div>
+                </div>
+
+                {/* Down Connector Line & Protocol Badge */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '4px 0' }}>
+                  <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
+                  <span style={{ fontSize: '11px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '3px 12px', borderRadius: '12px', letterSpacing: '0.02em' }}>REST / JSON over HTTPS (OAuth 2.0 JWT)</span>
+                  <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
+                </div>
+
+                {/* Middle Tier: Orchestration Gateway */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                  <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', border: '2px solid var(--gold-500)', padding: '20px 28px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '700px', boxShadow: '0 6px 16px rgba(0,0,0,0.4)' }}>
+                    <div style={{ display: 'inline-block', fontSize: '11px', fontWeight: '800', background: 'var(--gold-500)', color: '#000', padding: '2px 10px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>CENTRAL ORCHESTRATION GATEWAY</div>
+                    <div style={{ fontSize: '18px', fontWeight: '800', color: '#fff' }}>iTravel Connect OMS Gateway (/v7/rest)</div>
+                    <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '6px 0 0 0', lineHeight: '1.5' }}>
+                      Single Entry Point for UI • Validates Rules Engine & Transit Buffers • Calculates Blended Commissions • Manages Super PNR Order Basket & Guest Invoices
+                    </p>
+                  </div>
+                </div>
+
+                {/* Split Connector Lines */}
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', maxWidth: '880px', margin: '0 auto' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
+                    <span style={{ fontSize: '10px', fontWeight: '800', background: '#7c3aed', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>RPC REST/SOAP v6.0</span>
+                    <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
+                    <span style={{ fontSize: '10px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>PowerShopping Sync</span>
+                    <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
+                    <span style={{ fontSize: '10px', fontWeight: '800', background: '#ca8a04', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>REST / V4 Integration API</span>
+                    <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
+                  </div>
+                </div>
+
+                {/* Bottom Tier: Southbound Backend Systems */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginTop: '4px' }}>
+                  
+                  {/* System 1: iTravel Cruise Engine */}
+                  <div style={{ background: '#1e1b4b', border: '2px solid #a855f7', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: '800', color: '#c084fc', textTransform: 'uppercase' }}>CRUISE INVENTORY SYSTEM</div>
+                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>iTravel Cruise Engine v6.0</div>
+                    <p style={{ fontSize: '11px', color: '#e9d5ff', margin: 0, lineHeight: '1.4' }}>
+                      Uniworld Cabin Holds, Dining Allotments, Sailing Rates, Deck Plans & Cruise PNR Master Store.
+                    </p>
+                  </div>
+
+                  {/* System 2: PowerShopping Cache */}
+                  <div style={{ background: '#0c4a6e', border: '2px solid #38bdf8', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: '800', color: '#7dd3fc', textTransform: 'uppercase' }}>HIGH-SPEED SEARCH CACHE</div>
+                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>PowerShopping Cache Tier</div>
+                    <p style={{ fontSize: '11px', color: '#bae6fd', margin: 0, lineHeight: '1.4' }}>
+                      Pre-aggregated cruise availability, promotions & starting fare search cache for high-concurrency lookups.
+                    </p>
+                  </div>
+
+                  {/* System 3: TravCorp V4 Tropics Adapter */}
+                  <div style={{ background: '#451a03', border: '2px solid #f59e0b', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ fontSize: '10px', fontWeight: '800', color: '#fde047', textTransform: 'uppercase' }}>LAND TOUR SYSTEM</div>
+                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>TravCorp V4 Adapter (Tropics)</div>
+                    <p style={{ fontSize: '11px', color: '#fef08a', margin: 0, lineHeight: '1.4' }}>
+                      Guided Land Tours (Trafalgar, Insight, Contiki), Operating Points, Tour Departures & Hotel Allotments.
+                    </p>
+                  </div>
+
+                </div>
+
+                {/* Strict Isolation Notice */}
+                <div style={{ background: '#0284c7', color: '#fff', padding: '10px 16px', borderRadius: 'var(--radius-accordion)', marginTop: '20px', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <span>🔒 <strong>Architectural Rule:</strong> UI NEVER interacts directly with TravCorp V4 or iTravel Cruise v6.0. All requests pass strictly through iTravel OMS Gateway (/v7/rest).</span>
+                </div>
+              </div>
+
+              {/* Principles & Confirmation */}
+              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)' }}>
+                <h4 className="child-title-dt" style={{ marginBottom: '12px', color: '#15803d' }}>Architectural Confirmation & Principles:</h4>
+                <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--slate-800)', margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {OMS_ARCHITECTURE_TOPOLOGY.keyTakeaways.map((item, idx) => (
+                    <li key={idx} style={{ lineHeight: '1.6' }}>
+                      <strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Platform Comparison Table */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
+                <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
+                <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Business Architecture.</p>
+              </div>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: 'var(--navy-900)', color: '#fff' }}>
+                    <th style={{ padding: '12px 16px', borderRadius: 'var(--radius-icon) 0 0 0', width: '22%' }}>Dimension</th>
+                    <th style={{ padding: '12px 16px', width: '39%' }}>TravCorp V4 (Distribution API)</th>
+                    <th style={{ padding: '12px 16px', borderRadius: '0 var(--radius-icon) 0 0', width: '39%' }}>iTravel Connect (IBS OMS)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Platform Owner / Provider</td>
+                    <td style={{ padding: '12px 16px', fontWeight: '600', color: '#0284c7' }}>The Travel Corporation (TTC Internal Tech)</td>
+                    <td style={{ padding: '12px 16px', fontWeight: '600', color: '#7c3aed' }}>IBS Software (iTravel Product Suite)</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Core System Role</td>
+                    <td style={{ padding: '12px 16px' }}>Touring Product Distribution API & Inventory Gateway</td>
+                    <td style={{ padding: '12px 16px' }}>Central Order Management System (OMS) & Gateway</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Business Domains</td>
+                    <td style={{ padding: '12px 16px' }}>Guided Land Tours (Trafalgar, Insight, Contiki, Costsaver)</td>
+                    <td style={{ padding: '12px 16px' }}>Uniworld River Cruises & Multi-Modal Bundled Carts</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Backend Source Systems</td>
+                    <td style={{ padding: '12px 16px' }}>Tropics (Guided Tour Booking Engine)</td>
+                    <td style={{ padding: '12px 16px' }}>iTravel Cruise Engine v6.0 & Super PNR Master Store</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>UI Integration Topology</td>
+                    <td style={{ padding: '12px 16px' }}>Invoked internally by iTravel OMS (Never called from UI)</td>
+                    <td style={{ padding: '12px 16px' }}>Exposes single unified REST API Gateway directly to UI</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Abstraction</td>
+                    <td style={{ padding: '12px 16px' }}>Touring product (brand, tour, option, departure)</td>
+                    <td style={{ padding: '12px 16px' }}>Multi-Product Order Basket & Super PNR</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: '700' }}>Key Responsibilities</td>
+                    <td style={{ padding: '12px 16px' }}>Land tour departures, hotel allotments, optional experiences</td>
+                    <td style={{ padding: '12px 16px' }}>Cruise cabin holds, transit buffer rules engine, unified guest invoice, net billing</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
           </div>
         )}
 
-        {/* TAB 2: HIGH-LEVEL REQUIREMENTS MAPPING */}
+        {/* TAB 4: RISKS & EVIDENCE Q&A MATRIX */}
+        {activeTab === 'qa' && (
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Business Operating Model Assessment</span>
+              <h2 className="parent-title-dt" style={{ marginTop: '8px', color: 'var(--navy-900)' }}>Architecture & Operating Model Risks — Evidence & Solutions Matrix</h2>
+              <p style={{ color: 'var(--color-text-muted)' }}>Technical API & POC evidence addressing the risk questions from the Third-Party Business Architecture Assessment.</p>
+            </div>
+
+            {/* EA Governance Banner */}
+            <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-card)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <HelpCircle size={24} color="#1d4ed8" />
+              <div style={{ fontSize: '13.5px', color: 'var(--slate-800)', lineHeight: '1.5' }}>
+                <strong>Governance Note:</strong> The technical responses below reflect the <strong>AI-Synthesized Architectural Assessment</strong> grounded in iTravel Cruise v6.0 contracts, TravCorp V4 APIs, and Business requirements.
+                <br />
+                <span style={{ color: '#1e40af', fontWeight: '700' }}>Status: AI Answer = YES | Final Confirmation (YES / NO) to be formally signed off by the TTC Enterprise Architecture (EA) Team.</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {ARCHITECTURE_RISKS_QA.map((cat, idx) => (
+                <div key={idx} style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', borderBottom: '2px solid var(--navy-900)', paddingBottom: '8px' }}>
+                    <AlertTriangle size={20} color="#dc2626" />
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--navy-900)', margin: 0 }}>{cat.category}</h3>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {cat.items.map((item, itemIdx) => (
+                      <div key={itemIdx} style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                          <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: 0, flex: 1 }}>
+                            "{item.question}"
+                          </h4>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
+                            <CheckCircle size={14} color="#1d4ed8" />
+                            AI Answer: YES <span style={{ fontSize: '11px', fontWeight: '600', color: '#3b82f6' }}>(To be confirmed by EA Team)</span>
+                          </span>
+                        </div>
+
+                        <div style={{ background: '#f0fdf4', padding: '12px 16px', borderRadius: 'var(--radius-accordion)', border: '1px solid #bbf7d0' }}>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Technical Evidence & Solution:</div>
+                          <p style={{ fontSize: '13px', color: '#14532d', margin: 0, lineHeight: '1.5', fontWeight: '500' }}>{item.evidence}</p>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-500)' }}>API / Contract Reference:</span>
+                          <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>{item.apiRef}</code>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: HIGH-LEVEL REQUIREMENTS MAPPING */}
         {activeTab === 'reqs' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
             
@@ -351,7 +740,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 3: AGENCY, TRADE & COMMISSION HUB */}
+        {/* TAB 6: AGENCY, TRADE & COMMISSION HUB */}
         {activeTab === 'trade' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
             
@@ -398,455 +787,6 @@ export default function App() {
 
               </div>
             </div>
-
-          </div>
-        )}
-
-        {/* TAB 4: TECHNICAL DOCUMENTATION & API EXPLORER */}
-        {activeTab === 'arch' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            
-            {/* Tech Specs Sub-Navigation Bar */}
-            <div className="card" style={{ padding: '12px 16px', background: 'var(--navy-900)', border: '1px solid var(--gold-500)', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ color: 'var(--gold-500)', fontWeight: '800', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', marginRight: '8px' }}>Tech Specs View:</span>
-              
-              <button
-                onClick={() => { setTechSubTab('explorer'); trackTelemetry({ block_type: 'TECH_SUBTAB', block_id: 'EXPLORER', interaction_type: 'CLICK' }); }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-accordion)',
-                  border: techSubTab === 'explorer' ? '2px solid var(--gold-500)' : '1px solid var(--slate-700)',
-                  backgroundColor: techSubTab === 'explorer' ? 'var(--gold-500)' : 'var(--navy-800)',
-                  color: '#fff',
-                  fontWeight: '700',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <Code size={16} /> API Interactive Explorer
-              </button>
-
-              <button
-                onClick={() => { setTechSubTab('topology'); trackTelemetry({ block_type: 'TECH_SUBTAB', block_id: 'TOPOLOGY', interaction_type: 'CLICK' }); }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-accordion)',
-                  border: techSubTab === 'topology' ? '2px solid var(--gold-500)' : '1px solid var(--slate-700)',
-                  backgroundColor: techSubTab === 'topology' ? 'var(--gold-500)' : 'var(--navy-800)',
-                  color: '#fff',
-                  fontWeight: '700',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <GitMerge size={16} /> System Topology & Artwork
-              </button>
-
-              <button
-                onClick={() => { setTechSubTab('qa'); trackTelemetry({ block_type: 'TECH_SUBTAB', block_id: 'QA', interaction_type: 'CLICK' }); }}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-accordion)',
-                  border: techSubTab === 'qa' ? '2px solid var(--gold-500)' : '1px solid var(--slate-700)',
-                  backgroundColor: techSubTab === 'qa' ? 'var(--gold-500)' : 'var(--navy-800)',
-                  color: '#fff',
-                  fontWeight: '700',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
-                <AlertTriangle size={16} /> Architecture Risks & Evidence Q&A
-              </button>
-            </div>
-
-            {/* SUB-TAB 1: API INTERACTIVE EXPLORER */}
-            {techSubTab === 'explorer' && (
-              <div>
-                {/* Search and Filter Bar */}
-                <div className="card" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ flex: 1, position: 'relative' }}>
-                      <Search size={18} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--color-text-muted)' }} />
-                      <input
-                        type="text"
-                        placeholder="Search endpoints by title, schema, field, error code, or keyword..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px 12px 42px',
-                          borderRadius: 'var(--radius-accordion)',
-                          border: '1px solid var(--color-border-subtle)',
-                          fontSize: '14px',
-                          outline: 'none'
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Category Pills */}
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {categories.map((cat) => (
-                      <button
-                        key={cat}
-                        onClick={() => { setSelectedCategory(cat); trackTelemetry({ block_type: 'CATEGORY_FILTER', block_id: cat, interaction_type: 'CLICK' }); }}
-                        style={{
-                          padding: '6px 14px',
-                          borderRadius: 'var(--radius-icon)',
-                          border: 'none',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          backgroundColor: selectedCategory === cat ? 'var(--navy-900)' : '#e2e8f0',
-                          color: selectedCategory === cat ? '#fff' : 'var(--slate-700)',
-                          transition: 'all 0.15s ease'
-                        }}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Split View: Left List, Right Inspector */}
-                <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '24px' }}>
-                  {/* Left Column: Endpoint List */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '750px', overflowY: 'auto', paddingRight: '4px' }}>
-                    {filteredEndpoints.map((ep) => (
-                      <div
-                        key={ep.id}
-                        className="card"
-                        onClick={() => { setSelectedEndpoint(ep); trackTelemetry({ block_type: 'ENDPOINT_CARD', block_id: ep.id, interaction_type: 'SELECT' }); }}
-                        style={{
-                          padding: '16px',
-                          cursor: 'pointer',
-                          borderColor: selectedEndpoint?.id === ep.id ? 'var(--gold-500)' : 'var(--color-border-subtle)',
-                          borderWidth: selectedEndpoint?.id === ep.id ? '2px' : '1px',
-                          backgroundColor: selectedEndpoint?.id === ep.id ? '#fdfbf7' : '#fff',
-                          transition: 'all 0.15s ease'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                          <span className={`badge badge-${ep.lifecycleBadge.toLowerCase()}`}>{ep.lifecycleBadge}</span>
-                          <span style={{ fontSize: '11px', fontWeight: '700', color: '#475569', background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px' }}>{ep.source}</span>
-                        </div>
-                        <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '4px' }}>{ep.title}</h3>
-                        <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', margin: 0 }}>{ep.displayName}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Right Column: Deep Endpoint Inspector */}
-                  {selectedEndpoint && (
-                    <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                      <div style={{ borderBottom: '1px solid var(--color-border-subtle)', pb: '16px', paddingBottom: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                          <span style={{ backgroundColor: '#10b981', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>{selectedEndpoint.method}</span>
-                          <code style={{ fontSize: '14px', fontWeight: '600', color: 'var(--navy-900)' }}>{selectedEndpoint.endpointPath}</code>
-                          <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: '700', color: '#0369a1', background: '#e0f2fe', padding: '4px 8px', borderRadius: '4px' }}>Source: {selectedEndpoint.source}</span>
-                        </div>
-                        <h2 className="parent-title-dt" style={{ marginBottom: '8px' }}>{selectedEndpoint.displayName} ({selectedEndpoint.title})</h2>
-                        <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>{selectedEndpoint.description}</p>
-                      </div>
-
-                      {/* Mandatory Headers */}
-                      <div>
-                        <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>Mandatory Security & Channel Headers</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                          {selectedEndpoint.headers.map((h) => (
-                            <div key={h.name} style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)' }}>
-                              <code style={{ fontWeight: '700', color: 'var(--navy-900)' }}>{h.name}</code>
-                              <p style={{ fontSize: '11px', color: 'var(--slate-700)', margin: '4px 0 0 0' }}>{h.description}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Sample Payloads */}
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                          <h4 className="child-title-dt">Request Payload Example</h4>
-                          <button className="btn-primary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleCopy(selectedEndpoint.requestPayload, 'req')}>
-                            {copiedField === 'req' ? <Check size={14} /> : <Copy size={14} />} {copiedField === 'req' ? 'Copied' : 'Copy Payload'}
-                          </button>
-                        </div>
-                        <pre>{selectedEndpoint.requestPayload}</pre>
-                      </div>
-
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                          <h4 className="child-title-dt">Response Payload Example</h4>
-                          <button className="btn-primary" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => handleCopy(selectedEndpoint.responsePayload, 'res')}>
-                            {copiedField === 'res' ? <Check size={14} /> : <Copy size={14} />} {copiedField === 'res' ? 'Copied' : 'Copy Payload'}
-                          </button>
-                        </div>
-                        <pre>{selectedEndpoint.responsePayload}</pre>
-                      </div>
-
-                      {/* V4 Comparison & Error Codes */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', borderTop: '1px solid var(--color-border-subtle)', paddingTop: '16px' }}>
-                        <div style={{ background: '#fefce8', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fef08a' }}>
-                          <h5 style={{ fontWeight: '700', color: '#854d0e', marginBottom: '4px' }}>V4 vs iTravel Architectural Difference</h5>
-                          <p style={{ fontSize: '12px', color: '#713f12', margin: 0 }}>{selectedEndpoint.v4Comparison}</p>
-                        </div>
-                        <div style={{ background: '#fef2f2', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fecaca' }}>
-                          <h5 style={{ fontWeight: '700', color: '#991b1b', marginBottom: '4px' }}>Common Error Codes</h5>
-                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '6px' }}>
-                            {selectedEndpoint.errorCodes.map(err => (
-                              <code key={err} style={{ background: '#fee2e2', color: '#991b1b', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', fontWeight: '700' }}>{err}</code>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* SUB-TAB 2: SYSTEM TOPOLOGY & ARTWORK */}
-            {techSubTab === 'topology' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                
-                {/* Integration Architecture Topology Card */}
-                <div className="card" style={{ padding: '24px', background: '#fff', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-card)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                    <GitMerge size={22} color="var(--navy-900)" />
-                    <div>
-                      <h3 className="parent-title-dt" style={{ margin: 0 }}>iTravel OMS Gateway & Protocol Topology</h3>
-                      <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '2px 0 0 0' }}>High-Resolution Architectural System Illustration & Protocol Mapping</p>
-                    </div>
-                  </div>
-
-                  {/* Solid Box & Line Architecture Diagram Component */}
-                  <div style={{ background: 'var(--navy-900)', color: '#fff', padding: '24px', borderRadius: 'var(--radius-card)', border: '2px solid var(--gold-500)', boxShadow: 'var(--shadow-section)', marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--navy-800)', paddingBottom: '12px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: '800', color: 'var(--gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>System Architecture Topology</span>
-                      <span style={{ fontSize: '11px', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>Single Gateway Model</span>
-                    </div>
-
-                    {/* Top Tier: Frontend UI */}
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                      <div style={{ background: '#1e293b', border: '2px solid #38bdf8', padding: '16px 24px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '540px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>NORTHBOUND FRONTEND CLIENTS</div>
-                        <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff', marginTop: '4px' }}>TTC Consumer Web Portals & Travel Agent B2B UI</div>
-                        <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Single Customer Shopping Cart / Guest Booking Session</div>
-                      </div>
-                    </div>
-
-                    {/* Down Connector Line & Protocol Badge */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '4px 0' }}>
-                      <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
-                      <span style={{ fontSize: '11px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '3px 12px', borderRadius: '12px', letterSpacing: '0.02em' }}>REST / JSON over HTTPS (OAuth 2.0 JWT)</span>
-                      <div style={{ width: '2px', height: '16px', background: '#38bdf8' }}></div>
-                    </div>
-
-                    {/* Middle Tier: Orchestration Gateway */}
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', border: '2px solid var(--gold-500)', padding: '20px 28px', borderRadius: 'var(--radius-card)', textAlign: 'center', width: '100%', maxWidth: '700px', boxShadow: '0 6px 16px rgba(0,0,0,0.4)' }}>
-                        <div style={{ display: 'inline-block', fontSize: '11px', fontWeight: '800', background: 'var(--gold-500)', color: '#000', padding: '2px 10px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>CENTRAL ORCHESTRATION GATEWAY</div>
-                        <div style={{ fontSize: '18px', fontWeight: '800', color: '#fff' }}>iTravel Connect OMS Gateway (/v7/rest)</div>
-                        <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '6px 0 0 0', lineHeight: '1.5' }}>
-                          Single Entry Point for UI • Validates Rules Engine & Transit Buffers • Calculates Blended Commissions • Manages Super PNR Order Basket & Guest Invoices
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Split Connector Lines */}
-                    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', maxWidth: '880px', margin: '0 auto' }}>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
-                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#7c3aed', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>RPC REST/SOAP v6.0</span>
-                        <div style={{ width: '2px', height: '18px', background: '#a855f7' }}></div>
-                      </div>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
-                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>PowerShopping Sync</span>
-                        <div style={{ width: '2px', height: '18px', background: '#38bdf8' }}></div>
-                      </div>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
-                        <span style={{ fontSize: '10px', fontWeight: '800', background: '#ca8a04', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>REST / V4 Integration API</span>
-                        <div style={{ width: '2px', height: '18px', background: '#eab308' }}></div>
-                      </div>
-                    </div>
-
-                    {/* Bottom Tier: Southbound Backend Systems */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginTop: '4px' }}>
-                      
-                      {/* System 1: iTravel Cruise Engine */}
-                      <div style={{ background: '#1e1b4b', border: '2px solid #a855f7', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#c084fc', textTransform: 'uppercase' }}>CRUISE INVENTORY SYSTEM</div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>iTravel Cruise Engine v6.0</div>
-                        <p style={{ fontSize: '11px', color: '#e9d5ff', margin: 0, lineHeight: '1.4' }}>
-                          Uniworld Cabin Holds, Dining Allotments, Sailing Rates, Deck Plans & Cruise PNR Master Store.
-                        </p>
-                      </div>
-
-                      {/* System 2: PowerShopping Cache */}
-                      <div style={{ background: '#0c4a6e', border: '2px solid #38bdf8', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#7dd3fc', textTransform: 'uppercase' }}>HIGH-SPEED SEARCH CACHE</div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>PowerShopping Cache Tier</div>
-                        <p style={{ fontSize: '11px', color: '#bae6fd', margin: 0, lineHeight: '1.4' }}>
-                          Pre-aggregated cruise availability, promotions & starting fare search cache for high-concurrency lookups.
-                        </p>
-                      </div>
-
-                      {/* System 3: TravCorp V4 Tropics Adapter */}
-                      <div style={{ background: '#451a03', border: '2px solid #f59e0b', padding: '16px', borderRadius: 'var(--radius-card)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div style={{ fontSize: '10px', fontWeight: '800', color: '#fde047', textTransform: 'uppercase' }}>LAND TOUR SYSTEM</div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>TravCorp V4 Adapter (Tropics)</div>
-                        <p style={{ fontSize: '11px', color: '#fef08a', margin: 0, lineHeight: '1.4' }}>
-                          Guided Land Tours (Trafalgar, Insight, Contiki), Operating Points, Tour Departures & Hotel Allotments.
-                        </p>
-                      </div>
-
-                    </div>
-
-                    {/* Strict Isolation Notice */}
-                    <div style={{ background: '#0284c7', color: '#fff', padding: '10px 16px', borderRadius: 'var(--radius-accordion)', marginTop: '20px', fontSize: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                      <span>🔒 <strong>Architectural Rule:</strong> UI NEVER interacts directly with TravCorp V4 or iTravel Cruise v6.0. All requests pass strictly through iTravel OMS Gateway (/v7/rest).</span>
-                    </div>
-                  </div>
-
-                  {/* Principles & Confirmation */}
-                  <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-300)' }}>
-                    <h4 className="child-title-dt" style={{ marginBottom: '12px', color: '#15803d' }}>Architectural Confirmation & Principles:</h4>
-                    <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--slate-800)', margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {OMS_ARCHITECTURE_TOPOLOGY.keyTakeaways.map((item, idx) => (
-                        <li key={idx} style={{ lineHeight: '1.6' }}>
-                          <strong>{item.split(':')[0]}:</strong> {item.split(':')[1]}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Platform Comparison Table */}
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  <div>
-                    <span style={{ backgroundColor: 'var(--gold-500)', color: '#fff', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '800' }}>Platform Naming & Roles</span>
-                    <h2 className="parent-title-dt" style={{ marginTop: '8px' }}>TravCorp V4 (Distribution API) vs iTravel Connect (IBS OMS)</h2>
-                    <p style={{ color: 'var(--color-text-muted)' }}>Comparison of ownership, primary domain, inventory backends, and integration responsibilities within TTC Business Architecture.</p>
-                  </div>
-
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                      <tr style={{ background: 'var(--navy-900)', color: '#fff' }}>
-                        <th style={{ padding: '12px 16px', borderRadius: 'var(--radius-icon) 0 0 0', width: '22%' }}>Dimension</th>
-                        <th style={{ padding: '12px 16px', width: '39%' }}>TravCorp V4 (Distribution API)</th>
-                        <th style={{ padding: '12px 16px', borderRadius: '0 var(--radius-icon) 0 0', width: '39%' }}>iTravel Connect (IBS OMS)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Platform Owner / Provider</td>
-                        <td style={{ padding: '12px 16px', fontWeight: '600', color: '#0284c7' }}>The Travel Corporation (TTC Internal Tech)</td>
-                        <td style={{ padding: '12px 16px', fontWeight: '600', color: '#7c3aed' }}>IBS Software (iTravel Product Suite)</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Core System Role</td>
-                        <td style={{ padding: '12px 16px' }}>Touring Product Distribution API & Inventory Gateway</td>
-                        <td style={{ padding: '12px 16px' }}>Central Order Management System (OMS) & Gateway</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Business Domains</td>
-                        <td style={{ padding: '12px 16px' }}>Guided Land Tours (Trafalgar, Insight, Contiki, Costsaver)</td>
-                        <td style={{ padding: '12px 16px' }}>Uniworld River Cruises & Multi-Modal Bundled Carts</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Backend Source Systems</td>
-                        <td style={{ padding: '12px 16px' }}>Tropics (Guided Tour Booking Engine)</td>
-                        <td style={{ padding: '12px 16px' }}>iTravel Cruise Engine v6.0 & Super PNR Master Store</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>UI Integration Topology</td>
-                        <td style={{ padding: '12px 16px' }}>Invoked internally by iTravel OMS (Never called from UI)</td>
-                        <td style={{ padding: '12px 16px' }}>Exposes single unified REST API Gateway directly to UI</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)', background: '#f8fafc' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Primary Abstraction</td>
-                        <td style={{ padding: '12px 16px' }}>Touring product (brand, tour, option, departure)</td>
-                        <td style={{ padding: '12px 16px' }}>Multi-Product Order Basket & Super PNR</td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid var(--slate-200)' }}>
-                        <td style={{ padding: '12px 16px', fontWeight: '700' }}>Key Responsibilities</td>
-                        <td style={{ padding: '12px 16px' }}>Land tour departures, hotel allotments, optional experiences</td>
-                        <td style={{ padding: '12px 16px' }}>Cruise cabin holds, transit buffer rules engine, unified guest invoice, net billing</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-              </div>
-            )}
-
-            {/* SUB-TAB 3: RISKS & EVIDENCE Q&A MATRIX */}
-            {techSubTab === 'qa' && (
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div>
-                  <span style={{ backgroundColor: '#dc2626', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: '800', letterSpacing: '0.05em' }}>Business Operating Model Assessment</span>
-                  <h2 className="parent-title-dt" style={{ marginTop: '8px', color: 'var(--navy-900)' }}>Architecture & Operating Model Risks — Evidence & Solutions Matrix</h2>
-                  <p style={{ color: 'var(--color-text-muted)' }}>Technical API & POC evidence addressing the risk questions from the Third-Party Business Architecture Assessment.</p>
-                </div>
-
-                {/* EA Governance Banner */}
-                <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-card)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <HelpCircle size={24} color="#1d4ed8" />
-                  <div style={{ fontSize: '13.5px', color: 'var(--slate-800)', lineHeight: '1.5' }}>
-                    <strong>Governance Note:</strong> The technical responses below reflect the <strong>AI-Synthesized Architectural Assessment</strong> grounded in iTravel Cruise v6.0 contracts, TravCorp V4 APIs, and Business requirements.
-                    <br />
-                    <span style={{ color: '#1e40af', fontWeight: '700' }}>Status: AI Answer = YES | Final Confirmation (YES / NO) to be formally signed off by the TTC Enterprise Architecture (EA) Team.</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {ARCHITECTURE_RISKS_QA.map((cat, idx) => (
-                    <div key={idx} style={{ background: '#f8fafc', padding: '24px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', borderBottom: '2px solid var(--navy-900)', paddingBottom: '8px' }}>
-                        <AlertTriangle size={20} color="#dc2626" />
-                        <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--navy-900)', margin: 0 }}>{cat.category}</h3>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {cat.items.map((item, itemIdx) => (
-                          <div key={itemIdx} style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-                              <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: 0, flex: 1 }}>
-                                "{item.question}"
-                              </h4>
-                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#eff6ff', color: '#1e40af', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
-                                <CheckCircle size={14} color="#1d4ed8" />
-                                AI Answer: YES <span style={{ fontSize: '11px', fontWeight: '600', color: '#3b82f6' }}>(To be confirmed by EA Team)</span>
-                              </span>
-                            </div>
-
-                            <div style={{ background: '#f0fdf4', padding: '12px 16px', borderRadius: 'var(--radius-accordion)', border: '1px solid #bbf7d0' }}>
-                              <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '4px' }}>Technical Evidence & Solution:</div>
-                              <p style={{ fontSize: '13px', color: '#14532d', margin: 0, lineHeight: '1.5', fontWeight: '500' }}>{item.evidence}</p>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--slate-500)' }}>API / Contract Reference:</span>
-                              <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px', fontWeight: '700' }}>{item.apiRef}</code>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
           </div>
         )}
