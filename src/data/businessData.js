@@ -354,7 +354,7 @@ export const MULTI_MODAL_JOURNEYS = [
     uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBooking)",
     uiCallBusinessDetails: "How it works: UI submits the full multi-product payload (`IsPreview=false`, guest profiles, tokenized payment token). OMS Gateway creates the order and returns master Super PNR reference 'SUPER-88492'.",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
-    v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 /booking to commit the land tour sub-booking in Tropics, receiving Tropics sub-booking reference 'TRP-55219'.",
+    v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 /booking to commit the land tour sub-booking in Tropics, receiving a real numeric Tropics sub-booking reference (e.g. Tropics Booking Ref `1048291`).",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",
     itravelCallBusinessDetails: "How it works: iTravel OMS writes the master Super PNR record containing both line items (Tour + Cruise), generates the single guest invoice PDF, and stores payment authorization.",
     rulesEngineCall: "Calculates consolidated deposit due dates, payment schedule milestones, and Net vs Gross agency billing terms.",
@@ -363,17 +363,17 @@ export const MULTI_MODAL_JOURNEYS = [
   {
     step: 7,
     stageName: "7. Bundled Servicing & Commission Settlement",
-    tagline: "Collision-Free Modifications & Blended Commission Payout",
-    description: "Handles post-booking modifications using pessimistic session locking (freezePnrs) and calculates blended travel advisor commission payouts across the bundled products.",
-    businessValue: "Prevents concurrent editing race conditions during call-center servicing and ensures accurate, automated agency commission payouts across multi-brand packages.",
+    tagline: "Collision-Free Modifications & Centralized Blended Commission Payout",
+    description: "Handles post-booking modifications using pessimistic session locking (freezePnrs) and calculates centralized blended travel advisor commission payouts across bundled products.",
+    businessValue: "Prevents concurrent editing race conditions during call-center servicing and ensures a single consolidated agency commission check/remittance out of iTravel OMS rather than dual separate payments.",
     uiCall: "POST /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs & cancel | PDF Sec 5.3 Pg 147 (freezePnrs), PDF Sec 5.9 Pg 158 (modify - No URL published) & PDF Sec 6.2 Pg 196 (cancel)",
     uiCallBusinessDetails: "How it works: When a call-center agent opens the Super PNR to add an optional tour or change guest passport details, UI calls `freezePnrs` to obtain an exclusive pessimistic edit lock (`LockToken`).",
-    v4Call: "iTravel OMS updates Tropics Commission Ledger via V4 Commissions endpoint (/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions)",
-    v4CallBusinessDetails: "How it works: iTravel OMS syncs final land tour line item pricing to Tropics and posts the land tour commission portion (e.g. 12% on $3,000 land tour = $360) to Tropics Finance.",
+    v4Call: "iTravel OMS syncs land tour pricing to Tropics sub-ledger (/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions)",
+    v4CallBusinessDetails: "How it works: iTravel OMS syncs final land tour pricing to Tropics for internal brand revenue recognition journal entries. All travel agency commission disbursements are centralized and paid out of iTravel OMS (not Tropics).",
     itravelCall: "Pessimistic session lock & post-booking amendments (PDF Sec 5.3 Pg 147, Sec 5.9 Pg 158 & Sec 6.2 Pg 196)",
     itravelCallBusinessDetails: "How it works: iTravel OMS manages the master Super PNR modification lifecycle (`modifyRQ/RS`), recalculating total package price and issuing updated customer invoices.",
     rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner context and NetPayApplicable flag.",
-    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates `BookingOwner.NetPayApplicable`. If `true` (Net Billing), guest is charged Total Price minus Commission, and agency retains commission at source. If `false` (Gross Billing), guest pays 100% and iTravel OMS posts a $1,110 blended commission credit ($750 cruise + $360 tour) to agency payout ledger."
+    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates `BookingOwner.NetPayApplicable`. If `true` (Net Billing), guest is charged Total Price minus Commission, and agency retains commission at source. If `false` (Gross Billing), guest pays 100% and iTravel OMS Central Financial Ledger dispatches a single consolidated $1,110 blended commission payout ($750 cruise + $360 tour) to the agency."
   }
 ];
 
