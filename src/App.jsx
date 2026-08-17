@@ -266,36 +266,63 @@ export default function App() {
                   </div>
 
                   <div>
-                    <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>API Orchestration & Rules Engine Mapping</h4>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                    <h4 className="child-title-dt" style={{ marginBottom: '12px' }}>API Orchestration & Business Execution Details</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                       
                       {/* UI Call */}
-                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#15803d', textTransform: 'uppercase', marginBottom: '4px' }}>Frontend UI → OMS Gateway</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Single UI REST Call</h5>
-                        <code style={{ fontSize: '12px', background: '#dcfce7', color: '#14532d', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.uiCall}</code>
+                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#15803d', textTransform: 'uppercase', marginBottom: '4px' }}>Frontend UI → OMS Gateway</div>
+                          <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Single UI REST Call</h5>
+                          <code style={{ fontSize: '12px', background: '#dcfce7', color: '#14532d', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.uiCall}</code>
+                        </div>
+                        <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '4px', borderLeft: '3px solid #166534' }}>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#166534', textTransform: 'uppercase', marginBottom: '2px' }}>Business Context:</div>
+                          <p style={{ fontSize: '12px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>{selectedJourneyStep.uiCallBusinessDetails}</p>
+                        </div>
                       </div>
 
                       {/* V4 Land Tour Component */}
-                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>TravCorp V4 Adapter (Tropics)</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Land Tour Component</h5>
-                        <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.v4Call}</code>
+                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>TravCorp V4 Adapter (Tropics)</div>
+                          <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Land Tour Component</h5>
+                          <code style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.v4Call}</code>
+                        </div>
+                        <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '4px', borderLeft: '3px solid #0284c7' }}>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#0369a1', textTransform: 'uppercase', marginBottom: '2px' }}>Business Context:</div>
+                          <p style={{ fontSize: '12px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>{selectedJourneyStep.v4CallBusinessDetails}</p>
+                        </div>
                       </div>
 
                       {/* iTravel Cruise Component */}
-                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)' }}>
-                        <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>iTravel Connect Gateway</div>
-                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>River Cruise Component</h5>
-                        <code style={{ fontSize: '12px', background: '#f3e8ff', color: '#6b21a8', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.itravelCall}</code>
+                      <div style={{ background: '#fff', padding: '16px', borderRadius: 'var(--radius-card)', border: '1px solid #cbd5e1', boxShadow: 'var(--shadow-tag)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>iTravel Connect Gateway</div>
+                          <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>River Cruise Component</h5>
+                          <code style={{ fontSize: '12px', background: '#f3e8ff', color: '#6b21a8', padding: '8px 10px', borderRadius: '4px', display: 'block', wordBreak: 'break-all', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: '1.5' }}>{selectedJourneyStep.itravelCall}</code>
+                        </div>
+                        <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '4px', borderLeft: '3px solid #7c3aed' }}>
+                          <div style={{ fontSize: '11px', fontWeight: '800', color: '#6b21a8', textTransform: 'uppercase', marginBottom: '2px' }}>Business Context:</div>
+                          <p style={{ fontSize: '12px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>{selectedJourneyStep.itravelCallBusinessDetails}</p>
+                        </div>
                       </div>
 
                     </div>
                   </div>
 
-                  <div style={{ background: '#fffbe3', padding: '14px 18px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fde68a' }}>
-                    <h5 style={{ fontWeight: '700', color: '#b45309', marginBottom: '4px' }}>Rules Engine & Policy Evaluation</h5>
-                    <p style={{ fontSize: '13px', color: '#92400e', margin: 0 }}>{selectedJourneyStep.rulesEngineValidation}</p>
+                  {/* Rules Engine & Policy Evaluation Box */}
+                  <div style={{ background: '#fffbe3', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #fde68a', boxShadow: 'var(--shadow-tag)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <CheckCircle size={18} color="#b45309" />
+                      <h5 style={{ fontWeight: '800', color: '#92400e', margin: 0, fontSize: '15px' }}>Rules Engine & Policy Evaluation</h5>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: '700', color: '#b45309', marginBottom: '6px' }}>
+                      Rule Triggered: {selectedJourneyStep.rulesEngineCall}
+                    </div>
+                    <p style={{ fontSize: '13px', color: '#78350f', margin: 0, lineHeight: '1.6', background: '#fff', padding: '12px 14px', borderRadius: 'var(--radius-accordion)', border: '1px solid #fef3c7' }}>
+                      {selectedJourneyStep.rulesEngineBusinessDetails}
+                    </p>
                   </div>
                 </div>
               )}
@@ -755,11 +782,126 @@ export default function App() {
               </p>
             </div>
 
-            {/* OPEN ARCHITECTURAL QUESTION FOR TTC: AGENCY MASTERING AUTHORITY */}
+            {/* 1. AGENCY IDENTITY RESOLUTION & BOOKINGOWNER SCHEMA */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Users size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>1. Agency Identity Resolution & BookingOwner Schema</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                Travel agents currently possess disparate IDs across TTC systems (e.g. <code>AG-101</code> in Tropics vs <code>SF-ACC-88192</code> in Salesforce CRM vs Pseudo City Code <code>x-pcc</code> in iTravel Connect). The iTravel OMS Gateway unifies these identities into a single canonical <code>BookingOwner</code> payload object passed on every booking call.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+                
+                {/* BookingOwner Fields Card */}
+                <div style={{ background: '#f8fafc', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '12px' }}>Canonical BookingOwner Parameters</h4>
+                  <ul style={{ fontSize: '12.5px', color: 'var(--slate-700)', paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', lineHeight: '1.5' }}>
+                    <li><strong>RequestorType:</strong> Indicates entity type (<code>AGENCY</code>, <code>CORPORATE</code>, <code>DIRECT_B2C</code>).</li>
+                    <li><strong>RequestorID:</strong> Central agency ID (e.g. IATA / CLIA number / Tropics ID <code>AG-101</code>).</li>
+                    <li><strong>RequestingUserID:</strong> Individual travel advisor/consultant ID for booking attribution.</li>
+                    <li><strong>OrgUnitCode:</strong> Agency branch or office code (e.g. <code>LON_WEST_BRANCH</code>).</li>
+                    <li><strong>AgencyConsortium:</strong> Consortia alignment (e.g. <code>VIRTUOSO</code>, <code>AAA</code>, <code>SIGNATURE</code>).</li>
+                    <li><strong>PayToSelf:</strong> Boolean flag indicating whether advisor is paid directly or via Host Agency.</li>
+                    <li><strong>PayOutAgencyCode:</strong> Target account code for commission payment disbursements.</li>
+                    <li><strong>NetPayApplicable:</strong> Toggles Net Billing (<code>true</code>) vs Gross Billing (<code>false</code>).</li>
+                    <li><strong>BusinessType:</strong> Categorizes order flow (<code>FIT</code>, <code>GROUP</code>, <code>CHARTER</code>).</li>
+                  </ul>
+                </div>
+
+                {/* Sample JSON Object */}
+                <div style={{ background: '#0f172a', color: '#e2e8f0', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #334155' }}>
+                  <div style={{ fontSize: '11px', fontWeight: '800', color: '#38bdf8', textTransform: 'uppercase', marginBottom: '8px' }}>Live Payload Example (iTravel REST /v7/rest/bookings)</div>
+                  <pre style={{ fontSize: '11.5px', fontFamily: 'monospace', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: '#93c5fd', lineHeight: '1.5' }}>{`"BookingOwner": {
+  "RequestorType": "AGENCY",
+  "RequestorID": "IATA-992014",
+  "RequestingUserID": "ADV-JULIA-SMITH",
+  "OrgUnitCode": "UK-LON-01",
+  "AgencyConsortium": "VIRTUOSO",
+  "PayToSelf": false,
+  "PayOutAgencyCode": "HOST-PROTRAVEL-01",
+  "NetPayApplicable": true,
+  "channel": "B2B_ADVISOR_PORTAL",
+  "BusinessType": "FIT"
+}`}</pre>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 2. MULTI-BRAND BLENDED COMMISSION ENGINE */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <DollarSign size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>2. Multi-Brand Blended Commission Engine</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                When an advisor bundles products across different TTC brands (e.g. a <strong>Trafalgar Land Tour</strong> + a <strong>Uniworld River Cruise</strong>), each line item carries distinct commercial agreements and commission percentages. The iTravel OMS Financial Ledger calculates a blended, itemized commission breakdown.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* Itemized Calculation Breakdown */}
+                <div style={{ background: '#f0fdf4', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #bbf7d0' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#166534', marginTop: 0, marginBottom: '8px' }}>Itemized Blended Ledger Calculation</h4>
+                  <div style={{ fontSize: '12.5px', color: '#14532d', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <div>• <strong>Uniworld River Cruise Line Item:</strong> $5,000 fare @ 15% Tier = <strong>$750.00 Commission</strong></div>
+                    <div>• <strong>Trafalgar Land Tour Line Item:</strong> $3,000 fare @ 12% Tier = <strong>$360.00 Commission</strong></div>
+                    <div style={{ borderTop: '1px solid #86efac', paddingTop: '6px', fontWeight: '800', color: '#15803d', fontSize: '13.5px' }}>
+                      Total Blended Package Commission: $1,110.00 (13.875% Effective Rate)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Net vs Gross Settlement */}
+                <div style={{ background: '#eff6ff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #bfdbfe' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#1e40af', marginTop: 0, marginBottom: '8px' }}>Net Billing vs Gross Billing Settlement</h4>
+                  <div style={{ fontSize: '12.5px', color: '#1e3a8a', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.5' }}>
+                    <div>• <strong>Net Billing (NetPayApplicable = true):</strong> Advisor collects total fare minus commission from guest ($8,000 - $1,110 = $6,890) and remits net $6,890 to TTC.</div>
+                    <div>• <strong>Gross Billing (NetPayApplicable = false):</strong> Guest pays full $8,000 to TTC; iTravel OMS posts a $1,110 credit to agency payout ledger for monthly disbursement.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 3. CONSORTIA OVERRIDES & HEADLESS CHANNELS */}
+            <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Globe size={22} color="var(--navy-900)" />
+                <h3 className="parent-title-dt" style={{ margin: 0, color: 'var(--navy-900)' }}>3. Consortia Overrides & Headless API Distribution</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.6' }}>
+                Supports both human advisors booking via the B2B Web Portal and large agency partners (e.g. Flight Centre, AAA, American Express Travel) integrating via automated <strong>Headless REST APIs</strong>.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                
+                {/* Consortia Benefits */}
+                <div style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '6px' }}>Automated Consortia Recognition</h4>
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    Passing <code>AgencyConsortium = "VIRTUOSO"</code> or <code>"AAA"</code> automatically attaches exclusive inclusions (e.g. $250 shipboard credit, complimentary private transfer, or priority room upgrades) without manual call-center intervention.
+                  </p>
+                </div>
+
+                {/* Headless API Channel */}
+                <div style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid var(--slate-200)', boxShadow: 'var(--shadow-tag)' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', marginTop: 0, marginBottom: '6px' }}>OAuth 2.0 Headless REST Integration</h4>
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    External partner systems authenticate via <code>POST /oauth/token</code> (client_credentials grant) on the Auth host, receiving a 30-minute signed JWT bearer token that grants direct REST access to search, hold, and book APIs.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 4. OPEN ARCHITECTURAL QUESTION FOR TTC: AGENCY MASTERING AUTHORITY */}
             <div className="card" style={{ padding: '24px', background: '#fffbe3', border: '2px solid var(--gold-500)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                 <HelpCircle size={22} color="#b45309" />
-                <h3 className="parent-title-dt" style={{ margin: 0, color: '#92400e' }}>Open Decision Point for TTC: Agency Mastering Authority</h3>
+                <h3 className="parent-title-dt" style={{ margin: 0, color: '#92400e' }}>4. Open Decision Point for TTC: Agency Mastering Authority</h3>
               </div>
               <p style={{ fontSize: '14px', color: '#78350f', margin: '0 0 16px 0', lineHeight: '1.5' }}>
                 While <strong>iTravel Connect is contracted to replace Longitude by End of 2027</strong>, TTC must formally finalize which platform acts as the <strong>System of Record / Golden Master for Agency Accounts</strong>:
@@ -771,8 +913,8 @@ export default function App() {
                 <div style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #fde68a', boxShadow: 'var(--shadow-tag)' }}>
                   <div style={{ fontSize: '11px', fontWeight: '800', color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>Option A (Recommended for CRM Sync)</div>
                   <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>Salesforce CRM / MDM as Golden Source</h4>
-                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: '0 0 10px 0', lineHeight: '1.5' }}>
-                    Salesforce owns agency creation, validation, and consortia tier mapping. Salesforce CDC (Change Data Capture) / Outbound Webhooks sync updates directly down to <strong>iTravel Connect OMS</strong> and <strong>Tropics (V4)</strong>.
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
+                    Salesforce owns agency creation, validation, and consortia tier mapping. Salesforce CDC / Outbound Webhooks sync updates directly down to <strong>iTravel Connect OMS</strong> and <strong>Tropics (V4)</strong>.
                   </p>
                 </div>
 
@@ -780,7 +922,7 @@ export default function App() {
                 <div style={{ background: '#fff', padding: '18px', borderRadius: 'var(--radius-card)', border: '1px solid #fde68a', boxShadow: 'var(--shadow-tag)' }}>
                   <div style={{ fontSize: '11px', fontWeight: '800', color: '#7c3aed', textTransform: 'uppercase', marginBottom: '4px' }}>Option B (OMS Native Mastering)</div>
                   <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--navy-900)', margin: '0 0 6px 0' }}>iTravel Connect OMS Agency Master Store</h4>
-                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: '0 0 10px 0', lineHeight: '1.5' }}>
+                  <p style={{ fontSize: '12.5px', color: 'var(--slate-700)', margin: 0, lineHeight: '1.5' }}>
                     iTravel Connect acts as central agency directory for all web bookings. Agencies register in iTravel, which pushes accounts up to Salesforce via REST API.
                   </p>
                 </div>

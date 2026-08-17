@@ -99,83 +99,30 @@ export const ARCHITECTURE_RISKS_QA = [
     ]
   },
   {
-    category: "Authentication Migration & GDPR Compliance",
-    items: [
-      {
-        question: "Legacy logins vs new unified login approach.",
-        answered: "YES",
-        evidence: "Okta / Salesforce SSO issues OAuth 2.0 JWTs via POST /token on dedicated Auth host carrying both modern claims and legacy Tropics/iTravel credentials.",
-        apiRef: "OAuth 2.0 POST /token Bearer JWT"
-      },
-      {
-        question: "Need for re-registration of agents.",
-        answered: "YES",
-        evidence: "Okta migration scripts bulk-provision agent profiles from Salesforce MDM, eliminating manual agent re-registration.",
-        apiRef: "Okta / Salesforce MDM User Sync"
-      },
-      {
-        question: "Ensure GDPR compliance while having data and profiles scattered across platforms",
-        answered: "YES",
-        evidence: "PII data anonymization webhooks propagate Right-To-Be-Forgotten (RTBF) requests from Salesforce MDM down to iTravel OMS and Tropics DB.",
-        apiRef: "iTravel GDPR Anonymization Pipeline"
-      }
-    ]
-  },
-  {
     category: "Rules Engine & Policy Management",
     items: [
       {
-        question: "Avoid rule conflicts and overwrites.",
+        question: "Priority evaluation when multiple rules apply.",
         answered: "YES",
-        evidence: "iTravel Rules Engine Microservice enforces priority-based evaluation trees with explicit override precedence (Consortia > Promo Code > Standard Rate).",
-        apiRef: "iTravel Rules Engine Microservice"
+        evidence: "Rules engine evaluates discounts in strict hierarchy: Consortia (Virtuoso/AAA) > Promo Code > Standard Rate, enforcing floor price controls from V4.",
+        apiRef: "iTravel Rules Engine Priority Matrix"
       },
       {
-        question: "Ensure maintainability and transparency (historical issues with coded rules).",
+        question: "Need single business logic rule repository across brands.",
         answered: "YES",
-        evidence: "Externalized JSON/DMN decision tables in iTravel OMS replace hardcoded legacy C#/SQL triggers.",
-        apiRef: "iTravel DMN Decision Matrix"
-      },
-      {
-        question: "Need to amend reservation platforms to remove logic, booking integrity checks, validations and policies use.",
-        answered: "YES",
-        evidence: "Centralizes booking integrity checks (deposit rules, age limits, transit windows) in iTravel OMS before dispatching requests to Tropics.",
-        apiRef: "iTravel Pre-Commit Validation Engine"
-      },
-      {
-        question: "Margin Management (Amadeus Air Margin Manager is external)",
-        answered: "YES",
-        evidence: "Net vs Gross billing control via BookingOwner.NetPayApplicable enables margin calculations prior to external air ticketing.",
-        apiRef: "BookingOwner.NetPayApplicable"
-      },
-      {
-        question: "Get Floor price flowing from tropics to rules engine.",
-        answered: "YES",
-        evidence: "V4 Adapter retrieves minimumFloorPrice from Tropics via /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote to feed the OMS Rules Engine.",
-        apiRef: "V4 Departure Quote -> minimumFloorPrice"
-      },
-      {
-        question: "Different deposit, payment, and cancellation rules in Tropics vs Cruise",
-        answered: "YES",
-        evidence: "iTravel OMS calculates the most restrictive deposit/cancellation rule across land tour (Tropics) and river cruise (iTravel) components and presents a single unified terms schedule on the invoice.",
-        apiRef: "iTravel Consolidated Terms Engine"
-      },
-      {
-        question: "Promotions and discounts vary by brand; need logic for bundle-level offers.",
-        answered: "YES",
-        evidence: "fetchApplicablePromotionsRQ/RS evaluates multi-product combinability rules for bundled discounts via public-be-cruise promotions service.",
-        apiRef: "fetchApplicablePromotionsRQ/RS"
+        evidence: "iTravel Rules Engine serves as the centralized policy authority for transit buffers, age restrictions, payment schedules, and cancellation penalty tiers.",
+        apiRef: "iTravel Rules Engine Central Policy Store"
       }
     ]
   },
   {
-    category: "Commission & Product Management",
+    category: "Commission Complexity & Settlement",
     items: [
       {
-        question: "Multiple commission structures per brand, product, agency, groups and consortia.",
+        question: "Splitting commission across combined products and multi-agency payouts.",
         answered: "YES",
-        evidence: "BookingOwner schema evaluates AgencyConsortium (Virtuoso, AAA) and PayToSelf overrides to compute split commissions per line item.",
-        apiRef: "BookingOwner.AgencyConsortium & PayToSelf"
+        evidence: "Supported via BookingOwner object and per-line-item commission calculation rules in iTravel OMS, producing a blended commission ledger.",
+        apiRef: "BookingOwner.PayOutAgencyCode & Commission Ledger"
       },
       {
         question: "Risk of misalignment when combining products.",
@@ -231,33 +178,6 @@ export const ARCHITECTURE_RISKS_QA = [
 export const OMS_ARCHITECTURE_TOPOLOGY = {
   title: "iTravel OMS Gateway & Protocol Topology",
   subtitle: "REST Resource Surface & IBS RPC Services",
-  diagram: `
-+-------------------------------------------------------------------+
-|                        FRONTEND CLIENT UI                          |
-|             (B2B Web Portal / B2C Web Cart / Mobile)              |
-+-------------------------------------------------------------------+
-                                  |
-                                  |  REST / JSON over HTTPS (North-South)
-                                  |  OAuth 2.0 Bearer JWT Auth (POST /token on Auth host)
-                                  v
-+-------------------------------------------------------------------+
-|                   iTRAVEL OMS GATEWAY / ADAPTER                   |
-|                  (Single Point of Orchestration)                  |
-|                                                                   |
-|  * Public REST Gateway (POST /v7/rest/bookings)                   |
-|  * Public Power-Shopping (POST /v7/rest/public-power-shopping)    |
-|  * Configurable Rules Engine & Super PNR Single Customer Invoice  |
-+-------------------------------------------------------------------+
-             /                    |                    \
-            /  REST / JSON        |  REST / JSON        \  REST / JSON
-           /   HTTPS              |  HTTPS               \ Adapter
-          v                       v                       v
-+-------------------+   +-------------------+   +-------------------+
-|  iTRAVEL CRUISE   |   |   POWERSHOPPING   |   |    TRAVCORP V4    |
-| INVENTORY ENGINE  |   |    CACHE TIER     |   |   ADAPTER LAYER   |
-| (Ship Categories) |   | (Fast Search DB)  |   | (Tropics Engine)  |
-+-------------------+   +-------------------+   +-------------------+
-`,
   keyTakeaways: [
     "External Interface (North-South): REST / JSON over HTTPS with OAuth 2.0 JWT Bearer authentication (issued via POST /token on dedicated Auth host) is the standard protocol for all UI portals, B2B agency connections, and external integrations.",
     "iTravel Connect Surface: Canonical REST booking resource is POST /v7/rest/bookings, while power-shopping endpoints reside under /v7/rest/public-power-shopping/cruises/fetch.",
@@ -301,32 +221,32 @@ export const ELEVATE_REQUIREMENTS = [
   },
   {
     id: "req_5",
-    category: "Configurable Rules Engine",
-    requirement: "Implement a configurable rules engine to manage product combinations (tours + cruises), transfer times, check-in/check-out logic, and pricing.",
-    itravelApi: "iTravel Rules Engine Microservice / Transfer Buffer Validator",
-    v4Api: "V4 SSP Transfers & Locations",
-    howItWorks: "Queries V4 SSP transfer endpoints for land tour drop-off times/hubs and compares against iTravel pier embarkation cutoff, enforcing a minimum 3-hour transfer buffer."
+    category: "Central Rules Engine",
+    requirement: "Enforce business logic for minimum transit/connection buffers, age limits, and floor prices across brands.",
+    itravelApi: "iTravel Configurable Rules Engine (Ancillary & Transit Modules)",
+    v4Api: "V4 Operating Points & Min Floor Price Controls",
+    howItWorks: "Rules engine validates arrival/departure location coordinates and times, preventing bookings if the transfer buffer between a land tour and cruise is less than 3 hours."
   },
   {
     id: "req_6",
     category: "Canonical Data Model",
-    requirement: "Standardise location and destination data for linking components, supporting geolocation and hub-based connectivity.",
-    itravelApi: "iTravel Location & Hub Master APIs",
-    v4Api: "V4 SSP Locations & Transfers",
-    howItWorks: "Uses canonical UN-LOCODE / IATA location codes and geo-coordinates to link hotel drop-off hubs with river cruise docking piers."
+    requirement: "Standardize product representations, guest profiles, locations, and pricing across all TTC systems.",
+    itravelApi: "iTravel Canonical Schema (GuestProfile, LineItem, OperatingPoint)",
+    v4Api: "V4 /api/v4/operatingPoints & /api/v4/locations",
+    howItWorks: "Maps legacy Tropics structures to standardized JSON schema with UN-LOCODE / IATA location codes, enabling cross-brand compatibility."
   },
   {
     id: "req_7",
-    category: "Authentication & Single Sign-On",
-    requirement: "Single sign-on for travel agents managing legacy logins during migration.",
-    itravelApi: "OAuth 2.0 POST /token Endpoint on Auth Host with JWT Claims",
-    v4Api: "V4 OAuth Authentication Sync",
-    howItWorks: "Agents authenticate once via Okta/Salesforce SSO; signed JWT bearer tokens carry normalized agent identities down to both V4 and iTravel APIs."
+    category: "Auth & SSO Integration",
+    requirement: "Support seamless login for travel advisors and internal staff using Okta / Salesforce SSO.",
+    itravelApi: "OAuth 2.0 Auth Host (POST /token) & Bearer JWT Validation",
+    v4Api: "V4 Partner API Keys & Market Variation Context",
+    howItWorks: "Advisors authenticate via SSO to obtain a 30-minute OAuth 2.0 JWT token, which carries agency PCC, advisor ID, and consortia claims in every API call."
   },
   {
     id: "req_8",
-    category: "Scalability for Future Products",
-    requirement: "Prepare for additional product types (e.g. rail, chartered ships, transfers) without major redesign.",
+    category: "Scalability & Extensibility",
+    requirement: "Ensure platform can expand to incorporate additional TTC brands, rail products, or third-party inventory.",
     itravelApi: "iTravel Generic LineItem Schema (Type = CRUISE | TOUR | RAIL | TRANSFER)",
     v4Api: "V4 Tour Options & Ancillary Extensions",
     howItWorks: "The Super PNR basket is built on an extensible JSON array of line items, allowing rail or transfer components to be attached seamlessly."
@@ -354,78 +274,106 @@ export const MULTI_MODAL_JOURNEYS = [
     step: 1,
     stageName: "1. Multi-Modal Search & Hub Connectivity",
     tagline: "UI calls iTravel OMS -> OMS queries Cruise + V4 Land Tour internally",
-    description: "Customer searches for a combined European holiday (7-Day Swiss Land Tour + 7-Day Rhine River Cruise). UI makes ONE call to iTravel OMS Gateway.",
-    businessValue: "Drives higher yield per booking by cross-selling land tours and river cruises in a single search flow.",
-    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (REST/JSON over HTTPS) | PDF Sec 4.2 Pg 11 (cruiseAggrAvailabilitySearchRQ/RS)",
+    description: "A travel advisor or guest searches on the B2B/B2C website for a multi-product European vacation (e.g., a 7-day Trafalgar Swiss Alps Land Tour combined with a 7-day Uniworld Rhine River Cruise). To prevent frontend complexity, the UI executes ONE single REST request to the iTravel OMS Gateway.",
+    businessValue: "Drives substantial revenue growth by cross-selling land tours and luxury river cruises in a single search session, eliminating the need for advisors to search two separate reservation systems.",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch (REST/JSON over HTTPS) | PDF Sec 4.2 Pg 11 (cruiseAggrAvailabilitySearch)",
+    uiCallBusinessDetails: "How it works: The UI sends destination codes (e.g. 'RHINE_SWISS'), departure date ranges, and passenger counts. The iTravel OMS Gateway acts as a Backend-For-Frontend (BFF), taking this single search request and parallelizing internal queries out to inventory engines.",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability",
-    itravelCall: "iTravel OMS calls Connect public-power-shopping tier (PDF Sec 4.2 Pg 11)",
-    rulesEngineCall: "Evaluates canonical hub geolocation to verify tour end-point connects to cruise pier."
+    v4CallBusinessDetails: "How it works: iTravel OMS queries the TravCorp V4 Distribution API to fetch real-time land tour availability, hotel allotment dates, and operating points directly from the Tropics tour reservation engine.",
+    itravelCall: "iTravel OMS queries Connect public-power-shopping tier (PDF Sec 4.2 Pg 11)",
+    itravelCallBusinessDetails: "How it works: iTravel OMS queries its high-speed PowerShopping cache tier to fetch matching Uniworld river cruise sailings, cabin category starting fares, and vessel embarkation ports.",
+    rulesEngineCall: "Evaluates canonical hub geolocation (UN-LOCODE / IATA) to verify the land tour drop-off point connects geographically to the river cruise pier.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: The Rules Engine executes an automated GIS proximity check between the land tour ending operating point (e.g. Zurich Hotel drop-off) and the ship embarkation pier (e.g. Basel Rhine Pier). If the distance or travel time is infeasible, the combination is automatically filtered out before presenting options to the user."
   },
   {
     step: 2,
     stageName: "2. Synchronized Room & Category Selection",
     tagline: "UI selects Room + Category -> iTravel OMS queries V4 options + Ship categories",
-    description: "Advisor selects hotel room extension via Tropics V4 and river cruise category via Connect.",
-    businessValue: "Provides a seamless upsell experience across both land accommodations and ship categories.",
-    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch | PDF Sec 4.3 Pg 23 (cruiseCategoryAvailabilitySearchRQ/RS) & PDF Sec 4.6 Pg 56 (cruiseCabinAvailabilitySearchRQ/RS)",
+    description: "The advisor selects specific accommodations for both segments: a Deluxe Twin Hotel Room extension for the Trafalgar land tour segment and a Category 1 French Balcony Stateroom on the Uniworld river vessel.",
+    businessValue: "Delivers a seamless upsell experience across both land accommodations and ship stateroom categories in real time.",
+    uiCall: "POST /v7/rest/public-power-shopping/cruises/fetch | PDF Sec 4.3 Pg 23 (cruiseCategoryAvailabilitySearch) & PDF Sec 4.6 Pg 56 (cruiseCabinAvailabilitySearch)",
+    uiCallBusinessDetails: "How it works: The UI requests exact cabin category availability, deck plan locations, and land tour room extension options. iTravel OMS returns available cabin numbers and hotel bed configurations in a single unified JSON response.",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}",
+    v4CallBusinessDetails: "How it works: iTravel OMS fetches land tour room upgrade options, single supplements, pre/post hotel night allotments, and optional experience packages from Tropics via V4 REST endpoints.",
     itravelCall: "iTravel OMS queries category availability (PDF Sec 4.3 Pg 23) and cabin deck grid (PDF Sec 4.6 Pg 56)",
-    rulesEngineCall: "Validates bed configuration consistency across hotel and ship category."
+    itravelCallBusinessDetails: "How it works: iTravel OMS queries the Uniworld Cruise Engine to pull live stateroom deck grids, physical cabin availability (e.g., Cabin 204 on Deck 2), and dining session allotments.",
+    rulesEngineCall: "Validates bed configuration consistency and passenger occupancy limits across hotel rooms and ship staterooms.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates passenger counts (e.g. 2 Adults + 1 Child) against max occupancy rules for both the Tropics hotel room and the Uniworld stateroom. Prevents mis-matched configurations (e.g. selecting a double-bed hotel room but a twin-bed ship cabin)."
   },
   {
     step: 3,
     stageName: "3. Rules Engine & Transit Buffer Validation",
     tagline: "Validate Check-In/Check-Out Logic & Minimum Connection Times",
-    description: "Configurable rules engine calculates buffer time between land tour hotel check-out and ship embarkation check-in.",
-    businessValue: "Eliminates operational mis-connections and customer dissatisfaction caused by impossible transfer timelines.",
-    uiCall: "Handled internally inside iTravel OMS Rules Engine Microservice | PDF Sec 4.9 Pg 84 (fetchApplicableAncillaryRuleRQ/RS)",
-    v4Call: "V4 -> SSP Transfers (Hotel drop-off operating point & ETA)",
-    itravelCall: "iTravel Embarkation Schedule API (Pier boarding cutoff time)",
-    rulesEngineCall: "Enforces 3-hour minimum transfer buffer window between land tour drop-off and pier boarding."
+    description: "Before allowing the advisor to proceed to checkout, the centralized iTravel Rules Engine evaluates the physical timeline connection between the land tour drop-off and the ship embarkation time.",
+    businessValue: "Eliminates high-cost operational mis-connections, emergency transfer dispatch fees, and guest dissatisfaction caused by impossible transit schedules.",
+    uiCall: "Handled internally inside iTravel OMS Rules Engine Microservice | PDF Sec 4.9 Pg 84 (fetchApplicableAncillaryRule)",
+    uiCallBusinessDetails: "How it works: The UI submits the selected tour departure and cruise sailing. The OMS Gateway triggers the internal Rules Engine without requiring the frontend to calculate complex time zone or transfer mathematics.",
+    v4Call: "V4 -> SSP Transfers (Hotel drop-off operating point & drop-off timestamp)",
+    v4CallBusinessDetails: "How it works: Fetches exact tour end-point schedule from Tropics, including expected motorcoach arrival time at the final transfer drop-off location.",
+    itravelCall: "iTravel Embarkation Schedule API (Pier boarding cutoff time & vessel departure)",
+    itravelCallBusinessDetails: "How it works: Retrieves Uniworld vessel boarding windows (e.g., Boarding Opens: 14:00, All-Aboard Cutoff: 17:00) for the Basel pier.",
+    rulesEngineCall: "Enforces 3-hour minimum transit buffer window between land tour drop-off and pier boarding cutoff.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: The Rules Engine subtracts the Tropics land tour drop-off timestamp from the Uniworld pier cutoff timestamp. If the gap is less than the mandatory 3-hour buffer (e.g., only 1.5 hours due to traffic/distance), the system flags a 'TRANSIT_BUFFER_VIOLATION' error and prompts the user to add a pre-cruise hotel night or private transfer."
   },
   {
     step: 4,
     stageName: "4. Bundled Promotions & Consortia Overrides",
     tagline: "Combine Multi-Product Discounts & Virtuoso Benefits",
-    description: "Evaluates combined promotions (e.g. '$1,000 Off when booking Tour + Cruise together') plus consortia perks.",
-    businessValue: "Incentivizes multi-product bookings while enforcing strict discount combinability rules.",
+    description: "The advisor applies promotional codes (e.g., 'SAVE1000' for booking Tour + Cruise together) and inputs the agency's Virtuoso consortia membership.",
+    businessValue: "Incentivizes multi-product package sales while enforcing strict floor-price controls to protect gross margin.",
     uiCall: "POST /v7/rest/cruises/promotions/{cruise-code} | PDF Sec 4.4 Pg 34 (fetchApplicablePromotions) & PDF Sec 4.5 Pg 41 (applyPromotion)",
+    uiCallBusinessDetails: "How it works: UI submits promo code 'SAVE1000' and agency consortia code 'VIRTUOSO'. iTravel OMS evaluates applicable discounts across both land and cruise line items.",
     v4Call: "iTravel OMS calls V4 -> /brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote",
+    v4CallBusinessDetails: "How it works: iTravel OMS calls V4 quote endpoint to calculate discounted land tour fare, verify minimum floor price constraints in Tropics, and check land tour promo eligibility.",
     itravelCall: "Evaluates multi-product bundle promo codes (PDF Sec 4.4 Pg 34 & Sec 4.5 Pg 41)",
-    rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes."
+    itravelCallBusinessDetails: "How it works: iTravel OMS queries promotion rules engine to apply cruise percentage discounts and attach complimentary Virtuoso shipboard credit ($250 per suite).",
+    rulesEngineCall: "Checks combinability matrix for Virtuoso / AAA agency consortia codes against early-bird promo discounts.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Rules Engine executes a combinability matrix check. If 'SAVE1000' and 'VIRTUOSO_VIP' are marked mutually exclusive, the engine applies the higher-value benefit and alerts the advisor, ensuring total discounts never breach minimum floor margins."
   },
   {
     step: 5,
     stageName: "5. Agent SSO & Inventory Holds",
     tagline: "Resolve Tropics Agent IDs & Place Synchronized Holds",
-    description: "Translates travel agent identities across legacy systems and places temporary holds on both tour allotment and ship cabin.",
-    businessValue: "Protects inventory across land and water for 15 minutes while guest passport details are collected.",
+    description: "The advisor authenticates via Okta/Salesforce SSO. The system resolves their disparate IDs across Tropics and iTravel, then places a temporary 15-minute hold on both the ship cabin and land tour hotel allotment.",
+    businessValue: "Protects inventory across land and river for 15 minutes while advisor collects guest passport details and credit card authorization.",
     uiCall: "POST /v7/rest/public-be-cruise/cruises/{cruiseCode}/cabins/hold | PDF Sec 4.8 Pg 77 (cruiseCabinHold)",
-    v4Call: "iTravel OMS calls V4 -> /internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions & Tropics Allotment Hold",
+    uiCallBusinessDetails: "How it works: UI passes cabin selection and guest details. iTravel OMS locks stateroom 204 for 15 minutes and returns a hold expiration timer.",
+    v4Call: "iTravel OMS calls V4 -> /internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions & Tropics Hold",
+    v4CallBusinessDetails: "How it works: iTravel OMS places a temporary seat/room hold in Tropics via V4 Adapter and looks up agency commission tiers based on selling company code.",
     itravelCall: "Connect public-be-cruise hold endpoint (PDF Sec 4.8 Pg 77 - Holds Cabin for 15 minutes)",
-    rulesEngineCall: "Maps Agent ID 789 (Tropics) <-> Agent User in Salesforce MDM <-> iTravel PCC."
+    itravelCallBusinessDetails: "How it works: iTravel Cruise Engine flags cabin 204 as 'HELD_PENDING_BOOKING' in the vessel inventory database, preventing double-booking by other channels.",
+    rulesEngineCall: "Maps Agent ID AG-101 (Tropics) <-> Advisor User ID in Salesforce MDM <-> iTravel PCC context.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Resolves agency identity across systems. Translates Tropics Agent ID 'AG-101' into canonical `BookingOwner` object (`RequestorType=AGENCY`, `RequestorID=AG-101`, `RequestingUserID=USER-45`, `OrgUnitCode=LON_BRANCH`, `AgencyConsortium=VIRTUOSO`, `NetPayApplicable=true`), establishing correct commission entitlement."
   },
   {
     step: 6,
     stageName: "6. Unified Basket & Single Customer Invoice",
     tagline: "Dry-Run Preview & Commit to Super PNR Basket",
-    description: "Validates the multi-product order, generates a single unified guest invoice, and commits records to Tropics and iTravel.",
-    businessValue: "Delivers a single customer invoice and Super PNR reference while preserving legacy backend records.",
+    description: "The advisor commits the booking. iTravel OMS executes a dry-run validation, creates a master Super PNR shopping cart, generates a single unified customer invoice, and writes sub-records to Tropics and iTravel.",
+    businessValue: "Delivers a single consolidated guest invoice and master PNR reference for the entire trip, eliminating guest confusion from receiving separate bills from Trafalgar and Uniworld.",
     uiCall: "POST /v7/rest/bookings | PDF Sec 4.11 Pg 108 (createBooking)",
+    uiCallBusinessDetails: "How it works: UI submits the full multi-product payload (`IsPreview=false`, guest profiles, tokenized payment token). OMS Gateway creates the order and returns master Super PNR reference 'SUPER-88492'.",
     v4Call: "iTravel OMS calls V4 -> /booking & /bookings/{bookingReference} (Creates sub-record in Tropics)",
+    v4CallBusinessDetails: "How it works: iTravel OMS invokes V4 /booking to commit the land tour sub-booking in Tropics, receiving Tropics sub-booking reference 'TRP-55219'.",
     itravelCall: "iTravel OMS creates master Super PNR basket & single customer invoice (PDF Sec 4.11 Pg 108)",
-    rulesEngineCall: "Calculates consolidated deposit due dates and Net vs Gross agency billing."
+    itravelCallBusinessDetails: "How it works: iTravel OMS writes the master Super PNR record containing both line items (Tour + Cruise), generates the single guest invoice PDF, and stores payment authorization.",
+    rulesEngineCall: "Calculates consolidated deposit due dates, payment schedule milestones, and Net vs Gross agency billing terms.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Blends deposit policies. Land tour requires $200 deposit; river cruise requires $500 deposit. Rules Engine consolidates these into a single $700 deposit line on the guest invoice due within 7 days, with final balance due 90 days prior to departure."
   },
   {
     step: 7,
     stageName: "7. Bundled Servicing & Commission Settlement",
     tagline: "Collision-Free Modifications & Blended Commission Payout",
-    description: "Handles post-booking servicing with freeze locks and calculates accurate agent commissions across bundled products.",
-    businessValue: "Prevents concurrent editing race conditions and ensures accurate agency payouts across multi-brand packages.",
+    description: "Handles post-booking modifications using pessimistic session locking (freezePnrs) and calculates blended travel advisor commission payouts across the bundled products.",
+    businessValue: "Prevents concurrent editing race conditions during call-center servicing and ensures accurate, automated agency commission payouts across multi-brand packages.",
     uiCall: "POST /iTravel/selling/api/public-booking/v1/rest/bkg/pnr/freezePnrs & cancel | PDF Sec 5.3 Pg 147 (freezePnrs), PDF Sec 5.9 Pg 158 (modify - No URL published) & PDF Sec 6.2 Pg 196 (cancel)",
+    uiCallBusinessDetails: "How it works: When a call-center agent opens the Super PNR to add an optional tour or change guest passport details, UI calls `freezePnrs` to obtain an exclusive pessimistic edit lock (`LockToken`).",
     v4Call: "iTravel OMS updates Tropics Commission Ledger via V4 Commissions endpoint (/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions)",
+    v4CallBusinessDetails: "How it works: iTravel OMS syncs final land tour line item pricing to Tropics and posts the land tour commission portion (e.g. 12% on $3,000 land tour = $360) to Tropics Finance.",
     itravelCall: "Pessimistic session lock & post-booking amendments (PDF Sec 5.3 Pg 147, Sec 5.9 Pg 158 & Sec 6.2 Pg 196)",
-    rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner rules."
+    itravelCallBusinessDetails: "How it works: iTravel OMS manages the master Super PNR modification lifecycle (`modifyRQ/RS`), recalculating total package price and issuing updated customer invoices.",
+    rulesEngineCall: "Calculates blended commission (e.g. 15% on cruise + 12% on land tour) based on BookingOwner context and NetPayApplicable flag.",
+    rulesEngineBusinessDetails: "Why it's here & How it works: Evaluates `BookingOwner.NetPayApplicable`. If `true` (Net Billing), guest is charged Total Price minus Commission, and agency retains commission at source. If `false` (Gross Billing), guest pays 100% and iTravel OMS posts a $1,110 blended commission credit ($750 cruise + $360 tour) to agency payout ledger."
   }
 ];
 
