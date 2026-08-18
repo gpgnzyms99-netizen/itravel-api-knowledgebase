@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE } from './data/apiData';
 import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText } from 'lucide-react';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText, Network } from 'lucide-react';
+import { GraphExplorer } from './components/GraphExplorer';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -19,7 +20,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const [activeTab, setActiveTab] = useState('biz'); // Default to 'biz' ('biz' | 'reqs' | 'trade' | 'kb' | 'arch' | 'qa')
+  const [activeTab, setActiveTab] = useState('graph'); // Default to 'graph' for immediate visibility ('graph' | 'biz' | 'reqs' | 'trade' | 'kb' | 'arch' | 'qa')
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
@@ -161,8 +162,15 @@ export default function App() {
             </button>
           </div>
 
-          {/* Navigation Bar (All 6 Tabs Prominent) */}
+          {/* Navigation Bar (All 7 Tabs Prominent) */}
           <nav style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+            <button 
+              className={activeTab === 'graph' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('graph'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'GRAPH', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <Network size={16} /> Graph Explorer
+            </button>
             <button 
               className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
               onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
@@ -212,6 +220,9 @@ export default function App() {
       {/* Main Content Area */}
       <main style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '24px auto', padding: '0 24px' }}>
         
+        {/* TAB 0: GRAPH EXPLORER (NETWORKING MAP) */}
+        {activeTab === 'graph' && <GraphExplorer />}
+
         {/* TAB 1: MULTI-MODAL BUSINESS JOURNEY (TOUR + CRUISE + RAIL) */}
         {activeTab === 'biz' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>

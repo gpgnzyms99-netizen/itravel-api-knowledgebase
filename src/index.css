@@ -8,9 +8,16 @@
   --slate-100: #f8fafc;
   --slate-200: #e2e8f0;
   --slate-400: #94a3b8;
+  --slate-600: #475569;
   --slate-700: #334155;
   --emerald-500: #10b981;
+  --emerald-600: #059669;
   --crimson-600: #c8102e;
+  --cyan-600: #0284c7;
+  --purple-600: #9333ea;
+  --amber-600: #d97706;
+  --amber-800: #854d0e;
+  --rose-600: #e11d48;
 
   /* Tier 2: Semantic Tokens */
   --color-primary: var(--navy-900);
@@ -24,6 +31,14 @@
   --color-text-inverse: #ffffff;
   --color-border-subtle: #e2e8f0;
 
+  --color-node-rest: var(--cyan-600);
+  --color-node-rpc: var(--purple-600);
+  --color-node-v4: var(--emerald-600);
+  --color-node-req: var(--amber-600);
+  --color-node-brand: var(--amber-800);
+  --color-node-platform: var(--slate-600);
+  --color-node-fin: var(--rose-600);
+
   /* Tier 3: Component Tokens */
   --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
   --shadow-section: 0 20px 30px -10px rgba(10, 25, 47, 0.12);
@@ -35,6 +50,16 @@
   --radius-image: 12px;
   --radius-accordion: 8px;
   --radius-icon: 6px;
+
+  --node-rest-bg: var(--color-node-rest);
+  --node-rpc-bg: var(--color-node-rpc);
+  --node-v4-bg: var(--color-node-v4);
+  --node-req-bg: var(--color-node-req);
+  --node-brand-bg: var(--color-node-brand);
+  --node-platform-bg: var(--color-node-platform);
+  --node-fin-bg: var(--color-node-fin);
+  --graph-canvas-bg: var(--color-background-card);
+  --graph-canvas-border: var(--color-border-subtle);
 }
 
 * {
