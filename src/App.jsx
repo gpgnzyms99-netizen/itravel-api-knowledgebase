@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE } from './data/apiData';
 import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText, Network } from 'lucide-react';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText, Network, Sparkles } from 'lucide-react';
 import { GraphExplorer } from './components/GraphExplorer';
+import { UseCaseFinder } from './components/UseCaseFinder';
 
 // Amplitude Telemetry Tracking Helper
 const trackTelemetry = (properties) => {
@@ -207,6 +208,13 @@ export default function App() {
               <CheckSquare size={16} /> Business Requirements Matrix
             </button>
             <button 
+              className={activeTab === 'usecase' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('usecase'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'USECASE', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <Sparkles size={16} /> Use Case Finder
+            </button>
+            <button 
               className={activeTab === 'graph' ? 'btn-accent' : 'btn-primary'}
               onClick={() => { setActiveTab('graph'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'GRAPH', interaction_type: 'CLICK' }); }}
               style={{ padding: '10px 16px', fontSize: '13.5px' }}
@@ -222,6 +230,9 @@ export default function App() {
         
         {/* TAB 0: GRAPH EXPLORER (NETWORKING MAP) */}
         {activeTab === 'graph' && <GraphExplorer />}
+
+        {/* TAB: OPEN-ENDED USE CASE SOLUTION FINDER */}
+        {activeTab === 'usecase' && <UseCaseFinder onNavigateToGraph={() => setActiveTab('graph')} />}
 
         {/* TAB 1: MULTI-MODAL BUSINESS JOURNEY (TOUR + CRUISE + RAIL) */}
         {activeTab === 'biz' && (
