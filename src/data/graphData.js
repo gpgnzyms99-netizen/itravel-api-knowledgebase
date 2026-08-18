@@ -1,5 +1,5 @@
-import { API_KNOWLEDGE_BASE } from './apiData';
-import { ELEVATE_REQUIREMENTS } from './businessData';
+import { API_KNOWLEDGE_BASE } from './apiData.js';
+import { ELEVATE_REQUIREMENTS } from './businessData.js';
 
 // Tier 1 & 2 Node Categories
 export const NODE_CATEGORIES = {
@@ -68,7 +68,7 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability",
     displayName: "V4 Departure Availability",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:142 & apiData.js:55",
+    sourceCitation: "businessData.js:8, :281 & apiData.js:10",
     aliases: ["/brands/{brand}/.../departures/{id}/availability"]
   },
   {
@@ -76,7 +76,7 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/brands/{brand}/tours",
     displayName: "V4 Tour Listing",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:184 & apiData.js:55",
+    sourceCitation: "businessData.js:9, :184",
     aliases: ["/brands/{brand}/tours"]
   },
   {
@@ -84,7 +84,7 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/brands/{brand}/tours/{tourId}/options/{optionId}",
     displayName: "V4 Tour Options Search",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:142 & businessData.js:296",
+    sourceCitation: "businessData.js:142, :296",
     aliases: ["/brands/{brand}/tours/{tourId}/options/{optionId}"]
   },
   {
@@ -92,7 +92,7 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote",
     displayName: "V4 Quote Calculation",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:195 & apiData.js:164",
+    sourceCitation: "businessData.js:195, :203 & apiData.js:137",
     aliases: ["/brands/{brand}/.../departures/{id}/quote", "/quote"]
   },
   {
@@ -124,21 +124,21 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions",
     displayName: "V4 Selling Company Commissions",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:142 & ARCHITECTURE_RISKS_QA",
+    sourceCitation: "businessData.js:125, :219 & apiData.js:431",
     aliases: ["/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions"]
   }
 ];
 
-// Brand Metadata (Codes from businessData.js:6, full names explicitly marked Inferred)
+// Brand Metadata: Codes alone as explicitly enumerated in businessData.js:6 (AA, BV, CH, CS, GE, IV, LG, TT)
 export const TROPICS_BRANDS = [
-  { code: 'AA', name: 'Adventure World (Inferred)' },
-  { code: 'BV', name: 'Boutique Voyages (Inferred)' },
-  { code: 'CH', name: 'Contiki Holidays (Inferred)' },
-  { code: 'CS', name: 'Costsaver (Inferred)' },
-  { code: 'GE', name: 'Grand European Travel (Inferred)' },
-  { code: 'IV', name: 'Insight Vacations (Inferred)' },
-  { code: 'LG', name: 'Luxury Gold (Inferred)' },
-  { code: 'TT', name: 'Trafalgar Tours (Inferred)' }
+  { code: 'AA' },
+  { code: 'BV' },
+  { code: 'CH' },
+  { code: 'CS' },
+  { code: 'GE' },
+  { code: 'IV' },
+  { code: 'LG' },
+  { code: 'TT' }
 ];
 
 export const generateGraphTopology = () => {
@@ -153,8 +153,9 @@ export const generateGraphTopology = () => {
       const method = record.connectRestMethod || record.method || 'POST';
       // Composite Key: category_layer_method_path
       const nodeId = `REST_API_connect_${method}_${path}`;
+      const mapKey = `${method}_${path}`;
 
-      if (!restNodeMap.has(path)) {
+      if (!restNodeMap.has(mapKey)) {
         const node = {
           id: nodeId,
           category: 'REST_API',
@@ -169,9 +170,9 @@ export const generateGraphTopology = () => {
           tier: 1 // Tiered layout row 1
         };
         nodes.push(node);
-        restNodeMap.set(path, node);
+        restNodeMap.set(mapKey, node);
       } else {
-        restNodeMap.get(path).records.push(record);
+        restNodeMap.get(mapKey).records.push(record);
       }
     }
   });
@@ -199,7 +200,8 @@ export const generateGraphTopology = () => {
 
       // Link REST_API ➔ RPC_SCHEMA where record defines both
       if (record.connectRestPath) {
-        const restNode = restNodeMap.get(record.connectRestPath);
+        const method = record.connectRestMethod || record.method || 'POST';
+        const restNode = restNodeMap.get(`${method}_${record.connectRestPath}`);
         if (restNode) {
           edges.push({
             id: `edge_rest_rpc_${restNode.id}_${nodeId}`,
@@ -215,7 +217,6 @@ export const generateGraphTopology = () => {
 
   // 3. Build V4_ADAPTER Nodes (8 Canonical Endpoints)
   V4_CANONICAL_ALIASES.forEach(v4Alias => {
-    // Composite Key: category_layer_method_path
     const nodeId = `V4_ADAPTER_tropics_${v4Alias.method}_${v4Alias.canonicalPath}`;
 
     nodes.push({
@@ -241,10 +242,15 @@ export const generateGraphTopology = () => {
       if (rpcPromo) {
         edges.push({ id: `edge_rpc_v4_quote`, source: rpcPromo.id, target: nodeId, type: 'ROUTES_TO', label: 'Recalculates Land Quote' });
       }
-    } else if (v4Alias.id === 'v4_booking' || v4Alias.id === 'v4_book') {
+    } else if (v4Alias.id === 'v4_book') {
       const rpcBkg = nodes.find(n => n.id === 'RPC_SCHEMA_ibsrpc_POST_createBookingRQ');
       if (rpcBkg) {
-        edges.push({ id: `edge_rpc_v4_bkg`, source: rpcBkg.id, target: nodeId, type: 'ROUTES_TO', label: 'Commits Sub-Booking' });
+        edges.push({ id: `edge_rpc_v4_book`, source: rpcBkg.id, target: nodeId, type: 'ROUTES_TO', label: 'Books Tour Departure' });
+      }
+    } else if (v4Alias.id === 'v4_booking') {
+      const rpcBkg = nodes.find(n => n.id === 'RPC_SCHEMA_ibsrpc_POST_createBookingRQ');
+      if (rpcBkg) {
+        edges.push({ id: `edge_rpc_v4_booking`, source: rpcBkg.id, target: nodeId, type: 'ROUTES_TO', label: 'Commits Sub-Booking' });
       }
     } else if (v4Alias.id === 'v4_booking_ref') {
       const restRetrieve = nodes.find(n => n.id === 'REST_API_connect_GET_/v7/rest/bookings/{bookingReference}');
@@ -261,28 +267,29 @@ export const generateGraphTopology = () => {
       id: nodeId,
       category: 'REQUIREMENT',
       layer: 'Elevate Requirement',
-      displayName: `${req.id.toUpperCase()}: ${req.title}`,
+      displayName: `${req.id.toUpperCase()}: ${req.category}`,
       reqId: req.id,
       reqCategory: req.category,
       sourceCitation: `businessData.js: ELEVATE_REQUIREMENTS (${req.id})`,
-      description: req.description,
+      description: req.requirement,
+      howItWorks: req.howItWorks,
       tier: 4 // Tiered layout row 4
     });
   });
 
-  // Connect REST & RPC to Requirements
+  // Connect REST to Requirements accurately
   const createBkgNode = nodes.find(n => n.id === 'REST_API_connect_POST_/v7/rest/bookings');
   if (createBkgNode) {
     const req1Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_1');
     const req3Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_3');
-    if (req1Node) edges.push({ id: 'edge_bkg_req1', source: createBkgNode.id, target: req1Node.id, type: 'IMPLEMENTS', label: 'Enforces Multi-Brand' });
-    if (req3Node) edges.push({ id: 'edge_bkg_req3', source: createBkgNode.id, target: req3Node.id, type: 'IMPLEMENTS', label: 'Supports Net Billing' });
+    if (req1Node) edges.push({ id: 'edge_bkg_req1', source: createBkgNode.id, target: req1Node.id, type: 'IMPLEMENTS', label: 'Implements Unified Basket' });
+    if (req3Node) edges.push({ id: 'edge_bkg_req3', source: createBkgNode.id, target: req3Node.id, type: 'IMPLEMENTS', label: 'Consolidates Invoice' });
   }
 
   const tokenNode = nodes.find(n => n.id === 'REST_API_connect_POST_/token');
   if (tokenNode) {
-    const req2Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_2');
-    if (req2Node) edges.push({ id: 'edge_token_req2', source: tokenNode.id, target: req2Node.id, type: 'IMPLEMENTS', label: 'Secures B2B Channel' });
+    const req7Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_7');
+    if (req7Node) edges.push({ id: 'edge_token_req7', source: tokenNode.id, target: req7Node.id, type: 'IMPLEMENTS', label: 'Enforces Auth & SSO' });
   }
 
   // 5. Build BRAND Nodes (8 Tropics Brand Codes)
@@ -292,24 +299,26 @@ export const generateGraphTopology = () => {
       id: nodeId,
       category: 'BRAND',
       layer: 'Tropics Brand',
-      displayName: `${brand.code} - ${brand.name}`,
+      displayName: `Brand ${brand.code}`,
       brandCode: brand.code,
-      brandName: brand.name,
       sourceCitation: 'businessData.js:6 (Brand Code Enumeration)',
+      description: `Tropics Brand Code ${brand.code} enumerated in businessData.js:6`,
       tier: 5 // Tiered layout row 5
     });
-
-    // Link V4 Adapters to Brand Codes
-    nodes.filter(n => n.category === 'V4_ADAPTER').forEach(v4Node => {
-      edges.push({
-        id: `edge_v4_brand_${v4Node.id}_${brand.code}`,
-        source: v4Node.id,
-        target: nodeId,
-        type: 'SERVES_BRAND',
-        label: 'Brand Tenant Routing'
-      });
-    });
   });
+
+  // Connect V4 Adapter layer as a single conceptual relationship to Brand Codes
+  const v4ToursNode = nodes.find(n => n.id === 'V4_ADAPTER_tropics_UNSPEC_/brands/{brand}/tours');
+  const brandAANode = nodes.find(n => n.id === 'BRAND_tropics_CODE_AA');
+  if (v4ToursNode && brandAANode) {
+    edges.push({
+      id: 'edge_v4_brand_routing',
+      source: v4ToursNode.id,
+      target: brandAANode.id,
+      type: 'SERVES_BRAND',
+      label: 'Brand Tenant Routing'
+    });
+  }
 
   // 6. Build PLATFORM Node (1 Legacy Platform)
   const platformNodeId = 'PLATFORM_uniworld_SYS_Longitude';
@@ -318,14 +327,14 @@ export const generateGraphTopology = () => {
     category: 'PLATFORM',
     layer: 'Legacy Platform',
     displayName: 'Longitude (Uniworld Legacy Platform)',
-    sourceCitation: 'businessData.js: ELEVATE_REQUIREMENTS (req_4)',
+    sourceCitation: 'businessData.js:84 & ELEVATE_REQUIREMENTS (req_10)',
     description: 'Uniworld legacy platform being migrated to iTravel Connect v7.0 and Super PNR master basket.',
     tier: 5
   });
 
-  const req4Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_4');
-  if (req4Node) {
-    edges.push({ id: 'edge_plat_req4', source: req4Node.id, target: platformNodeId, type: 'MIGRATES_FROM', label: 'Replaces Legacy System' });
+  const req10Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_10');
+  if (req10Node) {
+    edges.push({ id: 'edge_plat_req10', source: req10Node.id, target: platformNodeId, type: 'MIGRATES_FROM', label: 'Replaces Legacy System' });
   }
 
   // 7. Build FINANCIAL Node (1 Commission Ledger Node)
@@ -335,8 +344,8 @@ export const generateGraphTopology = () => {
     category: 'FINANCIAL',
     layer: 'Financial & Ledger Rules',
     displayName: 'iTravel Centralized Commission Ledger',
-    sourceCitation: 'businessData.js: ELEVATE_REQUIREMENTS (req_3)',
-    description: 'Centralized financial ledger managing Net/Gross agency commission calculations and deposit milestones.',
+    sourceCitation: 'businessData.js:125, :131, :376 ($1,110 Deposit Rules)',
+    description: 'Centralized financial ledger managing Net/Gross agency commission calculations and $1,110 deposit milestone rules (sourced businessData.js:376).',
     tier: 5
   });
 
