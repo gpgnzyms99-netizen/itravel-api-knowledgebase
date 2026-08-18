@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { API_KNOWLEDGE_BASE } from './data/apiData';
 import { MULTI_MODAL_JOURNEYS, ELEVATE_REQUIREMENTS, OMS_ARCHITECTURE_TOPOLOGY, ARCHITECTURE_RISKS_QA } from './data/businessData';
-import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText, Network, Sparkles } from 'lucide-react';
+import { Search, Code, CheckCircle, Copy, Check, Lock, LogOut, Briefcase, HelpCircle, Compass, CheckSquare, ShieldCheck, GitMerge, AlertTriangle, Users, DollarSign, Globe, CreditCard, Layers, RefreshCw, FileText, Network } from 'lucide-react';
 import { GraphExplorer } from './components/GraphExplorer';
 import { UseCaseFinder } from './components/UseCaseFinder';
 
@@ -31,11 +31,20 @@ export default function App() {
   // Business Guide Selected Journey Step
   const [selectedJourneyStep, setSelectedJourneyStep] = useState(MULTI_MODAL_JOURNEYS[0]);
 
-  // Password Gate Check on Mount
+  // Password Gate Check & URL Route Check on Mount
   useEffect(() => {
     const savedAuth = localStorage.getItem('itravel_kb_authenticated');
     if (savedAuth === 'true') {
       setIsAuthenticated(true);
+    }
+
+    // Direct URL Access for /usecase or ?tab=usecase or #usecase
+    const path = window.location.pathname.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+
+    if (path.includes('/usecase') || search.includes('usecase') || hash.includes('usecase')) {
+      setActiveTab('usecase');
     }
   }, []);
 
@@ -206,13 +215,6 @@ export default function App() {
               style={{ padding: '10px 16px', fontSize: '13.5px' }}
             >
               <CheckSquare size={16} /> Business Requirements Matrix
-            </button>
-            <button 
-              className={activeTab === 'usecase' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('usecase'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'USECASE', interaction_type: 'CLICK' }); }}
-              style={{ padding: '10px 16px', fontSize: '13.5px' }}
-            >
-              <Sparkles size={16} /> Use Case Finder
             </button>
             <button 
               className={activeTab === 'graph' ? 'btn-accent' : 'btn-primary'}
