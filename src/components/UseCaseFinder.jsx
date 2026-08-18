@@ -2,10 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { API_KNOWLEDGE_BASE } from '../data/apiData';
 import { ELEVATE_REQUIREMENTS, ARCHITECTURE_RISKS_QA } from '../data/businessData';
 import { V4_CANONICAL_ALIASES } from '../data/graphData';
-import { Search, Sparkles, AlertTriangle, CheckCircle, Copy, Check, ArrowRight, Compass } from 'lucide-react';
+import { Search, Sparkles, AlertTriangle, CheckCircle, Copy, Check, ArrowRight, Compass, XCircle } from 'lucide-react';
 
-// Sample PM Scenarios for 1-click testing
+// Sample PM Scenarios & Architectural Decision Queries
 const PRESET_SCENARIOS = [
+  {
+    id: 'v4_direct_basket',
+    title: '🛑 Decision: Should I use V4 directly to create a basket?',
+    query: 'Should I use V4 directly to create a basket?',
+    category: 'Arch Decision'
+  },
   {
     id: 'agent_portal',
     title: 'Personalized Travel Agent Home Page & Portal SSO',
@@ -48,36 +54,66 @@ export function UseCaseFinder({ onNavigateToGraph }) {
   const [searchQuery, setSearchQuery] = useState(PRESET_SCENARIOS[0].query);
   const [copiedJira, setCopiedJira] = useState(false);
 
-  // Real-Time Matching & Gap Analysis Engine
+  // Real-Time Matching, Decision Verdict & Gap Analysis Engine
   const analysis = useMemo(() => {
     const queryLower = searchQuery.toLowerCase();
     const words = queryLower.split(/\s+/).filter(w => w.length > 2);
 
-    // 1. Match Elevate Requirements
+    // 1. Architectural Policy Verdict Engine
+    let decisionVerdict = null;
+
+    if (queryLower.includes('v4') && (queryLower.includes('direct') || queryLower.includes('create a basket') || queryLower.includes('basket') || queryLower.includes('cart'))) {
+      decisionVerdict = {
+        verdict: 'STRICTLY PROHIBITED (ANTI-PATTERN)',
+        isViolation: true,
+        title: 'DO NOT invoke V4 Adapter directly from UI to create a basket!',
+        summary: 'Connect REST v7.0 (POST /v7/rest/bookings) is the mandatory North-South external entry point. V4 endpoints are internal East-West microservices.',
+        rationale: [
+          'V4 Adapter endpoints (e.g. /booking or /brands/{brand}/.../book) are internal microservices invoked by iTravel OMS to write land tour records to legacy Tropics (businessData.js:184, :357).',
+          'Bypassing iTravel OMS breaks multi-modal bundling (land tour + river cruise) inside a single Super PNR cart.',
+          'Direct V4 calls fail Elevate Requirement REQ_1 ("Unified Booking Basket") and REQ_3 ("Single Customer Invoice").'
+        ],
+        correctPattern: 'UI Portals ➔ POST /v7/rest/bookings (Connect REST Gateway) ➔ iTravel OMS Orchestrator ➔ V4 Adapter (POST /booking)'
+      };
+    } else if (queryLower.includes('rpc') && (queryLower.includes('direct') || queryLower.includes('ui') || queryLower.includes('portal'))) {
+      decisionVerdict = {
+        verdict: 'NOT RECOMMENDED FOR NORTH-SOUTH UI PORTALS',
+        isViolation: true,
+        title: 'UI Portals should use Connect REST v7.0 Gateway rather than raw IBS RPCs.',
+        summary: 'Connect REST v7.0 translates REST JSON payloads into IBS RPC v6.0 schemas internally.',
+        rationale: [
+          'Raw IBS RPCs require stateful session handling and IBS-specific message formatting.',
+          'Connect REST v7.0 handles OAuth 2.0 JWT authentication and standardizes HTTP verb semantics.'
+        ],
+        correctPattern: 'UI Portals ➔ Connect REST Gateway (HTTPS + Bearer JWT) ➔ iTravel OMS ➔ IBS Cruise RPC v6.0 Engine'
+      };
+    }
+
+    // 2. Match Elevate Requirements
     const matchedRequirements = ELEVATE_REQUIREMENTS.filter(req => {
       const text = `${req.id} ${req.category} ${req.requirement} ${req.itravelApi} ${req.v4Api} ${req.howItWorks}`.toLowerCase();
       return words.some(w => text.includes(w));
     });
 
-    // 2. Match Connect REST & RPC APIs
+    // 3. Match Connect REST & RPC APIs
     const matchedApis = API_KNOWLEDGE_BASE.filter(api => {
       const text = `${api.title} ${api.displayName} ${api.description} ${api.endpointPath} ${api.connectRestPath || ''} ${api.rpcMessageName || ''}`.toLowerCase();
       return words.some(w => text.includes(w));
     });
 
-    // 3. Match V4 Adapter Surfaces
+    // 4. Match V4 Adapter Surfaces
     const matchedV4Adapters = V4_CANONICAL_ALIASES.filter(v4 => {
       const text = `${v4.displayName} ${v4.canonicalPath} ${v4.aliases.join(' ')}`.toLowerCase();
       return words.some(w => text.includes(w));
     });
 
-    // 4. Match Architecture Risks & Q&A
+    // 5. Match Architecture Risks & Q&A
     const matchedRisks = ARCHITECTURE_RISKS_QA.filter(risk => {
       const text = `${risk.title} ${risk.risk} ${risk.resolution}`.toLowerCase();
       return words.some(w => text.includes(w));
     });
 
-    // 5. Dynamic Lacking Information & Gap Analysis
+    // 6. Dynamic Lacking Information & Gap Analysis
     const gaps = [];
 
     // Agent Home Page / Personalization Gaps
@@ -109,7 +145,7 @@ export function UseCaseFinder({ onNavigateToGraph }) {
     }
 
     // Checkout / Cart / Deposit Gaps
-    if (queryLower.includes('checkout') || queryLower.includes('cart') || queryLower.includes('deposit') || queryLower.includes('payment')) {
+    if (queryLower.includes('checkout') || queryLower.includes('cart') || queryLower.includes('deposit') || queryLower.includes('payment') || queryLower.includes('basket')) {
       gaps.push({
         type: 'MISSING_NON_FUNCTIONAL',
         title: 'Inventory Lock SLA & Timeout Policy',
@@ -150,6 +186,7 @@ export function UseCaseFinder({ onNavigateToGraph }) {
     });
 
     return {
+      decisionVerdict,
       matchedRequirements,
       matchedApis,
       matchedV4Adapters,
@@ -160,7 +197,9 @@ export function UseCaseFinder({ onNavigateToGraph }) {
 
   const handleCopyJira = () => {
     const text = `
-h2. Product Feature Blueprint: ${searchQuery}
+h2. Product Feature Blueprint & Decision: ${searchQuery}
+
+${analysis.decisionVerdict ? `h3. Architectural Decision Verdict: ${analysis.decisionVerdict.verdict}\n${analysis.decisionVerdict.title}\n*Rationale:* ${analysis.decisionVerdict.summary}\n*Correct Pattern:* ${analysis.decisionVerdict.correctPattern}\n` : ''}
 
 h3. 1. Available System Architecture & APIs
 *Requirements Implemented:* ${analysis.matchedRequirements.map(r => `${r.id} (${r.category})`).join(', ') || 'None'}
@@ -171,8 +210,8 @@ h3. 2. Lacking Information & API Gaps (Request from Engineering)
 ${analysis.gaps.map(g => `* [${g.severity}] ${g.title}: ${g.description}`).join('\n')}
 
 h3. 3. Recommended Action Plan
-1. Request Engineering contracts for missing profile/preference endpoints.
-2. Define HTTP Error Code matrix and fallback UX.
+1. Ensure all North-South integrations route via Connect REST v7.0 Gateway.
+2. Request Engineering contracts for missing profile/preference endpoints.
 3. Validate multi-modal transit buffers against rules engine.
     `.trim();
 
@@ -188,10 +227,10 @@ h3. 3. Recommended Action Plan
       <div className="card" style={{ padding: '24px', backgroundColor: 'var(--navy-900)', color: '#fff', borderLeft: '4px solid var(--gold-500)', boxShadow: 'var(--shadow-section)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
           <Sparkles style={{ color: 'var(--gold-500)' }} size={24} />
-          <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', margin: 0 }}>Open-Ended Use Case Solution Finder</h2>
+          <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', margin: 0 }}>Open-Ended Use Case & Architectural Decision Finder</h2>
         </div>
         <p style={{ fontSize: '13px', color: 'var(--slate-300)', margin: 0, maxWidth: '900px' }}>
-          Enter any product scenario or user story. The engine cross-references our <strong>Connect REST APIs</strong>, <strong>IBS RPC Schemas</strong>, <strong>V4 Adapters</strong>, and <strong>Elevate Requirements</strong>—instantly revealing what system assets exist and exactly what information or APIs are currently lacking.
+          Ask any open-ended product capability question or architectural decision query (e.g. <em>"Should I use V4 directly to create a basket?"</em> or <em>"Build a travel agent home page"</em>). The engine renders architectural policy verdicts, available system assets, and information gaps.
         </p>
       </div>
 
@@ -199,7 +238,7 @@ h3. 3. Recommended Action Plan
       <div className="card" style={{ padding: '24px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--navy-900)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Describe Product Use Case / User Story:
+            Query Product Use Case or Architectural Decision:
           </label>
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ position: 'relative', flex: 1 }}>
@@ -208,7 +247,7 @@ h3. 3. Recommended Action Plan
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="e.g. 'I need to build a Travel agent experience where I can personalise a home page using my login'..."
+                placeholder="e.g. 'Should I use V4 directly to create a basket?'..."
                 style={{
                   width: '100%',
                   padding: '14px 16px 14px 48px',
@@ -232,7 +271,7 @@ h3. 3. Recommended Action Plan
 
           {/* Sample Preset Pills */}
           <div>
-            <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--slate-500)', marginRight: '8px' }}>Sample Scenarios:</span>
+            <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--slate-500)', marginRight: '8px' }}>Sample Queries:</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
               {PRESET_SCENARIOS.map(preset => (
                 <button
@@ -244,9 +283,9 @@ h3. 3. Recommended Action Plan
                     fontSize: '12px',
                     fontWeight: '500',
                     cursor: 'pointer',
-                    border: '1px solid var(--slate-200)',
-                    backgroundColor: searchQuery === preset.query ? 'var(--navy-900)' : 'var(--slate-100)',
-                    color: searchQuery === preset.query ? '#fff' : 'var(--navy-800)',
+                    border: preset.id === 'v4_direct_basket' ? '1px solid #fca5a5' : '1px solid var(--slate-200)',
+                    backgroundColor: searchQuery === preset.query ? 'var(--navy-900)' : (preset.id === 'v4_direct_basket' ? '#fef2f2' : 'var(--slate-100)'),
+                    color: searchQuery === preset.query ? '#fff' : (preset.id === 'v4_direct_basket' ? '#991b1b' : 'var(--navy-800)'),
                     transition: 'all 0.15s ease'
                   }}
                 >
@@ -257,6 +296,44 @@ h3. 3. Recommended Action Plan
           </div>
         </div>
       </div>
+
+      {/* Architectural Policy Verdict Banner (Rendered when decision detected) */}
+      {analysis.decisionVerdict && (
+        <div className="card" style={{ padding: '24px', backgroundColor: analysis.decisionVerdict.isViolation ? '#fef2f2' : '#f0fdf4', border: `2px solid ${analysis.decisionVerdict.isViolation ? '#ef4444' : '#22c55e'}`, boxShadow: 'var(--shadow-section)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+            <div style={{ backgroundColor: analysis.decisionVerdict.isViolation ? '#ef4444' : '#22c55e', color: '#fff', padding: '10px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {analysis.decisionVerdict.isViolation ? <XCircle size={28} /> : <CheckCircle size={28} />}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '800', padding: '3px 8px', borderRadius: '4px', backgroundColor: analysis.decisionVerdict.isViolation ? '#dc2626' : '#16a34a', color: '#fff', letterSpacing: '0.05em' }}>
+                  {analysis.decisionVerdict.verdict}
+                </span>
+                <h3 style={{ fontSize: '16px', fontWeight: '800', color: 'var(--navy-900)', margin: 0 }}>
+                  {analysis.decisionVerdict.title}
+                </h3>
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--slate-800)', fontWeight: '600', marginBottom: '12px' }}>
+                {analysis.decisionVerdict.summary}
+              </p>
+
+              <div style={{ backgroundColor: '#fff', padding: '14px', borderRadius: 'var(--radius-accordion)', border: '1px solid var(--slate-200)', marginBottom: '12px' }}>
+                <strong style={{ fontSize: '12px', color: 'var(--navy-900)', display: 'block', marginBottom: '6px' }}>Architectural Rationale:</strong>
+                <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '12px', color: 'var(--slate-700)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {analysis.decisionVerdict.rationale.map((r, i) => (
+                    <li key={i}>{r}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div style={{ backgroundColor: 'var(--navy-900)', color: '#fff', padding: '10px 14px', borderRadius: 'var(--radius-accordion)', fontSize: '12px', fontFamily: 'monospace' }}>
+                <strong style={{ color: 'var(--gold-500)', display: 'block', marginBottom: '2px', fontFamily: 'sans-serif' }}>Mandatory Integration Sequence:</strong>
+                {analysis.decisionVerdict.correctPattern}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3-Column Analysis Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
@@ -380,10 +457,10 @@ h3. 3. Recommended Action Plan
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ padding: '12px', borderRadius: 'var(--radius-card)', backgroundColor: '#fff', border: '1px solid var(--slate-200)' }}>
               <h4 style={{ fontSize: '12px', fontWeight: '700', color: 'var(--navy-900)', marginBottom: '4px' }}>
-                Step 1: Wire Existing Foundations
+                Step 1: Enforce Gateway Architecture
               </h4>
               <p style={{ fontSize: '11px', color: 'var(--slate-600)', margin: 0 }}>
-                Connect UI authentication flow to <code>POST /token</code> and bind agent identity attributes via <code>BookingOwner</code> object.
+                Ensure all North-South client portals route through <code>POST /v7/rest/bookings</code> (Connect REST Gateway) and authenticated via OAuth 2.0 JWT.
               </p>
             </div>
 
