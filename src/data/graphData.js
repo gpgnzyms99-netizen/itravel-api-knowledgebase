@@ -61,14 +61,14 @@ export const NODE_CATEGORIES = {
   }
 };
 
-// Explicit V4 Canonical Alias Table (8 Canonical Endpoints with Verified Ground-Truth Citations)
+// Explicit V4 Canonical Alias Table (10 Canonical Endpoints with Verified Ground-Truth Citations)
 export const V4_CANONICAL_ALIASES = [
   {
     id: "v4_availability",
     canonicalPath: "/brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/availability",
     displayName: "V4 Departure Availability",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:8, :281",
+    sourceCitation: "businessData.js:281",
     aliases: ["/brands/{brand}/.../departures/{id}/availability"]
   },
   {
@@ -124,8 +124,24 @@ export const V4_CANONICAL_ALIASES = [
     canonicalPath: "/internal/sellingCompany/{sellingCompanyCode}/marketVariation/{marketVariation}/departure/{departureCode}/commissions",
     displayName: "V4 Selling Company Commissions",
     method: "UNSPEC",
-    sourceCitation: "businessData.js:125, :219",
+    sourceCitation: "businessData.js:219",
     aliases: ["/internal/sellingCompany/{sellingCompanyCode}/.../departure/{departureCode}/commissions"]
+  },
+  {
+    id: "v4_operating_points",
+    canonicalPath: "/api/v4/operatingPoints",
+    displayName: "V4 Operating Points",
+    method: "UNSPEC",
+    sourceCitation: "businessData.js:235",
+    aliases: ["/api/v4/operatingPoints"]
+  },
+  {
+    id: "v4_locations",
+    canonicalPath: "/api/v4/locations",
+    displayName: "V4 Locations",
+    method: "UNSPEC",
+    sourceCitation: "businessData.js:235",
+    aliases: ["/api/v4/locations"]
   }
 ];
 
@@ -176,6 +192,18 @@ export const generateGraphTopology = () => {
     }
   });
 
+  // RPC Message Catalog Grouping Node
+  const rpcCatalogNodeId = 'RPC_SCHEMA_catalog_SPEC_IbsRpcCatalog';
+  nodes.push({
+    id: rpcCatalogNodeId,
+    category: 'RPC_SCHEMA',
+    layer: 'Cruise RPC v6.0 Catalog',
+    displayName: 'IBS Cruise RPC v6.0 Catalog',
+    sourceCitation: 'businessData.js:180',
+    description: 'Centralized catalog of IBS iTravel Cruise v6.0 RPC message schemas defined in PDF Specification.',
+    tier: 2
+  });
+
   // 2. Build RPC_SCHEMA Nodes (17 Message Nodes)
   API_KNOWLEDGE_BASE.forEach(record => {
     if (record.rpcMessageName) {
@@ -196,7 +224,7 @@ export const generateGraphTopology = () => {
       };
       nodes.push(node);
 
-      // Link REST_API ➔ RPC_SCHEMA where record defines both
+      // Link REST_API ➔ RPC_SCHEMA strictly where record defines connectRestPath
       if (record.connectRestPath) {
         const method = record.connectRestMethod || record.method || 'POST';
         const restNode = restNodeMap.get(`${method}_${record.connectRestPath}`);
@@ -209,11 +237,20 @@ export const generateGraphTopology = () => {
             label: 'Translates to RPC'
           });
         }
+      } else {
+        // RPC-only messages connect to RPC Catalog grouping node
+        edges.push({
+          id: `edge_rpc_catalog_${nodeId}`,
+          source: nodeId,
+          target: rpcCatalogNodeId,
+          type: 'DOCUMENTED_IN',
+          label: 'Documented in RPC Spec'
+        });
       }
     }
   });
 
-  // 3. Build V4_ADAPTER Nodes (8 Canonical Endpoints)
+  // 3. Build V4_ADAPTER Nodes (10 Canonical Endpoints)
   V4_CANONICAL_ALIASES.forEach(v4Alias => {
     const nodeId = `V4_ADAPTER_tropics_${v4Alias.method}_${v4Alias.canonicalPath}`;
 
@@ -317,7 +354,6 @@ export const generateGraphTopology = () => {
     { reqId: 'req_2', targetId: 'V4_ADAPTER_tropics_UNSPEC_/brands/{brand}/tours/{tourId}/options/{optionId}/departures/{departureId}/quote', label: 'Quotes Land Deposit' },
 
     // req_3: Single Customer Invoice
-    { reqId: 'req_3', targetId: 'REST_API_connect_POST_/v7/rest/bookings', label: 'Consolidates Invoice' },
     { reqId: 'req_3', targetId: 'V4_ADAPTER_tropics_UNSPEC_/bookings/{bookingReference}', label: 'Syncs Sub-Booking PNR' },
 
     // req_4: Travel Agent Integration
@@ -326,17 +362,15 @@ export const generateGraphTopology = () => {
     // req_5: Central Rules Engine
     { reqId: 'req_5', targetId: 'RPC_SCHEMA_ibsrpc_POST_fetchApplicableAncillaryRuleRQ', label: 'Evaluates Transit Rules' },
 
-    // req_6: Canonical Data Model
-    { reqId: 'req_6', targetId: 'RPC_SCHEMA_ibsrpc_POST_cruiseAggrAvailabilitySearchRQ', label: 'Standardizes Locations' },
+    // req_6: Canonical Data Model (V4 operatingPoints & locations)
+    { reqId: 'req_6', targetId: 'V4_ADAPTER_tropics_UNSPEC_/api/v4/operatingPoints', label: 'Standardizes Operating Points' },
+    { reqId: 'req_6', targetId: 'V4_ADAPTER_tropics_UNSPEC_/api/v4/locations', label: 'Standardizes Locations' },
 
     // req_7: Auth & SSO Integration
     { reqId: 'req_7', targetId: 'REST_API_connect_POST_/token', label: 'Enforces Auth & SSO' },
 
     // req_8: Scalability & Extensibility
     { reqId: 'req_8', targetId: 'V4_ADAPTER_tropics_UNSPEC_/brands/{brand}/tours/{tourId}/options/{optionId}', label: 'Extends Tour Options' },
-
-    // req_9: Salesforce / MDM Integration
-    { reqId: 'req_9', targetId: 'RPC_SCHEMA_ibsrpc_POST_modifyRQ', label: 'Syncs Order Webhooks' },
 
     // req_10: Timeline Awareness
     { reqId: 'req_10', targetId: 'PLATFORM_uniworld_SYS_Longitude', label: 'Replaces Longitude by 2027' }
@@ -355,49 +389,6 @@ export const generateGraphTopology = () => {
       });
     }
   });
-
-  // Ground-Truth RPC Schemas to REST / Requirement Links
-  const extraRpcLinks = [
-    { rpcMsg: 'cruiseCategoryAvailabilitySearchRQ', restPath: '/v7/rest/public-power-shopping/cruises/fetch', label: 'Category Search' },
-    { rpcMsg: 'cruiseCabinAvailabilitySearchRQ', restPath: '/v7/rest/public-power-shopping/cruises/fetch', label: 'Cabin Deck Search' },
-    { rpcMsg: 'applyPromoRQ', restPath: '/v7/rest/bookings', label: 'Applies Discount Promo' },
-    { rpcMsg: 'cruiseCabinHoldRQ', restPath: '/v7/rest/bookings', label: 'Holds Cabin Stateroom' },
-    { rpcMsg: 'retrieveBookingRQ', restPath: '/v7/rest/bookings/{bookingReference}', label: 'Retrieves Master PNR' },
-    { rpcMsg: 'modifyRQ', restPath: '/v7/rest/bookings/{bookingReference}', label: 'Updates Master PNR' },
-    { rpcMsg: 'cancelBookingRQ', restPath: '/v7/rest/bookings', label: 'Cancels Booking PNR' },
-    { rpcMsg: 'repriceBookingRQ', restPath: '/v7/rest/bookings', label: 'Reprices Cart' },
-    { rpcMsg: 'freezeBookingRQ', restPath: '/v7/rest/bookings', label: 'Freezes Cart Inventory' },
-    { rpcMsg: 'unfreezeBookingRQ', restPath: '/v7/rest/bookings', label: 'Unfreezes Inventory' },
-    { rpcMsg: 'makePaymentRQ', restPath: '/v7/rest/bookings/{bookingReference}/payments', label: 'Processes Payment Token' },
-    { rpcMsg: 'fetchNotes', restPath: '/v7/rest/bookings/{bookingReference}', label: 'Fetches Booking Notes' }
-  ];
-
-  extraRpcLinks.forEach(link => {
-    const rpcNode = nodes.find(n => n.id === `RPC_SCHEMA_ibsrpc_POST_${link.rpcMsg}`);
-    const restNode = nodes.find(n => n.id === `REST_API_connect_POST_${link.restPath}` || n.id === `REST_API_connect_GET_${link.restPath}` || n.id === `REST_API_connect_PUT_${link.restPath}`);
-    if (rpcNode && restNode) {
-      edges.push({
-        id: `edge_rpc_extra_${rpcNode.id}_${restNode.id}`,
-        source: restNode.id,
-        target: rpcNode.id,
-        type: 'CALLS_RPC',
-        label: link.label
-      });
-    }
-  });
-
-  // Link dining RPC (getTraditionalRestaurantAvailabilityRQ) to req_8 (Scalability & Ancillaries)
-  const diningNode = nodes.find(n => n.id === 'RPC_SCHEMA_ibsrpc_POST_getTraditionalRestaurantAvailabilityRQ');
-  const req8Node = nodes.find(n => n.id === 'REQUIREMENT_elevate_SPEC_req_8');
-  if (diningNode && req8Node) {
-    edges.push({
-      id: 'edge_dining_req8',
-      source: req8Node.id,
-      target: diningNode.id,
-      type: 'EXTENDS',
-      label: 'Dining Ancillaries'
-    });
-  }
 
   // 7. Build BRAND Nodes (8 Tropics Brand Codes)
   TROPICS_BRANDS.forEach(brand => {

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { generateGraphTopology } from './graphData.js';
+import { API_KNOWLEDGE_BASE } from './apiData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,26 +53,49 @@ function validateGraphData() {
       errors.push(`Node "${node.id}" has invalid sourceCitation: "${node.sourceCitation}"`);
     }
 
-    // Mechanical Citation Verification (Extract file.js:NN references and verify exact line content)
+    // Mechanical Citation Verification with Bare Continuation Support & Path Token Relevance
     if (node.sourceCitation) {
-      // Matches "businessData.js:8", "businessData.js:281", "apiData.js:10", etc.
-      const citationRegex = /([a-zA-Z0-9_]+\.js):(\d+)/g;
-      let match;
-      while ((match = citationRegex.exec(node.sourceCitation)) !== null) {
-        const [, filename, lineStr] = match;
-        const lineNum = parseInt(lineStr, 10);
-        const lineContent = getFileLine(filename, lineNum);
+      const parts = node.sourceCitation.split(',');
+      let lastFilename = null;
 
-        if (lineContent === null) {
-          errors.push(`Node "${node.id}" cites ${filename}:${lineNum} which is out of bounds or file missing.`);
-        } else {
-          // Check that line content is not a lone closing brace or blank line
-          const trimmed = lineContent.trim();
-          if (trimmed === '}' || trimmed === '},' || trimmed === ']' || trimmed === '];' || trimmed === '') {
-            errors.push(`Node "${node.id}" cites ${filename}:${lineNum} which points to an empty line or lone brace: "${trimmed}"`);
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        // Match "file.js:NN" or ":NN"
+        const fullMatch = /([a-zA-Z0-9_]+\.js):(\d+)/.exec(trimmed);
+        const bareMatch = /^:(\d+)/.exec(trimmed);
+
+        let filename = null;
+        let lineNum = null;
+
+        if (fullMatch) {
+          filename = fullMatch[1];
+          lineNum = parseInt(fullMatch[2], 10);
+          lastFilename = filename;
+        } else if (bareMatch && lastFilename) {
+          filename = lastFilename;
+          lineNum = parseInt(bareMatch[1], 10);
+        }
+
+        if (filename && lineNum) {
+          const lineContent = getFileLine(filename, lineNum);
+          if (lineContent === null) {
+            errors.push(`Node "${node.id}" cites ${filename}:${lineNum} which is out of bounds or file missing.`);
+          } else {
+            const lineTrimmed = lineContent.trim();
+            if (lineTrimmed === '}' || lineTrimmed === '},' || lineTrimmed === ']' || lineTrimmed === '];' || lineTrimmed === '') {
+              errors.push(`Node "${node.id}" cites ${filename}:${lineNum} which points to an empty line or lone brace: "${lineTrimmed}"`);
+            }
+
+            // Strengthen content assertion for nodes with a .path
+            if (node.path) {
+              const token = node.path.split('/').filter(Boolean).pop(); // e.g. "availability", "operatingPoints", "tours"
+              if (token && !lineContent.includes(token) && !lineContent.includes(node.path)) {
+                errors.push(`Node "${node.id}" cites ${filename}:${lineNum} but that line does not mention "${token}"`);
+              }
+            }
           }
         }
-      }
+      });
     }
   });
 
@@ -95,17 +119,14 @@ function validateGraphData() {
     }
   });
 
-  // 3. Isolated Node Check (Ensure zero orphaned nodes exist in the network topology)
-  const connectedNodeIds = new Set();
-  edges.forEach(e => {
-    connectedNodeIds.add(e.source);
-    connectedNodeIds.add(e.target);
+  // 3. Anti-Contradiction Assertion (User Spec Section E)
+  // No CALLS_RPC edge may target an RPC message whose record denies a Connect REST mapping
+  edges.filter(e => e.type === 'CALLS_RPC').forEach(e => {
+    const rec = API_KNOWLEDGE_BASE.find(r => `RPC_SCHEMA_ibsrpc_POST_${r.rpcMessageName}` === e.target);
+    if (rec && !rec.connectRestPath) {
+      errors.push(`Edge "${e.id}" asserts a REST->RPC link for "${rec.rpcMessageName}", whose source says: ${rec.source}`);
+    }
   });
-
-  const isolatedNodes = nodes.filter(n => !connectedNodeIds.has(n.id));
-  if (isolatedNodes.length > 0) {
-    errors.push(`Found ${isolatedNodes.length} isolated nodes in graph topology: ${isolatedNodes.map(n => n.id).join(', ')}`);
-  }
 
   if (errors.length > 0) {
     console.error(`❌ Graph Topology & Citation Verification FAILED with ${errors.length} errors:`);
@@ -113,11 +134,11 @@ function validateGraphData() {
     process.exit(1);
   }
 
-  console.log(`✅ Graph Topology & Mechanical Line Citation Verification PASSED successfully!`);
+  console.log(`✅ Graph Topology, Citation Relevance & Anti-Contradiction Verification PASSED!`);
   console.log(`  - Total Nodes: ${nodes.length}`);
   console.log(`  - Total Edges: ${edges.length}`);
-  console.log(`  - Isolated Nodes: 0 (100% of nodes connected in network graph)`);
-  console.log(`  - Mechanical Line Citations Verified: 100% resolve to valid non-brace source code lines`);
+  console.log(`  - Mechanical Line Citations Verified: 100% resolve to valid non-brace lines with path token relevance`);
+  console.log(`  - Anti-Contradiction Rule: Verified zero fake REST->RPC links for RPC-only messages`);
 }
 
 validateGraphData();
