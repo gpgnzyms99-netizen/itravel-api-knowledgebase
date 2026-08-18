@@ -12,6 +12,7 @@ export function GraphExplorer() {
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNode, setSelectedNode] = useState(null);
+  const [hoveredNode, setHoveredNode] = useState(null);
 
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -37,7 +38,6 @@ export function GraphExplorer() {
       const availableWidth = 1600 - marginX * 2;
 
       rowNodes.forEach((node, index) => {
-        // Calculate X spacing dynamically based on 1600px canvas width
         const spacingX = count > 1 ? availableWidth / (count - 1) : 0;
         const x = count === 1 ? 800 : marginX + index * spacingX;
         const y = tierHeights[tierNum] || marginY + tierNum * 120;
@@ -46,7 +46,7 @@ export function GraphExplorer() {
           ...node,
           x,
           y,
-          radius: 18, // 18px radius per specification
+          radius: 18,
           indexInTier: index
         });
       });
@@ -92,7 +92,7 @@ export function GraphExplorer() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
-    // Draw Grid Lines (Light High-Contrast Border)
+    // Draw Grid Lines
     ctx.strokeStyle = '#f1f5f9';
     ctx.lineWidth = 1;
     for (let x = 0; x < width; x += 40) {
@@ -126,13 +126,33 @@ export function GraphExplorer() {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Draw Edge Label if highlighted
+        // Draw Edge Label Pill if highlighted
         if (isHighlighted && edge.label) {
           const midX = (sourceNode.x + targetNode.x) / 2;
           const midY = (sourceNode.y + targetNode.y) / 2;
           ctx.font = 'bold 10px sans-serif';
+          const textWidth = ctx.measureText(edge.label).width;
+          const pillWidth = textWidth + 14;
+          const pillHeight = 20;
+
+          // White Pill Background Box
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#0284c7';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(midX - pillWidth / 2, midY - pillHeight / 2, pillWidth, pillHeight, 6);
+          } else {
+            ctx.rect(midX - pillWidth / 2, midY - pillHeight / 2, pillWidth, pillHeight);
+          }
+          ctx.fill();
+          ctx.stroke();
+
+          // Pill Text
           ctx.fillStyle = '#0f172a';
-          ctx.fillText(edge.label, midX + 5, midY - 5);
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(edge.label, midX, midY);
         }
       }
     });
@@ -143,10 +163,11 @@ export function GraphExplorer() {
       if (!isVisible) return;
 
       const isSelected = selectedNode && selectedNode.id === node.id;
+      const isHovered = hoveredNode && hoveredNode.id === node.id;
 
-      // Color mapping following Tier 3 Tokens
+      // Color mapping
       const categoryMeta = NODE_CATEGORIES[node.category] || NODE_CATEGORIES.REST_API;
-      let nodeColor = '#0284c7'; // REST
+      let nodeColor = '#0284c7';
       if (node.category === 'RPC_SCHEMA') nodeColor = '#9333ea';
       if (node.category === 'V4_ADAPTER') nodeColor = '#059669';
       if (node.category === 'REQUIREMENT') nodeColor = '#d97706';
@@ -154,15 +175,15 @@ export function GraphExplorer() {
       if (node.category === 'PLATFORM') nodeColor = '#475569';
       if (node.category === 'FINANCIAL') nodeColor = '#e11d48';
 
-      // Outer Selection Glow
-      if (isSelected) {
+      // Selection/Hover Glow
+      if (isSelected || isHovered) {
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius + 6, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(2, 132, 199, 0.25)';
+        ctx.fillStyle = isSelected ? 'rgba(2, 132, 199, 0.25)' : 'rgba(203, 213, 225, 0.4)';
         ctx.fill();
       }
 
-      // Main Circle Body (18px radius)
+      // Main Circle Body
       ctx.beginPath();
       ctx.arc(node.x, node.y, node.radius, 0, 2 * Math.PI);
       ctx.fillStyle = nodeColor;
@@ -178,25 +199,79 @@ export function GraphExplorer() {
       ctx.textBaseline = 'middle';
       ctx.fillText(categoryMeta.badge, node.x, node.y);
 
-      // Staggered Label Positioning (Even: Y + radius + 12, Odd: Y + radius + 26)
+      // Compact Base Label Below Circle
       const isEven = (node.indexInTier || 0) % 2 === 0;
-      const labelYOffset = isEven ? (node.radius + 12) : (node.radius + 26);
+      const labelYOffset = isEven ? (node.radius + 12) : (node.radius + 24);
 
-      // Node Label Below Circle
-      ctx.font = isSelected ? 'bold 11px sans-serif' : '10.5px sans-serif';
-      ctx.fillStyle = isSelected ? '#0f172a' : '#334155';
+      ctx.font = isSelected ? 'bold 10.5px sans-serif' : '10px sans-serif';
+      ctx.fillStyle = isSelected ? '#0f172a' : '#475569';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
-      let labelText = node.displayName;
-      if (labelText.length > 16) labelText = labelText.substring(0, 15) + '…';
+      let shortLabel = node.displayName;
+      if (shortLabel.length > 12) shortLabel = shortLabel.substring(0, 11) + '…';
+      ctx.fillText(shortLabel, node.x, node.y + labelYOffset);
 
-      ctx.fillText(labelText, node.x, node.y + labelYOffset);
+      // Floating Callout Card Tooltip for Selected/Hovered Node
+      if (isSelected || isHovered) {
+        const fullLabel = node.displayName;
+        ctx.font = 'bold 11px sans-serif';
+        const labelWidth = ctx.measureText(fullLabel).width + 20;
+        const boxHeight = 24;
+        const boxX = Math.max(10, Math.min(1600 - labelWidth - 10, node.x - labelWidth / 2));
+        const boxY = node.y - node.radius - boxHeight - 8;
+
+        // Dark Tooltip Background Box
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(boxX, boxY, labelWidth, boxHeight, 6);
+        } else {
+          ctx.rect(boxX, boxY, labelWidth, boxHeight);
+        }
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Pointer Arrow
+        ctx.beginPath();
+        ctx.moveTo(node.x - 5, boxY + boxHeight);
+        ctx.lineTo(node.x + 5, boxY + boxHeight);
+        ctx.lineTo(node.x, boxY + boxHeight + 5);
+        ctx.closePath();
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+
+        // Tooltip Text
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(fullLabel, boxX + labelWidth / 2, boxY + boxHeight / 2);
+      }
     });
 
-  }, [tieredNodes, filteredEdges, filteredNodeIds, selectedNode]);
+  }, [tieredNodes, filteredEdges, filteredNodeIds, selectedNode, hoveredNode]);
 
-  // Canvas Click Handler (Mapped to 1600px virtual width)
+  // Mouse Move Handler for Hover
+  const handleMouseMove = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (1600 / rect.width);
+    const mouseY = (e.clientY - rect.top) * (700 / rect.height);
+
+    const hovered = filteredNodes.find(node => {
+      const dx = mouseX - node.x;
+      const dy = mouseY - node.y;
+      return Math.sqrt(dx * dx + dy * dy) <= node.radius + 8;
+    });
+
+    setHoveredNode(hovered || null);
+    canvas.style.cursor = hovered ? 'pointer' : 'default';
+  };
+
+  // Canvas Click Handler
   const handleCanvasClick = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -207,7 +282,7 @@ export function GraphExplorer() {
     const clicked = filteredNodes.find(node => {
       const dx = clickX - node.x;
       const dy = clickY - node.y;
-      return Math.sqrt(dx * dx + dy * dy) <= node.radius + 6;
+      return Math.sqrt(dx * dx + dy * dy) <= node.radius + 8;
     });
 
     if (clicked) {
@@ -348,7 +423,7 @@ export function GraphExplorer() {
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
             <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
               <Network className="w-4 h-4 text-cyan-600" />
-              <span>Tiered Protocol Topology (1600px Staggered View)</span>
+              <span>Tiered Protocol Topology (Hover/Select Nodes to View Titles)</span>
             </div>
             <div className="flex items-center gap-4 text-xs font-semibold text-slate-600 flex-wrap">
               <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-cyan-600"></span> Connect REST</span>
@@ -363,6 +438,8 @@ export function GraphExplorer() {
             <canvas
               ref={canvasRef}
               onClick={handleCanvasClick}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={() => setHoveredNode(null)}
               className="cursor-pointer rounded-lg bg-white block"
               style={{ minWidth: '1600px', width: '1600px', height: '700px' }}
             />

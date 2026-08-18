@@ -162,15 +162,8 @@ export default function App() {
             </button>
           </div>
 
-          {/* Navigation Bar (All 7 Tabs Prominent) */}
+          {/* Navigation Bar (All 7 Tabs Prominent - Graph Explorer is Rightmost) */}
           <nav style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
-            <button 
-              className={activeTab === 'graph' ? 'btn-accent' : 'btn-primary'}
-              onClick={() => { setActiveTab('graph'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'GRAPH', interaction_type: 'CLICK' }); }}
-              style={{ padding: '10px 16px', fontSize: '13.5px' }}
-            >
-              <Network size={16} /> Graph Explorer
-            </button>
             <button 
               className={activeTab === 'biz' ? 'btn-accent' : 'btn-primary'}
               onClick={() => { setActiveTab('biz'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'BIZ', interaction_type: 'CLICK' }); }}
@@ -212,6 +205,13 @@ export default function App() {
               style={{ padding: '10px 16px', fontSize: '13.5px' }}
             >
               <CheckSquare size={16} /> Business Requirements Matrix
+            </button>
+            <button 
+              className={activeTab === 'graph' ? 'btn-accent' : 'btn-primary'}
+              onClick={() => { setActiveTab('graph'); trackTelemetry({ block_type: 'NAV_TAB', block_id: 'GRAPH', interaction_type: 'CLICK' }); }}
+              style={{ padding: '10px 16px', fontSize: '13.5px' }}
+            >
+              <Network size={16} /> Graph Explorer
             </button>
           </nav>
         </div>
