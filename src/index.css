@@ -51,6 +51,8 @@
   --radius-accordion: 8px;
   --radius-icon: 6px;
 
+  --color-border-strong: #cbd5e1;
+
   --node-rest-bg: var(--color-node-rest);
   --node-rpc-bg: var(--color-node-rpc);
   --node-v4-bg: var(--color-node-v4);
@@ -59,7 +61,7 @@
   --node-platform-bg: var(--color-node-platform);
   --node-fin-bg: var(--color-node-fin);
   --graph-canvas-bg: var(--color-background-card);
-  --graph-canvas-border: var(--color-border-subtle);
+  --graph-canvas-border: var(--color-border-strong);
 }
 
 * {

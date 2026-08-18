@@ -20,7 +20,7 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const [activeTab, setActiveTab] = useState('graph'); // Default to 'graph' for immediate visibility ('graph' | 'biz' | 'reqs' | 'trade' | 'kb' | 'arch' | 'qa')
+  const [activeTab, setActiveTab] = useState('biz'); // Default to 'biz' ('biz' | 'trade' | 'kb' | 'arch' | 'qa' | 'reqs' | 'graph')
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
