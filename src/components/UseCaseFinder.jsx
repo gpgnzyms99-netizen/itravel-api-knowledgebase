@@ -57,29 +57,52 @@ export function UseCaseFinder({ onNavigateToGraph }) {
   // Real-Time Matching, Decision Verdict & Gap Analysis Engine
   const analysis = useMemo(() => {
     const queryLower = searchQuery.toLowerCase();
-    const words = queryLower.split(/\s+/).filter(w => w.length > 2);
+    
+    // Stopwords to prevent false collisions on common English terms ("use", "should", "can", "directly", "create")
+    const STOP_WORDS = new Set([
+      'the', 'and', 'for', 'with', 'from', 'this', 'that', 'into', 'use', 'can',
+      'how', 'what', 'where', 'should', 'directly', 'create', 'a', 'an', 'in', 'on',
+      'of', 'to', 'is', 'are', 'be', 'do', 'does', 'did', 'would', 'could', 'about',
+      'like', 'need', 'build', 'using', 'will', 'your', 'my', 'our'
+    ]);
+
+    // Tokenize query into significant terms
+    const significantTerms = queryLower
+      .replace(/[^\w\s]/g, '')
+      .split(/\s+/)
+      .filter(w => w.length >= 3 && !STOP_WORDS.has(w));
+
+    // Word boundary matcher (prevents substring false matches like "use" matching "sync" or "create" matching "createbookingrq")
+    const matchesQuery = (text) => {
+      if (significantTerms.length === 0) return false;
+      const textLower = text.toLowerCase();
+      return significantTerms.some(term => {
+        const regex = new RegExp(`\\b${term}\\b`, 'i');
+        return regex.test(textLower);
+      });
+    };
 
     // 1. Architectural Policy Verdict Engine
     let decisionVerdict = null;
 
     if (queryLower.includes('v4') && (queryLower.includes('direct') || queryLower.includes('create a basket') || queryLower.includes('basket') || queryLower.includes('cart'))) {
       decisionVerdict = {
-        verdict: 'STRICTLY PROHIBITED (ANTI-PATTERN)',
+        verdict: 'NOT SUPPORTED BY DOCUMENTED ARCHITECTURE',
         isViolation: true,
-        title: 'DO NOT invoke V4 Adapter directly from UI to create a basket!',
-        summary: 'Connect REST v7.0 (POST /v7/rest/bookings) is the mandatory North-South external entry point. V4 endpoints are internal East-West microservices.',
+        title: 'Connect REST v7.0 Gateway is the Documented External Surface; V4 Adapters are Internal Orchestration Services.',
+        summary: 'The documented architecture models Connect REST v7.0 (POST /v7/rest/bookings) as the external North-South Gateway (BFF), while V4 Adapter endpoints are internal East-West microservices invoked by iTravel OMS (businessData.js:14, :184).',
         rationale: [
-          'V4 Adapter endpoints (e.g. /booking or /brands/{brand}/.../book) are internal microservices invoked by iTravel OMS to write land tour records to legacy Tropics (businessData.js:184, :357).',
-          'Bypassing iTravel OMS breaks multi-modal bundling (land tour + river cruise) inside a single Super PNR cart.',
-          'Direct V4 calls fail Elevate Requirement REQ_1 ("Unified Booking Basket") and REQ_3 ("Single Customer Invoice").'
+          'V4 Adapter endpoints (e.g. /booking or /brands/{brand}/.../book) are documented as internal endpoints invoked by iTravel OMS to commit land tour sub-bookings to Tropics (businessData.js:184, :357).',
+          'Bypassing iTravel OMS leaves land tour sub-bookings uncoordinated with river cruise/rail line items inside the Super PNR basket.',
+          'Bypassing iTravel OMS conflicts with Elevate Requirement REQ_1 ("Unified Booking Basket") and REQ_3 ("Single Customer Invoice").'
         ],
         correctPattern: 'UI Portals ➔ POST /v7/rest/bookings (Connect REST Gateway) ➔ iTravel OMS Orchestrator ➔ V4 Adapter (POST /booking)'
       };
     } else if (queryLower.includes('rpc') && (queryLower.includes('direct') || queryLower.includes('ui') || queryLower.includes('portal'))) {
       decisionVerdict = {
-        verdict: 'NOT RECOMMENDED FOR NORTH-SOUTH UI PORTALS',
+        verdict: 'NOT SUPPORTED BY DOCUMENTED ARCHITECTURE',
         isViolation: true,
-        title: 'UI Portals should use Connect REST v7.0 Gateway rather than raw IBS RPCs.',
+        title: 'UI Portals are documented to use Connect REST v7.0 Gateway rather than raw IBS RPCs.',
         summary: 'Connect REST v7.0 translates REST JSON payloads into IBS RPC v6.0 schemas internally.',
         rationale: [
           'Raw IBS RPCs require stateful session handling and IBS-specific message formatting.',
@@ -90,27 +113,35 @@ export function UseCaseFinder({ onNavigateToGraph }) {
     }
 
     // 2. Match Elevate Requirements
-    const matchedRequirements = ELEVATE_REQUIREMENTS.filter(req => {
-      const text = `${req.id} ${req.category} ${req.requirement} ${req.itravelApi} ${req.v4Api} ${req.howItWorks}`.toLowerCase();
-      return words.some(w => text.includes(w));
+    let matchedRequirements = ELEVATE_REQUIREMENTS.filter(req => {
+      const text = `${req.id} ${req.category} ${req.requirement} ${req.itravelApi} ${req.v4Api} ${req.howItWorks}`;
+      return matchesQuery(text);
     });
+
+    // Contextual evidence alignment: Ensure REQ_1 and REQ_3 align with the V4 basket query verdict rationale
+    if (queryLower.includes('v4') && (queryLower.includes('basket') || queryLower.includes('cart') || queryLower.includes('create'))) {
+      const req1 = ELEVATE_REQUIREMENTS.find(r => r.id === 'req_1');
+      const req3 = ELEVATE_REQUIREMENTS.find(r => r.id === 'req_3');
+      if (req1 && !matchedRequirements.some(r => r.id === 'req_1')) matchedRequirements.push(req1);
+      if (req3 && !matchedRequirements.some(r => r.id === 'req_3')) matchedRequirements.push(req3);
+    }
 
     // 3. Match Connect REST & RPC APIs
     const matchedApis = API_KNOWLEDGE_BASE.filter(api => {
-      const text = `${api.title} ${api.displayName} ${api.description} ${api.endpointPath} ${api.connectRestPath || ''} ${api.rpcMessageName || ''}`.toLowerCase();
-      return words.some(w => text.includes(w));
+      const text = `${api.title} ${api.displayName} ${api.description} ${api.endpointPath} ${api.connectRestPath || ''} ${api.rpcMessageName || ''}`;
+      return matchesQuery(text);
     });
 
     // 4. Match V4 Adapter Surfaces
     const matchedV4Adapters = V4_CANONICAL_ALIASES.filter(v4 => {
-      const text = `${v4.displayName} ${v4.canonicalPath} ${v4.aliases.join(' ')}`.toLowerCase();
-      return words.some(w => text.includes(w));
+      const text = `${v4.displayName} ${v4.canonicalPath} ${v4.aliases.join(' ')}`;
+      return matchesQuery(text);
     });
 
     // 5. Match Architecture Risks & Q&A
     const matchedRisks = ARCHITECTURE_RISKS_QA.filter(risk => {
-      const text = `${risk.title} ${risk.risk} ${risk.resolution}`.toLowerCase();
-      return words.some(w => text.includes(w));
+      const text = `${risk.title} ${risk.risk} ${risk.resolution}`;
+      return matchesQuery(text);
     });
 
     // 6. Dynamic Lacking Information & Gap Analysis
@@ -173,9 +204,9 @@ export function UseCaseFinder({ onNavigateToGraph }) {
     // Universal Gaps across all API queries
     gaps.push({
       type: 'MISSING_NON_FUNCTIONAL',
-      title: 'HTTP Error Code & Retry Matrix',
+      title: 'HTTP Status Code Mappings & Retry Strategy',
       severity: 'MEDIUM',
-      description: 'API specs document happy-path JSON payloads, but lack standard HTTP error payloads (400, 401, 409 Conflict, 502 V4 Timeout) and retry strategies.'
+      description: 'API specs document application error code arrays (e.g. ERR_4001), but lack standard HTTP status code mappings (e.g. 400 Bad Request vs 409 Stateroom Lock Conflict vs 502 V4 Adapter Timeout) and client retry strategies.'
     });
 
     gaps.push({
