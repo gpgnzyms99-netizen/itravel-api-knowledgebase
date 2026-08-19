@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   /* Tier 1: Primitives */
   --gold-300: #d4a373;
